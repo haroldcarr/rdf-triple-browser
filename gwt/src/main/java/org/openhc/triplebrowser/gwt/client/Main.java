@@ -1,7 +1,16 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 14 (Wed) 23:32:23 by Harold Carr.
+// Last Modified : 2006 Jun 14 (Wed) 23:46:20 by Harold Carr.
 //
+
+/*
+  TODO:
+
+  - Figure out how to make sov panels expand.
+  - Make +/- on sov links replace with full URL and frame
+  - Style
+  - Server-side
+ */
 
 package com.differentity.client;
 
@@ -161,43 +170,24 @@ class SVOManager
     private void expandCollapse(boolean isExpand)
     {
 	widget.clear();
-	/*
-	// XXX
-	TreeItem root = new TreeItem("root");
-	root.addItem("foo");
-	root.addItem("bar");
-	root.addItem("baz");
-	Tree tree = new Tree();
-	tree.addItem(root);
-	widget.add(tree);
 
-	Button button = new Button("+");
-	final Hyperlink hl = new Hyperlink("http://www.google.com/",
-					   "http://www.google.com/");
-	widget.add(button);
-	HorizontalPanel horizontalPanel = new HorizontalPanel();
-	horizontalPanel.add(button);
-	horizontalPanel.add(hl);
-	widget.add(horizontalPanel);
-	final int widgetIndex = widget.getWidgetIndex(horizontalPanel);
-
-	button.addClickListener(new ClickListener() {
-	    public void onClick(Widget sender) {
-		Button x = (Button) sender;
-		if (x.getText().equals("+")) {
-		    x.setText("-");
-		    widget.insert(new Frame("http://www.google.com/"), 
-				  widgetIndex);
-		} else {
-		    x.setText("+");
-		}
-	    }});
-	// XXX   
-	*/
 	Iterator i = contents.iterator();
 	while (i.hasNext()) {
+	    HorizontalPanel horizontalPanel = new HorizontalPanel();
+	    Button button = new Button("+");
+	    button.addClickListener(new ClickListener() {
+	        public void onClick(Widget sender) {
+		    Button x = (Button) sender;
+		    if (x.getText().equals("+")) {
+			x.setText("-");
+		    } else {
+			x.setText("+");
+		    }
+		}});
+	    horizontalPanel.add(button);
 	    String item = (String) i.next();
 	    Hyperlink hyperlink = new Hyperlink(item, name + " " + item);
+	    horizontalPanel.add(hyperlink);
 	    if (! isExpand) {
 		hyperlink.setText(lastSlash(item));
 	    }
@@ -206,7 +196,7 @@ class SVOManager
 		    Main.lbl.setText(((Hyperlink)sender).getTargetHistoryToken());
 		}
 	    });
-	    widget.add(hyperlink);
+	    widget.add(horizontalPanel);
 	}
     }
 
