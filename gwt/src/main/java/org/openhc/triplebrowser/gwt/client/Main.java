@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 14 (Wed) 21:26:03 by Harold Carr.
+// Last Modified : 2006 Jun 14 (Wed) 23:32:23 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -9,50 +9,46 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
-
-// From layout
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.HistoryListener;
+
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Frame;
+
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-// XXX
-import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.HistoryListener;
-import com.google.gwt.user.client.ui.Hyperlink;
-
-/**
- * Entry point classes define <code>onModuleLoad()</code>.
- */
 public class Main 
     implements 
-	EntryPoint,
-	HistoryListener // XXX
+	EntryPoint // Entry point classes define onModuleLoad()
 {
     private static String collapse = "collapse";
-    private static String expand   = "expand";
-    private static String differentityDotCom = "differentity.com";
     private static String copyright = "copyright 2006";
-    private static String subject = "subject";
-    private static String verb = "verb";
+    private static String differentityDotCom = "differentity.com";
+    private static String expand   = "expand";
     private static String object = "object";
+    private static String subject = "subject";
     private static String subjectVerbObject = "subjectVerbObject";
+    private static String verb = "verb";
 
-    private Label lbl = new Label(); // XXX
+    public static final Label lbl = new Label("XXX"); // XXX
 
     /**
      * This is the entry point method.
@@ -95,53 +91,17 @@ public class Main
 	dockPanel.add(south, DockPanel.SOUTH);
 	dockPanel.add(horizontalPanel, DockPanel.CENTER);
 
-	//
-	// BEGIN XXX - Hyperlink test
-	//
-
-	// Create three hyperlinks that change the application's history.
-
-	Hyperlink link0 = new Hyperlink("link to foo", "foo");
-	link0.addClickListener(new ClickListener() {
-		public void onClick(Widget sender) {
-		    lbl.setText("DDD");
-		}
-	    });
-	Hyperlink link1 = new Hyperlink("link to bar", "bar");
-	Hyperlink link2 = new Hyperlink("link to baz", "baz");
-
-	// If the application starts with no history token, start it off in the
-	// 'baz' state.
-	String initToken = History.getToken();
-	if (initToken.length() == 0)
-	    initToken = "baz";
-
-	// onHistoryChanged() is not called when the application first runs.
-	// Call it now in order to reflect the initial state.
-	onHistoryChanged(initToken);
-
-	// Add them.
-	FlowPanel panel = new FlowPanel();
-	panel.add(lbl); panel.add(link0); panel.add(link1); panel.add(link2);
-	RootPanel.get("slot2").add(panel);
-
-	//
-	// END XXX - Hyperlink test
-	//
-
 	// Host HTML has elements with IDs are "slot1", "slot2".
 	// Better: Search for all elements with a particular CSS class 
 	// and replace them with widgets.
 
 	RootPanel.get("slot2").add(dockPanel);
 
-    }
+	// XXX - Hyperlink test
+	RootPanel.get("slot1").add(lbl);
 
-    // XXX
-    public void onHistoryChanged(String historyToken) {
-	// This method is called whenever the application's history changes.
-	// Set the label to reflect the current history token.
-	lbl.setText("The current history token is: " + historyToken);
+	// XXX - frame test
+	RootPanel.get("slot3").add(new Frame("http://www.google.com/"));
     }
 
     private Widget[] buildSVOPanel(final SVOManager svoManager)
@@ -173,19 +133,19 @@ class SVOManager
 {
     String name;
     List contents;
-    HTML html;
+    VerticalPanel widget;
 
     SVOManager(String name)
     {
 	this.name = name;
 	this.contents = svoList;
-	this.html = new HTML();
+	this.widget = new VerticalPanel();
 	collapse();
     }
 
-    HTML getWidget()
+    Widget getWidget()
     {
-	return html;
+	return widget;
     }
 
     void expand()
@@ -200,18 +160,54 @@ class SVOManager
 
     private void expandCollapse(boolean isExpand)
     {
+	widget.clear();
+	/*
+	// XXX
+	TreeItem root = new TreeItem("root");
+	root.addItem("foo");
+	root.addItem("bar");
+	root.addItem("baz");
+	Tree tree = new Tree();
+	tree.addItem(root);
+	widget.add(tree);
+
+	Button button = new Button("+");
+	final Hyperlink hl = new Hyperlink("http://www.google.com/",
+					   "http://www.google.com/");
+	widget.add(button);
+	HorizontalPanel horizontalPanel = new HorizontalPanel();
+	horizontalPanel.add(button);
+	horizontalPanel.add(hl);
+	widget.add(horizontalPanel);
+	final int widgetIndex = widget.getWidgetIndex(horizontalPanel);
+
+	button.addClickListener(new ClickListener() {
+	    public void onClick(Widget sender) {
+		Button x = (Button) sender;
+		if (x.getText().equals("+")) {
+		    x.setText("-");
+		    widget.insert(new Frame("http://www.google.com/"), 
+				  widgetIndex);
+		} else {
+		    x.setText("+");
+		}
+	    }});
+	// XXX   
+	*/
 	Iterator i = contents.iterator();
-	StringBuffer result = new StringBuffer();
 	while (i.hasNext()) {
 	    String item = (String) i.next();
-	    if (isExpand) {
-		result.append(item);
-	    } else {
-		result.append(lastSlash(item));
+	    Hyperlink hyperlink = new Hyperlink(item, name + " " + item);
+	    if (! isExpand) {
+		hyperlink.setText(lastSlash(item));
 	    }
-	    result.append("<br/>");
+	    hyperlink.addClickListener(new ClickListener() {
+		public void onClick(Widget sender) {
+		    Main.lbl.setText(((Hyperlink)sender).getTargetHistoryToken());
+		}
+	    });
+	    widget.add(hyperlink);
 	}
-	html.setHTML(result.toString());
     }
 
     private String lastSlash(String x)
