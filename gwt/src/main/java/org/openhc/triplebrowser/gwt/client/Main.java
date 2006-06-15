@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 14 (Wed) 20:33:50 by Harold Carr.
+// Last Modified : 2006 Jun 14 (Wed) 21:26:03 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -30,12 +30,18 @@ import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+// XXX
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.ui.Hyperlink;
+
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class Main 
     implements 
-	EntryPoint 
+	EntryPoint,
+	HistoryListener // XXX
 {
     private static String collapse = "collapse";
     private static String expand   = "expand";
@@ -46,10 +52,16 @@ public class Main
     private static String object = "object";
     private static String subjectVerbObject = "subjectVerbObject";
 
+    private Label lbl = new Label(); // XXX
+
     /**
      * This is the entry point method.
      */
     public void onModuleLoad() {
+
+	//
+	// Subject, Verb, Object panels.
+	//
 
 	Widget[] result = null;
 	result = buildSVOPanel(new SVOManager(subject));
@@ -69,7 +81,10 @@ public class Main
 	horizontalPanel.add(subjectVerticalPanel);
 	horizontalPanel.add(verbVerticalPanel);
 	horizontalPanel.add(objectVerticalPanel);
-    
+
+	//
+	// Main panel.
+	//    
 
 	DockPanel dockPanel = new DockPanel();
 	dockPanel.setHorizontalAlignment(DockPanel.ALIGN_CENTER);
@@ -80,11 +95,53 @@ public class Main
 	dockPanel.add(south, DockPanel.SOUTH);
 	dockPanel.add(horizontalPanel, DockPanel.CENTER);
 
+	//
+	// BEGIN XXX - Hyperlink test
+	//
+
+	// Create three hyperlinks that change the application's history.
+
+	Hyperlink link0 = new Hyperlink("link to foo", "foo");
+	link0.addClickListener(new ClickListener() {
+		public void onClick(Widget sender) {
+		    lbl.setText("DDD");
+		}
+	    });
+	Hyperlink link1 = new Hyperlink("link to bar", "bar");
+	Hyperlink link2 = new Hyperlink("link to baz", "baz");
+
+	// If the application starts with no history token, start it off in the
+	// 'baz' state.
+	String initToken = History.getToken();
+	if (initToken.length() == 0)
+	    initToken = "baz";
+
+	// onHistoryChanged() is not called when the application first runs.
+	// Call it now in order to reflect the initial state.
+	onHistoryChanged(initToken);
+
+	// Add them.
+	FlowPanel panel = new FlowPanel();
+	panel.add(lbl); panel.add(link0); panel.add(link1); panel.add(link2);
+	RootPanel.get("slot2").add(panel);
+
+	//
+	// END XXX - Hyperlink test
+	//
+
 	// Host HTML has elements with IDs are "slot1", "slot2".
 	// Better: Search for all elements with a particular CSS class 
 	// and replace them with widgets.
 
-	RootPanel.get("slot1").add(dockPanel);
+	RootPanel.get("slot2").add(dockPanel);
+
+    }
+
+    // XXX
+    public void onHistoryChanged(String historyToken) {
+	// This method is called whenever the application's history changes.
+	// Set the label to reflect the current history token.
+	lbl.setText("The current history token is: " + historyToken);
     }
 
     private Widget[] buildSVOPanel(final SVOManager svoManager)
