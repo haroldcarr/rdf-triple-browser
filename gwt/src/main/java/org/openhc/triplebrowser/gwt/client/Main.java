@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 14 (Wed) 20:29:57 by Harold Carr.
+// Last Modified : 2006 Jun 14 (Wed) 20:33:50 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -76,7 +76,7 @@ public class Main
 	HTML north = new HTML(differentityDotCom, true);
 	HTML south = new HTML(copyright, true);
 	dockPanel.add(north, DockPanel.NORTH);
-	// NOTE: - if added after CENTER does not show up.
+	// NOTE: - if SOUTH added after CENTER does not show up.
 	dockPanel.add(south, DockPanel.SOUTH);
 	dockPanel.add(horizontalPanel, DockPanel.CENTER);
 
@@ -105,7 +105,7 @@ public class Main
 	    }
 	});
 	verticalPanel.add(button);
-	ScrollPanel scrollPanel = new ScrollPanel(svoManager.getHTML());
+	ScrollPanel scrollPanel = new ScrollPanel(svoManager.getWidget());
 	scrollPanel.setStyleName(subjectVerbObject);
 	verticalPanel.add(scrollPanel);
 	return new Widget[] { verticalPanel,  button };
@@ -126,7 +126,7 @@ class SVOManager
 	collapse();
     }
 
-    HTML getHTML()
+    HTML getWidget()
     {
 	return html;
     }
