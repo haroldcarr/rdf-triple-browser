@@ -27,44 +27,84 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class Main implements EntryPoint {
+public class Main 
+    implements 
+	EntryPoint 
+{
+    private static String collapse = "collapse";
+    private static String expand   = "expand";
+    private static String differentityDotCom = "differentity.com";
+    private static String copyright = "copyright 2006";
+    private static String subjectVerbObject = "subjectVerbObject";
 
     /**
      * This is the entry point method.
      */
     public void onModuleLoad() {
-	HTML subjectContents = buildSVO();
-	HTML verbContents    = buildSVO();
-	HTML objectContents  = buildSVO();
-	ScrollPanel subjectScroller = new ScrollPanel(subjectContents);
-	ScrollPanel verbScroller    = new ScrollPanel(verbContents);
-	ScrollPanel objectScroller  = new ScrollPanel(objectContents);
-	subjectScroller.setStyleName("subjectVerbObject");
-	verbScroller.setStyleName   ("subjectVerbObject");
-	objectScroller.setStyleName ("subjectVerbObject");
+
+	Button currentButton = null;
+	HTML   currentHTML   = null;
+
+	Widget[] result = null;
+	result = buildSVOPanel();
+	VerticalPanel subjectVerticalPanel = (VerticalPanel) result[0];
+	Button subjectExpandCollapseButton = (Button) result[1];
+	HTML subjectHTML                   = (HTML) result[2];
+
+	result = buildSVOPanel();
+	VerticalPanel verbVerticalPanel    = (VerticalPanel) result[0];
+	Button verbExpandCollapseButton    = (Button) result[1];
+	HTML verbHTML                      = (HTML) result[2];
+
+	result = buildSVOPanel();
+	VerticalPanel objectVerticalPanel  = (VerticalPanel) result[0];
+	Button objectExpandCollapseButton  = (Button) result[1];
+	HTML objectHTML                    = (HTML) result[2];
 
 	HorizontalPanel horizontalPanel = new HorizontalPanel();
 	horizontalPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
-	horizontalPanel.add(subjectScroller);
-	horizontalPanel.add(verbScroller);
-	horizontalPanel.add(objectScroller);
+	horizontalPanel.add(subjectVerticalPanel);
+	horizontalPanel.add(verbVerticalPanel);
+	horizontalPanel.add(objectVerticalPanel);
     
 
 	DockPanel dockPanel = new DockPanel();
 	dockPanel.setHorizontalAlignment(DockPanel.ALIGN_CENTER);
-	HTML north = new HTML("differentity.com/", true);
-	HTML south = new HTML("copyright 2006", true);
+	HTML north = new HTML(differentityDotCom, true);
+	HTML south = new HTML(copyright, true);
 	dockPanel.add(north, DockPanel.NORTH);
 	// NOTE: - if added after CENTER does not show up.
 	dockPanel.add(south, DockPanel.SOUTH);
 	dockPanel.add(horizontalPanel, DockPanel.CENTER);
-
 
 	// Host HTML has elements with IDs are "slot1", "slot2".
 	// Better: Search for all elements with a particular CSS class 
 	// and replace them with widgets.
 
 	RootPanel.get("slot1").add(dockPanel);
+    }
+
+    private Widget[] buildSVOPanel()
+    {
+	VerticalPanel verticalPanel = new VerticalPanel();
+	verticalPanel.setHorizontalAlignment(VerticalPanel.ALIGN_LEFT);
+	Button button = new Button(collapse);
+	button.addClickListener(new ClickListener() {
+	    public void onClick(Widget sender) {
+		Button x = (Button) sender;
+		if (x.getText().equals(collapse)) {
+		    x.setText(expand);
+		} else {
+		    x.setText(collapse);
+		}
+	    }
+	});
+	verticalPanel.add(button);
+	HTML html = buildSVO();
+	ScrollPanel scrollPanel = new ScrollPanel(html);
+	scrollPanel.setStyleName(subjectVerbObject);
+	verticalPanel.add(scrollPanel);
+	return new Widget[] { verticalPanel,  button, html };
     }
 
     private HTML buildSVO()
