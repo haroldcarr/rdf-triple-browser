@@ -1,6 +1,6 @@
 //
-// Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 14 (Wed) 23:46:20 by Harold Carr.
+// Created : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
+// Last Modified : 2006 Jun 19 (Mon) 14:28:27 by Harold Carr.
 //
 
 /*
@@ -48,14 +48,16 @@ public class Main
     implements 
 	EntryPoint // Entry point classes define onModuleLoad()
 {
-    private static String collapse = "collapse";
-    private static String copyright = "copyright 2006";
+    public  static String collapse           = "collapse";
+    private static String copyright          = "copyright 2006";
     private static String differentityDotCom = "differentity.com";
-    private static String expand   = "expand";
-    private static String object = "object";
-    private static String subject = "subject";
-    private static String subjectVerbObject = "subjectVerbObject";
-    private static String verb = "verb";
+    private static String expand             = "expand";
+    public  static String minusSymbol        = "-";
+    private static String object             = "object";
+    public  static String plusSymbol         = "+";
+    private static String subject            = "subject";
+    private static String subjectVerbObject  = "subjectVerbObject";
+    private static String verb               = "verb";
 
     public static final Label lbl = new Label("XXX"); // XXX
 
@@ -68,19 +70,12 @@ public class Main
 	// Subject, Verb, Object panels.
 	//
 
-	Widget[] result = null;
-	result = buildSVOPanel(new SVOManager(subject));
-	VerticalPanel subjectVerticalPanel = (VerticalPanel) result[0];
-	Button subjectExpandCollapseButton = (Button) result[1];
-
-	result = buildSVOPanel(new SVOManager(verb));
-	VerticalPanel verbVerticalPanel    = (VerticalPanel) result[0];
-	Button verbExpandCollapseButton    = (Button) result[1];
-
-	result = buildSVOPanel(new SVOManager(object));
-	VerticalPanel objectVerticalPanel  = (VerticalPanel) result[0];
-	Button objectExpandCollapseButton  = (Button) result[1];
-
+	VerticalPanel subjectVerticalPanel =
+	    buildSVOPanel(new SVOManager(subject));
+	VerticalPanel verbVerticalPanel    = 
+	    buildSVOPanel(new SVOManager(verb));
+	VerticalPanel objectVerticalPanel  =
+	    buildSVOPanel(new SVOManager(object));
 	HorizontalPanel horizontalPanel = new HorizontalPanel();
 	horizontalPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
 	horizontalPanel.add(subjectVerticalPanel);
@@ -113,7 +108,7 @@ public class Main
 	RootPanel.get("slot3").add(new Frame("http://www.google.com/"));
     }
 
-    private Widget[] buildSVOPanel(final SVOManager svoManager)
+    private VerticalPanel buildSVOPanel(final SVOManager svoManager)
     {
 	VerticalPanel verticalPanel = new VerticalPanel();
 	verticalPanel.setHorizontalAlignment(VerticalPanel.ALIGN_LEFT);
@@ -121,20 +116,20 @@ public class Main
 	button.addClickListener(new ClickListener() {
 	    public void onClick(Widget sender) {
 		Button x = (Button) sender;
+		svoManager.expandOrCollapse(x.getText());
 		if (x.getText().equals(collapse)) {
-		    svoManager.collapse();
 		    x.setText(expand);
 		} else {
-		    svoManager.expand();
 		    x.setText(collapse);
 		}
 	    }
 	});
 	verticalPanel.add(button);
+	// TODO: Would like a scroll or a cloud
 	ScrollPanel scrollPanel = new ScrollPanel(svoManager.getWidget());
 	scrollPanel.setStyleName(subjectVerbObject);
 	verticalPanel.add(scrollPanel);
-	return new Widget[] { verticalPanel,  button };
+	return verticalPanel;
     }
 }
 
@@ -147,9 +142,10 @@ class SVOManager
     SVOManager(String name)
     {
 	this.name = name;
+	// TODO: Get from service.
 	this.contents = svoList;
 	this.widget = new VerticalPanel();
-	collapse();
+	expandOrCollapse(Main.collapse);
     }
 
     Widget getWidget()
@@ -157,42 +153,36 @@ class SVOManager
 	return widget;
     }
 
-    void expand()
-    {
-	expandCollapse(true);
-    }
-
-    void collapse()
-    {
-	expandCollapse(false);
-    }
-
-    private void expandCollapse(boolean isExpand)
+    void expandOrCollapse(String expandCollapse)
     {
 	widget.clear();
 
 	Iterator i = contents.iterator();
 	while (i.hasNext()) {
 	    HorizontalPanel horizontalPanel = new HorizontalPanel();
-	    Button button = new Button("+");
+	    Button button = new Button(Main.plusSymbol);
 	    button.addClickListener(new ClickListener() {
 	        public void onClick(Widget sender) {
 		    Button x = (Button) sender;
-		    if (x.getText().equals("+")) {
-			x.setText("-");
+		    // TODO: Triple expand/collapse:
+		    // Expand to URL and N "characters" of source.
+		    // Expand to URL and frame of full source.
+		    if (x.getText().equals(Main.plusSymbol)) {
+			x.setText(Main.minusSymbol);
 		    } else {
-			x.setText("+");
+			x.setText(Main.plusSymbol);
 		    }
 		}});
 	    horizontalPanel.add(button);
 	    String item = (String) i.next();
 	    Hyperlink hyperlink = new Hyperlink(item, name + " " + item);
 	    horizontalPanel.add(hyperlink);
-	    if (! isExpand) {
-		hyperlink.setText(lastSlash(item));
+	    if (expandCollapse.equals(Main.collapse)) {
+		hyperlink.setText(substringAfterLastSlash(item));
 	    }
 	    hyperlink.addClickListener(new ClickListener() {
 		public void onClick(Widget sender) {
+		    // TODO: Send to server.  Receive updates for other panels.
 		    Main.lbl.setText(((Hyperlink)sender).getTargetHistoryToken());
 		}
 	    });
@@ -200,18 +190,19 @@ class SVOManager
 	}
     }
 
-    private String lastSlash(String x)
+    private String substringAfterLastSlash(String x)
     {
-	int lastSlash = 0;
+	int indexOfLastSlash = 0;
 	int i;
 	for (i = 0; i < x.length(); ++i) {
 	    if (x.charAt(i) == '/') {
-		lastSlash = i;
+		indexOfLastSlash = i;
 	    }
 	}
-	return x.substring(lastSlash + 1);
+	return x.substring(indexOfLastSlash + 1);
     }
 
+    // TODO: replace with real list from server.
     private List svoList = new ArrayList();
     { // NOTE: block needed for this to compile. 
     svoList.add("http://differentity.com/haroldcarr/author");
