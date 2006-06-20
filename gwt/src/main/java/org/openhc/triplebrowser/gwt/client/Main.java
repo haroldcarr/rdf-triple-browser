@@ -1,6 +1,6 @@
 //
 // Created : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 19 (Mon) 21:24:55 by Harold Carr.
+// Last Modified : 2006 Jun 19 (Mon) 21:42:57 by Harold Carr.
 //
 
 /*
@@ -138,12 +138,21 @@ class SVOItem
 {
     String svoCategory;
     String expandedName;
-    String collapseName;
+    String collapsedName;
+    SVOItem(String svoCategory, String expandedName, String collapsedName)
+    {
+	this.svoCategory = svoCategory;
+	this.expandedName = expandedName;
+	this.collapsedName = collapsedName;
+    }
+    String getSVOCategory() { return svoCategory; }
+    String getExpandedName() { return expandedName; }
+    String getCollapsedName() { return collapsedName; }
 }
 
 class SVOManager
 {
-    final String svoCategory;
+    final String svoCategory; // For debug only.
     final List contents;
     final VerticalPanel widget;
 
@@ -167,14 +176,19 @@ class SVOManager
 
 	final Iterator i = contents.iterator();
 	while (i.hasNext()) {
+	    final String item = (String) i.next();
+	    final SVOItem svoItem = 
+		new SVOItem(svoCategory, item, substringAfterLastSlash(item));
 	    final HorizontalPanel horizontalPanel = new HorizontalPanel();
 	    final Button button = new Button(Main.plusSymbol);
 	    horizontalPanel.add(button);
-	    final String item = (String) i.next();
-	    final Hyperlink hyperlink = new Hyperlink(item, svoCategory + " " + item);
+	    final Hyperlink hyperlink =
+		new Hyperlink(svoItem.getExpandedName(),
+			      svoItem.getSVOCategory()
+			      + " " + svoItem.getExpandedName());
 	    horizontalPanel.add(hyperlink);
 	    if (expandCollapse.equals(Main.collapse)) {
-		hyperlink.setText(substringAfterLastSlash(item));
+		hyperlink.setText(svoItem.getCollapsedName());
 	    }
 	    hyperlink.addClickListener(new ClickListener() {
 		public void onClick(final Widget sender) {
@@ -193,7 +207,7 @@ class SVOManager
 		    // Expand to URL and N "characters" of source.
 		    // Expand to URL and frame of full source.
 		    if (button.getText().equals(Main.plusSymbol)) {
-			verticalPanel.add(new Frame(item));
+			verticalPanel.add(new Frame(svoItem.getExpandedName()));
 			button.setText(Main.minusSymbol);
 		    } else {
 			button.setText(Main.plusSymbol);
