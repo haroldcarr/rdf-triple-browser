@@ -1,11 +1,12 @@
 //
 // Created : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 19 (Mon) 21:42:57 by Harold Carr.
+// Last Modified : 2006 Jun 19 (Mon) 22:53:05 by Harold Carr.
 //
 
 /*
   TODO:
-
+  - Fix item expandCollapseState viz svoCategory expandCollapseState state.
+  - Reuse existing button/panels in expandCollapse (maybe not when filtering)
   - Figure out how to make sov panels expand.
   - Make +/- on sov links replace with full URL and frame
   - Style
@@ -51,7 +52,7 @@ public class Main
     public  static String collapse           = "collapse";
     private static String copyright          = "copyright 2006";
     private static String differentityDotCom = "differentity.com";
-    private static String expand             = "expand";
+    public  static String expand             = "expand";
     public  static String minusSymbol        = "-";
     private static String object             = "object";
     public  static String plusSymbol         = "+";
@@ -112,16 +113,13 @@ public class Main
     {
 	final VerticalPanel verticalPanel = new VerticalPanel();
 	verticalPanel.setHorizontalAlignment(VerticalPanel.ALIGN_LEFT);
-	final Button button = new Button(expand); // STATE
+	final Button button = 
+	    new Button(svoManager.getExpandCollapseState(true));
 	button.addClickListener(new ClickListener() {
 	    public void onClick(Widget sender) {
+		final String newState = svoManager.expandOrCollapse();
 		final Button button = (Button) sender;
-		svoManager.expandOrCollapse(button.getText());
-		if (button.getText().equals(collapse)) {
-		    button.setText(expand);
-		} else {
-		    button.setText(collapse);
-		}
+		button.setText(newState);
 	    }
 	});
 	verticalPanel.add(button);
@@ -139,15 +137,20 @@ class SVOItem
     String svoCategory;
     String expandedName;
     String collapsedName;
-    SVOItem(String svoCategory, String expandedName, String collapsedName)
+    String expandCollapseState;
+    SVOItem(String svoCategory, String expandedName, String collapsedName,
+	    String expandCollapseState)
     {
 	this.svoCategory = svoCategory;
 	this.expandedName = expandedName;
 	this.collapsedName = collapsedName;
+	this.expandCollapseState = expandCollapseState;
     }
     String getSVOCategory() { return svoCategory; }
     String getExpandedName() { return expandedName; }
     String getCollapsedName() { return collapsedName; }
+    String getExpandCollapseState() { return expandCollapseState; }
+    void   setExpandCollapseState(String x) { expandCollapseState = x; }
 }
 
 class SVOManager
@@ -155,14 +158,17 @@ class SVOManager
     final String svoCategory; // For debug only.
     final List contents;
     final VerticalPanel widget;
+    String expandCollapseState;
 
     SVOManager(final String svoCategory)
     {
 	this.svoCategory = svoCategory;
 	// TODO: Get from service.
-	this.contents = svoList;
+	this.contents = fakeServerInitialization(svoCategory, Main.collapse);
 	this.widget = new VerticalPanel();
-	expandOrCollapse(Main.collapse);
+	this.expandCollapseState = Main.expand;
+	// This call will reverse initialization value in previous line.
+	expandOrCollapse();
     }
 
     Widget getWidget()
@@ -170,25 +176,53 @@ class SVOManager
 	return widget;
     }
 
-    void expandOrCollapse(final String expandCollapse)
+    String getExpandCollapseState(final boolean oppositeP)
+    {
+	if (expandCollapseState.equals(Main.expand)) {
+	    return (oppositeP ? Main.collapse : Main.expand);
+	} else {
+	    return (oppositeP ? Main.expand : Main.collapse);
+	}
+    }
+
+    String expandOrCollapse()
     {
 	widget.clear();
+	expandCollapseState = getExpandCollapseState(true);
 
 	final Iterator i = contents.iterator();
 	while (i.hasNext()) {
-	    final String item = (String) i.next();
-	    final SVOItem svoItem = 
-		new SVOItem(svoCategory, item, substringAfterLastSlash(item));
-	    final HorizontalPanel horizontalPanel = new HorizontalPanel();
-	    final Button button = new Button(Main.plusSymbol);
-	    horizontalPanel.add(button);
+	    final SVOItem svoItem = (SVOItem) i.next();
+	    final Button button = new Button();
 	    final Hyperlink hyperlink =
 		new Hyperlink(svoItem.getExpandedName(),
 			      svoItem.getSVOCategory()
 			      + " " + svoItem.getExpandedName());
+	    // Begin layout.
+	    final HorizontalPanel horizontalPanel = new HorizontalPanel();
+	    horizontalPanel.add(button);
 	    horizontalPanel.add(hyperlink);
-	    if (expandCollapse.equals(Main.collapse)) {
-		hyperlink.setText(svoItem.getCollapsedName());
+	    final VerticalPanel verticalPanel = new VerticalPanel();
+	    verticalPanel.add(horizontalPanel);
+	    widget.add(verticalPanel);
+	    // End layout.
+
+	    if (expandCollapseState.equals(Main.expand)) {
+		if (svoItem.getExpandCollapseState().equals(Main.expand)) {
+		    hyperlink.setText(svoItem.getExpandedName());
+		    button.setText(Main.minusSymbol);
+		} else {
+		    hyperlink.setText(svoItem.getExpandedName());
+		    button.setText(Main.plusSymbol);
+		}
+	    } else {
+		if (svoItem.getExpandCollapseState().equals(Main.expand)) {
+		    hyperlink.setText(svoItem.getExpandedName());
+		    button.setText(Main.minusSymbol);
+		} else {
+		    hyperlink.setText(svoItem.getCollapsedName());
+		    button.setText(Main.plusSymbol);
+		}
 	    }
 	    hyperlink.addClickListener(new ClickListener() {
 		public void onClick(final Widget sender) {
@@ -196,27 +230,26 @@ class SVOManager
 		    Main.lbl.setText(((Hyperlink)sender).getTargetHistoryToken());
 		}
 	    });
-	    final VerticalPanel verticalPanel = new VerticalPanel();
-	    verticalPanel.add(horizontalPanel);
-	    widget.add(verticalPanel);
-
 	    button.addClickListener(new ClickListener() {
 	        public void onClick(Widget sender) {
 		    final Button button = (Button) sender;
 		    // TODO: Triple expand/collapse:
 		    // Expand to URL and N "characters" of source.
 		    // Expand to URL and frame of full source.
+		    // TODO: manage item state like category state
 		    if (button.getText().equals(Main.plusSymbol)) {
 			verticalPanel.add(new Frame(svoItem.getExpandedName()));
+			svoItem.setExpandCollapseState(Main.collapse);
 			button.setText(Main.minusSymbol);
 		    } else {
-			button.setText(Main.plusSymbol);
 			Widget w = verticalPanel.getWidget(1);
 			verticalPanel.remove(w);
+			svoItem.setExpandCollapseState(Main.expand);
+			button.setText(Main.plusSymbol);
 		    }
 		}});
-
 	}
+	return expandCollapseState;
     }
 
     private String substringAfterLastSlash(final String x)
@@ -229,6 +262,21 @@ class SVOManager
 	    }
 	}
 	return x.substring(indexOfLastSlash + 1);
+    }
+
+    private List fakeServerInitialization(String svoCategory, 
+					  String expandOrCollapse)
+    {
+	final Iterator i = svoList.iterator();
+	final List result = new ArrayList();
+	while (i.hasNext()) {
+	    String uri = (String) i.next();
+	    result.add(new SVOItem(svoCategory, 
+				   uri,
+				   substringAfterLastSlash(uri),
+				   expandOrCollapse));
+	}
+	return result;
     }
 
     // TODO: replace with real list from server.
