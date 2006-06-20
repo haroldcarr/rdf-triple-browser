@@ -1,6 +1,6 @@
 //
 // Created : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 19 (Mon) 14:28:27 by Harold Carr.
+// Last Modified : 2006 Jun 19 (Mon) 21:24:55 by Harold Carr.
 //
 
 /*
@@ -70,13 +70,13 @@ public class Main
 	// Subject, Verb, Object panels.
 	//
 
-	VerticalPanel subjectVerticalPanel =
+	final VerticalPanel subjectVerticalPanel =
 	    buildSVOPanel(new SVOManager(subject));
-	VerticalPanel verbVerticalPanel    = 
+	final VerticalPanel verbVerticalPanel    = 
 	    buildSVOPanel(new SVOManager(verb));
-	VerticalPanel objectVerticalPanel  =
+	final VerticalPanel objectVerticalPanel  =
 	    buildSVOPanel(new SVOManager(object));
-	HorizontalPanel horizontalPanel = new HorizontalPanel();
+	final HorizontalPanel horizontalPanel = new HorizontalPanel();
 	horizontalPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
 	horizontalPanel.add(subjectVerticalPanel);
 	horizontalPanel.add(verbVerticalPanel);
@@ -86,10 +86,10 @@ public class Main
 	// Main panel.
 	//    
 
-	DockPanel dockPanel = new DockPanel();
+	final DockPanel dockPanel = new DockPanel();
 	dockPanel.setHorizontalAlignment(DockPanel.ALIGN_CENTER);
-	HTML north = new HTML(differentityDotCom, true);
-	HTML south = new HTML(copyright, true);
+	final HTML north = new HTML(differentityDotCom, true);
+	final HTML south = new HTML(copyright, true);
 	dockPanel.add(north, DockPanel.NORTH);
 	// NOTE: - if SOUTH added after CENTER does not show up.
 	dockPanel.add(south, DockPanel.SOUTH);
@@ -110,38 +110,46 @@ public class Main
 
     private VerticalPanel buildSVOPanel(final SVOManager svoManager)
     {
-	VerticalPanel verticalPanel = new VerticalPanel();
+	final VerticalPanel verticalPanel = new VerticalPanel();
 	verticalPanel.setHorizontalAlignment(VerticalPanel.ALIGN_LEFT);
-	Button button = new Button(expand); // STATE
+	final Button button = new Button(expand); // STATE
 	button.addClickListener(new ClickListener() {
 	    public void onClick(Widget sender) {
-		Button x = (Button) sender;
-		svoManager.expandOrCollapse(x.getText());
-		if (x.getText().equals(collapse)) {
-		    x.setText(expand);
+		final Button button = (Button) sender;
+		svoManager.expandOrCollapse(button.getText());
+		if (button.getText().equals(collapse)) {
+		    button.setText(expand);
 		} else {
-		    x.setText(collapse);
+		    button.setText(collapse);
 		}
 	    }
 	});
 	verticalPanel.add(button);
 	// TODO: Would like a scroll or a cloud
-	ScrollPanel scrollPanel = new ScrollPanel(svoManager.getWidget());
+	final ScrollPanel scrollPanel =
+	    new ScrollPanel(svoManager.getWidget());
 	scrollPanel.setStyleName(subjectVerbObject);
 	verticalPanel.add(scrollPanel);
 	return verticalPanel;
     }
 }
 
+class SVOItem
+{
+    String svoCategory;
+    String expandedName;
+    String collapseName;
+}
+
 class SVOManager
 {
-    String name;
-    List contents;
-    VerticalPanel widget;
+    final String svoCategory;
+    final List contents;
+    final VerticalPanel widget;
 
-    SVOManager(String name)
+    SVOManager(final String svoCategory)
     {
-	this.name = name;
+	this.svoCategory = svoCategory;
 	// TODO: Get from service.
 	this.contents = svoList;
 	this.widget = new VerticalPanel();
@@ -153,44 +161,51 @@ class SVOManager
 	return widget;
     }
 
-    void expandOrCollapse(String expandCollapse)
+    void expandOrCollapse(final String expandCollapse)
     {
 	widget.clear();
 
-	Iterator i = contents.iterator();
+	final Iterator i = contents.iterator();
 	while (i.hasNext()) {
-	    HorizontalPanel horizontalPanel = new HorizontalPanel();
-	    Button button = new Button(Main.plusSymbol);
-	    button.addClickListener(new ClickListener() {
-	        public void onClick(Widget sender) {
-		    Button x = (Button) sender;
-		    // TODO: Triple expand/collapse:
-		    // Expand to URL and N "characters" of source.
-		    // Expand to URL and frame of full source.
-		    if (x.getText().equals(Main.plusSymbol)) {
-			x.setText(Main.minusSymbol);
-		    } else {
-			x.setText(Main.plusSymbol);
-		    }
-		}});
+	    final HorizontalPanel horizontalPanel = new HorizontalPanel();
+	    final Button button = new Button(Main.plusSymbol);
 	    horizontalPanel.add(button);
-	    String item = (String) i.next();
-	    Hyperlink hyperlink = new Hyperlink(item, name + " " + item);
+	    final String item = (String) i.next();
+	    final Hyperlink hyperlink = new Hyperlink(item, svoCategory + " " + item);
 	    horizontalPanel.add(hyperlink);
 	    if (expandCollapse.equals(Main.collapse)) {
 		hyperlink.setText(substringAfterLastSlash(item));
 	    }
 	    hyperlink.addClickListener(new ClickListener() {
-		public void onClick(Widget sender) {
+		public void onClick(final Widget sender) {
 		    // TODO: Send to server.  Receive updates for other panels.
 		    Main.lbl.setText(((Hyperlink)sender).getTargetHistoryToken());
 		}
 	    });
-	    widget.add(horizontalPanel);
+	    final VerticalPanel verticalPanel = new VerticalPanel();
+	    verticalPanel.add(horizontalPanel);
+	    widget.add(verticalPanel);
+
+	    button.addClickListener(new ClickListener() {
+	        public void onClick(Widget sender) {
+		    final Button button = (Button) sender;
+		    // TODO: Triple expand/collapse:
+		    // Expand to URL and N "characters" of source.
+		    // Expand to URL and frame of full source.
+		    if (button.getText().equals(Main.plusSymbol)) {
+			verticalPanel.add(new Frame(item));
+			button.setText(Main.minusSymbol);
+		    } else {
+			button.setText(Main.plusSymbol);
+			Widget w = verticalPanel.getWidget(1);
+			verticalPanel.remove(w);
+		    }
+		}});
+
 	}
     }
 
-    private String substringAfterLastSlash(String x)
+    private String substringAfterLastSlash(final String x)
     {
 	int indexOfLastSlash = 0;
 	int i;
@@ -205,6 +220,10 @@ class SVOManager
     // TODO: replace with real list from server.
     private List svoList = new ArrayList();
     { // NOTE: block needed for this to compile. 
+    svoList.add("http://haroldcarr.com");
+    svoList.add("http://www.rojo.com/");
+    svoList.add("http://google.com");
+    svoList.add("http://del.icio.us/");
     svoList.add("http://differentity.com/haroldcarr/author");
     svoList.add("http://differentity.com/haroldcarr/authorPrefix");
     svoList.add("http://differentity.com/haroldcarr/authorFirstName");
