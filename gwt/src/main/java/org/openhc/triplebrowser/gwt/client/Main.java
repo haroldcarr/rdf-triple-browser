@@ -1,14 +1,12 @@
 //
 // Created : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 22 (Thu) 22:53:12 by Harold Carr.
+// Last Modified : 2006 Jun 22 (Thu) 23:09:18 by Harold Carr.
 //
 
 /*
   TODO:
-  - Fix item expandCollapseState viz svoCategory expandCollapseState state.
-  - Reuse existing button/panels in expandCollapse (maybe not when filtering)
+  - Document expandCollapse between "levels".
   - Figure out how to make sov panels expand.
-  - Make +/- on sov links replace with full URL and frame
   - Style
   - Server-side
  */
@@ -206,9 +204,10 @@ class SVOManager
     {
 	this.svoCategory = svoCategory;
 	// TODO: Get from service.
-	this.contents = fakeServerInitialization(svoCategory, Main.expand);
+	// NOTE: during development change to Main.expand to test full range.
+	this.contents = fakeServerInitialization(svoCategory, Main.collapse);
 	this.svoVerticalPanel = new VerticalPanel();
-	this.expandCollapseState = Main.expand;
+	this.expandCollapseState = Main.collapse;
 	initializeLayout();
     }
 
@@ -233,6 +232,10 @@ class SVOManager
 	while (i.hasNext()) {
 	    final SVOItem svoItem = (SVOItem) i.next();
 	    svoVerticalPanel.add(svoItem.getVerticalPanel());
+
+	    if (expandCollapseState.equals(Main.expand)) {
+		svoItem.getHyperlink().setText(svoItem.getExpandedName());
+	    }
 
 	    svoItem.getHyperlink().addClickListener(new ClickListener() {
 		public void onClick(final Widget sender) {
@@ -271,17 +274,11 @@ class SVOManager
 	while (i.hasNext()) {
 	    final VerticalPanel verticalPanel = (VerticalPanel) i.next();
 	    final SVOItem svoItem = (SVOItem) j.next();
-	    final HorizontalPanel horizontalPanel = 
-		(HorizontalPanel) verticalPanel.getWidget(0);
-	    final Button button = (Button) horizontalPanel.getWidget(0);
-	    final Hyperlink hyperlink = 
-		(Hyperlink) horizontalPanel.getWidget(1);
-
 	    if (svoItem.getCurrentExpandCollapseState().equals(Main.collapse)){
 		if (pendingExpandCollapseState.equals(Main.expand)) {
-		    hyperlink.setText(svoItem.getExpandedName());
+		    svoItem.getHyperlink().setText(svoItem.getExpandedName());
 		} else {
-		    hyperlink.setText(svoItem.getCollapsedName());
+		    svoItem.getHyperlink().setText(svoItem.getCollapsedName());
 		}
 	    }
 	}
@@ -365,3 +362,6 @@ class SVOManager
     svoList.add("http://differentity.com/haroldcarr/limit");
     }
 }
+
+// End of file.
+
