@@ -1,14 +1,13 @@
 //
 // Created : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 23 (Fri) 08:01:41 by Harold Carr.
+// Last Modified : 2006 Jun 23 (Fri) 10:04:48 by Harold Carr.
 //
 
 /*
   TODO:
-  - Document expandCollapse between "levels".
+  - Server-side
   - Figure out how to make sov panels expand.
   - Style
-  - Server-side
  */
 
 package com.differentity.client;
@@ -48,9 +47,11 @@ public class Main
 	EntryPoint // Entry point classes define onModuleLoad()
 {
     public  static String collapse           = "collapse";
+    public  static String collapseAllTags    = "collapse all tags";
     private static String copyright          = "copyright 2006";
     private static String differentityDotCom = "differentity.com";
     public  static String expand             = "expand";
+    public  static String expandAllTags      = "expand all tags";
     public  static String minusSymbol        = "-";
     private static String object             = "object";
     public  static String plusSymbol         = "+";
@@ -247,9 +248,9 @@ class SVOManager
 	    svoItem.getButton().addClickListener(new ClickListener() {
 	        public void onClick(Widget sender) {
 		    // TODO: Triple expand/collapse:
-		    // Expand to URL and N "characters" of source.
-		    // Expand to URL and frame of full source.
-		    // TODO: manage item state like category state
+		    // + = expand to full URL and N "characters" of source.
+		    // * = expand to full URL and all source.
+		    // - = collapse to short URL and no source.
 		    if (svoItem.getPendingExpandCollapseState().equals(Main.expand)) {
 			svoItem.getHyperlink().setText(svoItem.getExpandedName());
 			svoItem.getVerticalPanel().add(new Frame(svoItem.getExpandedName()));
