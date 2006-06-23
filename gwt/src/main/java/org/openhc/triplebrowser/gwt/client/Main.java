@@ -1,6 +1,6 @@
 //
 // Created : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 22 (Thu) 23:09:18 by Harold Carr.
+// Last Modified : 2006 Jun 23 (Fri) 07:20:44 by Harold Carr.
 //
 
 /*
@@ -286,7 +286,21 @@ class SVOManager
 	return getPendingExpandCollapseState();
     }
 
+    // Recursion caused stack overflow during compile.
     private String substringAfterLastSlash(final String x)
+    {
+	final String result = x.substring(indexOfLastSlash(x) + 1);
+	// If it ends in a slash then remove the ending slash
+	// and try again.
+	if (result.length() == 0) {
+	    final String newX = x.substring(0, x.length()-1);
+	    return newX.substring(indexOfLastSlash(newX) + 1);
+	} else {
+	    return result;
+	}
+    }
+
+    private int indexOfLastSlash (final String x)
     {
 	int indexOfLastSlash = 0;
 	int i;
@@ -295,7 +309,7 @@ class SVOManager
 		indexOfLastSlash = i;
 	    }
 	}
-	return x.substring(indexOfLastSlash + 1);
+	return indexOfLastSlash;
     }
 
     private List fakeServerInitialization(String svoCategory, 
