@@ -1,6 +1,6 @@
 //
 // Created : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 22 (Thu) 22:31:21 by Harold Carr.
+// Last Modified : 2006 Jun 22 (Thu) 22:53:12 by Harold Carr.
 //
 
 /*
@@ -145,10 +145,15 @@ public class Main
 
 class SVOItem
 {
-    String svoCategory;
-    String expandedName;
-    String collapsedName;
+    final String svoCategory;
+    final String expandedName;
+    final String collapsedName;
     String expandCollapseState;
+    final Button button;
+    final Hyperlink hyperlink;
+    final HorizontalPanel horizontalPanel;
+    final VerticalPanel verticalPanel;
+    
     SVOItem(String svoCategory, String expandedName, String collapsedName,
 	    String expandCollapseState)
     {
@@ -156,6 +161,23 @@ class SVOItem
 	this.expandedName = expandedName;
 	this.collapsedName = collapsedName;
 	this.expandCollapseState = expandCollapseState;
+	button = new Button(Main.plusSymbol);
+	hyperlink = new Hyperlink(expandedName,
+				  svoCategory + " " + expandedName);
+	horizontalPanel = new HorizontalPanel();
+	verticalPanel = new VerticalPanel();
+
+	// Item layout.
+	horizontalPanel.add(button);
+	horizontalPanel.add(hyperlink);
+	verticalPanel.add(horizontalPanel);
+
+	if (expandCollapseState.equals(Main.collapse)){
+	    hyperlink.setText(collapsedName);
+	} else {
+	    button.setText(Main.minusSymbol);
+	    verticalPanel.add(new Frame(expandedName));
+	}
     }
     String getSVOCategory() { return svoCategory; }
     String getExpandedName() { return expandedName; }
@@ -167,6 +189,10 @@ class SVOItem
 	return Main.getExpandCollapseState(expandCollapseState, true);
     }
     void   setExpandCollapseState(String x) { expandCollapseState = x; }
+    Button getButton() { return button; }
+    Hyperlink getHyperlink() { return hyperlink; }
+    HorizontalPanel getHorizontalPanel() { return horizontalPanel; }
+    VerticalPanel getVerticalPanel() { return verticalPanel; }
 }
 
 class SVOManager
@@ -206,52 +232,32 @@ class SVOManager
 	final Iterator i = contents.iterator();
 	while (i.hasNext()) {
 	    final SVOItem svoItem = (SVOItem) i.next();
-	    final Button button = new Button(Main.plusSymbol);
-	    final Hyperlink hyperlink =
-		new Hyperlink(svoItem.getExpandedName(),
-			      svoItem.getSVOCategory()
-			      + " " + svoItem.getExpandedName());
+	    svoVerticalPanel.add(svoItem.getVerticalPanel());
 
-	    // Begin item layout.
-	    final HorizontalPanel horizontalPanel = new HorizontalPanel();
-	    horizontalPanel.add(button);
-	    horizontalPanel.add(hyperlink);
-	    final VerticalPanel verticalPanel = new VerticalPanel();
-	    verticalPanel.add(horizontalPanel);
-	    svoVerticalPanel.add(verticalPanel);
-	    // End item layout.
-
-	    if (svoItem.getCurrentExpandCollapseState().equals(Main.collapse)){
-		hyperlink.setText(svoItem.getCollapsedName());
-	    } else {
-		button.setText(Main.minusSymbol);
-		verticalPanel.add(new Frame(svoItem.getExpandedName()));
-	    }
-
-	    hyperlink.addClickListener(new ClickListener() {
+	    svoItem.getHyperlink().addClickListener(new ClickListener() {
 		public void onClick(final Widget sender) {
 		    // TODO: Send to server.  Receive updates for other panels.
 		    Main.lbl.setText(((Hyperlink)sender).getTargetHistoryToken());
 		}
 	    });
-	    button.addClickListener(new ClickListener() {
+
+	    svoItem.getButton().addClickListener(new ClickListener() {
 	        public void onClick(Widget sender) {
-		    final Button button = (Button) sender;
 		    // TODO: Triple expand/collapse:
 		    // Expand to URL and N "characters" of source.
 		    // Expand to URL and frame of full source.
 		    // TODO: manage item state like category state
 		    if (svoItem.getPendingExpandCollapseState().equals(Main.expand)) {
-			hyperlink.setText(svoItem.getExpandedName());
-			verticalPanel.add(new Frame(svoItem.getExpandedName()));
+			svoItem.getHyperlink().setText(svoItem.getExpandedName());
+			svoItem.getVerticalPanel().add(new Frame(svoItem.getExpandedName()));
 			svoItem.setExpandCollapseState(Main.expand);
-			button.setText(Main.minusSymbol);
+			svoItem.getButton().setText(Main.minusSymbol);
 		    } else {
-			Widget w = verticalPanel.getWidget(1);
-			verticalPanel.remove(w);
-			hyperlink.setText(svoItem.getCollapsedName());
+			Widget w = svoItem.getVerticalPanel().getWidget(1);
+			svoItem.getVerticalPanel().remove(w);
+			svoItem.getHyperlink().setText(svoItem.getCollapsedName());
 			svoItem.setExpandCollapseState(Main.collapse);
-			button.setText(Main.plusSymbol);
+			svoItem.getButton().setText(Main.plusSymbol);
 		    }
 		}});
 	}
