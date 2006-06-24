@@ -1,10 +1,11 @@
 //
-// Created : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 24 (Sat) 09:37:17 by Harold Carr.
+// Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
+// Last Modified : 2006 Jun 24 (Sat) 09:58:09 by Harold Carr.
 //
 
 /*
   TODO:
+  - Query with fake server-side.
   - Server-side
   - Figure out how to make sov panels expand.
   - Style
@@ -61,12 +62,17 @@ public class Main
 
     public static final Label lbl = new Label("XXX"); // XXX
 
+    // TODO: these should be final.
+    public static Server server;
+    public static MainPanel mainPanel;
+
     /**
      * This is the entry point method.
      */
     public void onModuleLoad() 
     {
-	MainPanel mainPanel = new MainPanel();
+	server = new Server();
+	mainPanel = new MainPanel();
     }
 
     public static String getExpandCollapseState(
@@ -201,9 +207,7 @@ class SVOPanel
 
 	this.svoCategory = svoCategory;
 
-	// TODO: Get from service.
-	// NOTE: during development change to Main.expand to test full range.
-	contents = fakeServerInitialization(svoCategory, Main.collapse);
+	contents = Main.server.getInitialContents(svoCategory);
 
 	// Begin layout.
 	topVerticalPanel = new VerticalPanel();
@@ -297,6 +301,26 @@ class SVOPanel
 	expandCollapseState = pendingExpandCollapseState;
 	return getPendingExpandCollapseState();
     }
+}
+
+class Server
+{
+    // TODO: Really interact with service.
+    public List getInitialContents(String svoCategory)
+    {
+	final Iterator i = svoList.iterator();
+	final List result = new ArrayList();
+	while (i.hasNext()) {
+	    String uri = (String) i.next();
+	    result.add(new SVOItem(svoCategory, 
+				   uri,
+				   substringAfterLastSlash(uri),
+				   // NOTE: during development change to
+				   // Main.expand to test full range.
+				   Main.collapse));
+	}
+	return result;
+    }
 
     private String substringAfterLastSlash(final String x)
     {
@@ -314,21 +338,6 @@ class SVOPanel
 	} else {
 	    return result;
 	}
-    }
-
-    private List fakeServerInitialization(String svoCategory, 
-					  String expandOrCollapse)
-    {
-	final Iterator i = svoList.iterator();
-	final List result = new ArrayList();
-	while (i.hasNext()) {
-	    String uri = (String) i.next();
-	    result.add(new SVOItem(svoCategory, 
-				   uri,
-				   substringAfterLastSlash(uri),
-				   expandOrCollapse));
-	}
-	return result;
     }
 
     // TODO: replace with real list from server.
