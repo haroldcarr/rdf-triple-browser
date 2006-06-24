@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 24 (Sat) 09:58:09 by Harold Carr.
+// Last Modified : 2006 Jun 24 (Sat) 14:07:20 by Harold Carr.
 //
 
 /*
@@ -38,6 +38,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
@@ -59,8 +60,6 @@ public class Main
     public static String subject            = "subject";
     public static String subjectVerbObject  = "subjectVerbObject";
     public static String verb               = "verb";
-
-    public static final Label lbl = new Label("XXX"); // XXX
 
     // TODO: these should be final.
     public static Server server;
@@ -92,10 +91,11 @@ class MainPanel
     final VerticalPanel subjectVerticalPanel;
     final VerticalPanel verbVerticalPanel;
     final VerticalPanel objectVerticalPanel;
-    final HorizontalPanel horizontalPanel;
+    final HorizontalPanel svoHorizontalPanel;
     final DockPanel dockPanel;
     final HTML north;
     final HTML south;
+    final QueryPanel queryPanel;
 
     MainPanel() {
 	//
@@ -105,11 +105,11 @@ class MainPanel
 	subjectVerticalPanel = new SVOPanel(Main.subject).getPanel();
 	verbVerticalPanel    = new SVOPanel(Main.verb).getPanel();
 	objectVerticalPanel  = new SVOPanel(Main.object).getPanel();
-	horizontalPanel = new HorizontalPanel();
-	horizontalPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
-	horizontalPanel.add(subjectVerticalPanel);
-	horizontalPanel.add(verbVerticalPanel);
-	horizontalPanel.add(objectVerticalPanel);
+	svoHorizontalPanel = new HorizontalPanel();
+	svoHorizontalPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
+	svoHorizontalPanel.add(subjectVerticalPanel);
+	svoHorizontalPanel.add(verbVerticalPanel);
+	svoHorizontalPanel.add(objectVerticalPanel);
 
 	//
 	// Main panel.
@@ -120,9 +120,11 @@ class MainPanel
 	north = new HTML(Main.differentityDotCom, true);
 	south = new HTML(Main.copyright, true);
 	dockPanel.add(north, DockPanel.NORTH);
+	queryPanel = new QueryPanel();
+	dockPanel.add(queryPanel.getHorizontalPanel(), DockPanel.NORTH);
 	// NOTE: - if SOUTH added after CENTER does not show up.
 	dockPanel.add(south, DockPanel.SOUTH);
-	dockPanel.add(horizontalPanel, DockPanel.CENTER);
+	dockPanel.add(svoHorizontalPanel, DockPanel.CENTER);
 
 	// Host HTML has elements with IDs are "slot1", "slot2".
 	// Better: Search for all elements with a particular CSS class 
@@ -130,12 +132,33 @@ class MainPanel
 
 	RootPanel.get("slot2").add(dockPanel);
 
-	// XXX - Hyperlink test
-	RootPanel.get("slot1").add(Main.lbl);
-
 	// XXX - frame test
 	RootPanel.get("slot3").add(new Frame("http://www.google.com/"));
     }
+    public QueryPanel getQueryPanel() { return queryPanel; }
+}
+
+class QueryPanel
+{
+    final HorizontalPanel horizontalPanel;
+    final TextBox         subjectTextBox;
+    final TextBox         verbTextBox;
+    final TextBox         objectTextBox;
+
+    QueryPanel()
+    {
+	subjectTextBox = new TextBox();
+	verbTextBox    = new TextBox();
+	objectTextBox  = new TextBox();
+	horizontalPanel = new HorizontalPanel();
+	horizontalPanel.add(subjectTextBox);
+	horizontalPanel.add(verbTextBox);
+	horizontalPanel.add(objectTextBox);
+    }
+    TextBox         getSubjectTextBox() { return subjectTextBox; }
+    TextBox         getVerbTextBox   () { return verbTextBox; }
+    TextBox         getObjectTextBox () { return objectTextBox; }
+    HorizontalPanel getHorizontalPanel() { return horizontalPanel; }
 }
 
 class SVOItem
@@ -255,8 +278,7 @@ class SVOPanel
 
 	    svoItem.getHyperlink().addClickListener(new ClickListener() {
 		public void onClick(final Widget sender) {
-		    // TODO: Send to server.  Receive updates for other panels.
-		    Main.lbl.setText(((Hyperlink)sender).getTargetHistoryToken());
+		    Main.server.svoLinkClicked(((Hyperlink)sender).getTargetHistoryToken());
 		}
 	    });
 
@@ -320,6 +342,24 @@ class Server
 				   Main.collapse));
 	}
 	return result;
+    }
+
+    public void svoLinkClicked(final String categoryAndURL)
+    {
+	// TODO: Send to server.  Receive updates for other panels.
+	int i = categoryAndURL.indexOf(" ");
+	String category = categoryAndURL.substring(0, i);
+	String url = categoryAndURL.substring(i+1);
+	if (category.equals(Main.subject)) {
+	    Main.mainPanel.getQueryPanel().getSubjectTextBox().setText(url);
+	} else if (category.equals(Main.verb)) {
+	    Main.mainPanel.getQueryPanel().getVerbTextBox().setText(url);
+	} else if (category.equals(Main.object)) {
+            Main.mainPanel.getQueryPanel().getObjectTextBox().setText(url);
+	} else {
+	    // TODO: FIX
+	    Main.mainPanel.getQueryPanel().getSubjectTextBox().setText("ERROR");
+	}
     }
 
     private String substringAfterLastSlash(final String x)
