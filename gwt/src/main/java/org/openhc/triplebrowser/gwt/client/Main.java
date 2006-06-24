@@ -1,6 +1,6 @@
 //
 // Created : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 23 (Fri) 10:04:48 by Harold Carr.
+// Last Modified : 2006 Jun 23 (Fri) 10:30:19 by Harold Carr.
 //
 
 /*
@@ -56,7 +56,7 @@ public class Main
     private static String object             = "object";
     public  static String plusSymbol         = "+";
     private static String subject            = "subject";
-    private static String subjectVerbObject  = "subjectVerbObject";
+    public  static String subjectVerbObject  = "subjectVerbObject";
     private static String verb               = "verb";
 
     public static final Label lbl = new Label("XXX"); // XXX
@@ -71,11 +71,11 @@ public class Main
 	//
 
 	final VerticalPanel subjectVerticalPanel =
-	    buildSVOPanel(new SVOManager(subject));
+	    new SVOManager(subject).getPanel();
 	final VerticalPanel verbVerticalPanel    = 
-	    buildSVOPanel(new SVOManager(verb));
+	    new SVOManager(verb).getPanel();
 	final VerticalPanel objectVerticalPanel  =
-	    buildSVOPanel(new SVOManager(object));
+	    new SVOManager(object).getPanel();
 	final HorizontalPanel horizontalPanel = new HorizontalPanel();
 	horizontalPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
 	horizontalPanel.add(subjectVerticalPanel);
@@ -106,28 +106,6 @@ public class Main
 
 	// XXX - frame test
 	RootPanel.get("slot3").add(new Frame("http://www.google.com/"));
-    }
-
-    private VerticalPanel buildSVOPanel(final SVOManager svoManager)
-    {
-	final VerticalPanel verticalPanel = new VerticalPanel();
-	verticalPanel.setHorizontalAlignment(VerticalPanel.ALIGN_LEFT);
-	final Button button = 
-	    new Button(svoManager.getPendingExpandCollapseState());
-	button.addClickListener(new ClickListener() {
-	    public void onClick(Widget sender) {
-		final String newState = svoManager.expandOrCollapse();
-		final Button button = (Button) sender;
-		button.setText(newState);
-	    }
-	});
-	verticalPanel.add(button);
-	// TODO: Would like a scroll or a cloud
-	final ScrollPanel scrollPanel =
-	    new ScrollPanel(svoManager.getWidget());
-	scrollPanel.setStyleName(subjectVerbObject);
-	verticalPanel.add(scrollPanel);
-	return verticalPanel;
     }
 
     public static String getExpandCollapseState(
@@ -196,26 +174,47 @@ class SVOItem
 
 class SVOManager
 {
+    String expandCollapseState;
+
     final String svoCategory; // For debug only.
     final List contents; // The "raw" contents.
-    final VerticalPanel svoVerticalPanel;
-    String expandCollapseState;
+    final VerticalPanel verticalInsideScroll;
+    final VerticalPanel topVerticalPanel;
+    final Button topButton;
+    final ScrollPanel scrollPanel;
 
     SVOManager(final String svoCategory)
     {
+	this.expandCollapseState = Main.collapse;
+
 	this.svoCategory = svoCategory;
+
 	// TODO: Get from service.
 	// NOTE: during development change to Main.expand to test full range.
-	this.contents = fakeServerInitialization(svoCategory, Main.collapse);
-	this.svoVerticalPanel = new VerticalPanel();
-	this.expandCollapseState = Main.collapse;
-	initializeLayout();
+	contents = fakeServerInitialization(svoCategory, Main.collapse);
+
+	// Begin layout.
+	topVerticalPanel = new VerticalPanel();
+	topVerticalPanel.setHorizontalAlignment(VerticalPanel.ALIGN_LEFT);
+	topButton = new Button(getPendingExpandCollapseState());
+	topVerticalPanel.add(topButton);
+	// TODO: Would like a scroll or a cloud
+	verticalInsideScroll = new VerticalPanel();
+	scrollPanel = new ScrollPanel(verticalInsideScroll);
+	scrollPanel.setStyleName(Main.subjectVerbObject);
+	topVerticalPanel.add(scrollPanel);
+	initialContents();
+	// End layout.
+	
+	topButton.addClickListener(new ClickListener() {
+	    public void onClick(Widget sender) {
+		final String newState = expandOrCollapse();
+		topButton.setText(newState);
+	    }
+	});
     }
 
-    Widget getWidget()
-    {
-	return svoVerticalPanel;
-    }
+    VerticalPanel getPanel() { return topVerticalPanel; }
 
     String getCurrentExpandCollapseState()
     {
@@ -226,13 +225,13 @@ class SVOManager
 	return Main.getExpandCollapseState(expandCollapseState, true);
     }
 
-    private void initializeLayout()
+    private void initialContents()
     {
-	svoVerticalPanel.clear();
+	verticalInsideScroll.clear();
 	final Iterator i = contents.iterator();
 	while (i.hasNext()) {
 	    final SVOItem svoItem = (SVOItem) i.next();
-	    svoVerticalPanel.add(svoItem.getVerticalPanel());
+	    verticalInsideScroll.add(svoItem.getVerticalPanel());
 
 	    if (expandCollapseState.equals(Main.expand)) {
 		svoItem.getHyperlink().setText(svoItem.getExpandedName());
@@ -270,7 +269,7 @@ class SVOManager
     String expandOrCollapse()
     {
 	String pendingExpandCollapseState = getPendingExpandCollapseState();
-	final Iterator i = svoVerticalPanel.iterator();
+	final Iterator i = verticalInsideScroll.iterator();
 	final Iterator j = contents.iterator();
 	while (i.hasNext()) {
 	    final VerticalPanel verticalPanel = (VerticalPanel) i.next();
