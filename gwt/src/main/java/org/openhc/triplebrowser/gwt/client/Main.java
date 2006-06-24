@@ -1,6 +1,6 @@
 //
 // Created : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 23 (Fri) 10:30:19 by Harold Carr.
+// Last Modified : 2006 Jun 24 (Sat) 09:37:17 by Harold Carr.
 //
 
 /*
@@ -46,37 +46,60 @@ public class Main
     implements 
 	EntryPoint // Entry point classes define onModuleLoad()
 {
-    public  static String collapse           = "collapse";
-    public  static String collapseAllTags    = "collapse all tags";
-    private static String copyright          = "copyright 2006";
-    private static String differentityDotCom = "differentity.com";
-    public  static String expand             = "expand";
-    public  static String expandAllTags      = "expand all tags";
-    public  static String minusSymbol        = "-";
-    private static String object             = "object";
-    public  static String plusSymbol         = "+";
-    private static String subject            = "subject";
-    public  static String subjectVerbObject  = "subjectVerbObject";
-    private static String verb               = "verb";
+    public static String collapse           = "collapse";
+    public static String collapseAllTags    = "collapse all tags";
+    public static String copyright          = "copyright 2006";
+    public static String differentityDotCom = "differentity.com";
+    public static String expand             = "expand";
+    public static String expandAllTags      = "expand all tags";
+    public static String minusSymbol        = "-";
+    public static String object             = "object";
+    public static String plusSymbol         = "+";
+    public static String subject            = "subject";
+    public static String subjectVerbObject  = "subjectVerbObject";
+    public static String verb               = "verb";
 
     public static final Label lbl = new Label("XXX"); // XXX
 
     /**
      * This is the entry point method.
      */
-    public void onModuleLoad() {
+    public void onModuleLoad() 
+    {
+	MainPanel mainPanel = new MainPanel();
+    }
 
+    public static String getExpandCollapseState(
+	final String expandCollapseState,
+	final boolean pending)
+    {
+	if (expandCollapseState.equals(Main.expand)) {
+	    return (pending ? Main.collapse : Main.expand);
+	} else {
+	    return (pending ? Main.expand : Main.collapse);
+	}
+    }
+}
+
+class MainPanel
+{
+    final VerticalPanel subjectVerticalPanel;
+    final VerticalPanel verbVerticalPanel;
+    final VerticalPanel objectVerticalPanel;
+    final HorizontalPanel horizontalPanel;
+    final DockPanel dockPanel;
+    final HTML north;
+    final HTML south;
+
+    MainPanel() {
 	//
 	// Subject, Verb, Object panels.
 	//
 
-	final VerticalPanel subjectVerticalPanel =
-	    new SVOManager(subject).getPanel();
-	final VerticalPanel verbVerticalPanel    = 
-	    new SVOManager(verb).getPanel();
-	final VerticalPanel objectVerticalPanel  =
-	    new SVOManager(object).getPanel();
-	final HorizontalPanel horizontalPanel = new HorizontalPanel();
+	subjectVerticalPanel = new SVOPanel(Main.subject).getPanel();
+	verbVerticalPanel    = new SVOPanel(Main.verb).getPanel();
+	objectVerticalPanel  = new SVOPanel(Main.object).getPanel();
+	horizontalPanel = new HorizontalPanel();
 	horizontalPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
 	horizontalPanel.add(subjectVerticalPanel);
 	horizontalPanel.add(verbVerticalPanel);
@@ -86,10 +109,10 @@ public class Main
 	// Main panel.
 	//    
 
-	final DockPanel dockPanel = new DockPanel();
+	dockPanel = new DockPanel();
 	dockPanel.setHorizontalAlignment(DockPanel.ALIGN_CENTER);
-	final HTML north = new HTML(differentityDotCom, true);
-	final HTML south = new HTML(copyright, true);
+	north = new HTML(Main.differentityDotCom, true);
+	south = new HTML(Main.copyright, true);
 	dockPanel.add(north, DockPanel.NORTH);
 	// NOTE: - if SOUTH added after CENTER does not show up.
 	dockPanel.add(south, DockPanel.SOUTH);
@@ -102,21 +125,10 @@ public class Main
 	RootPanel.get("slot2").add(dockPanel);
 
 	// XXX - Hyperlink test
-	RootPanel.get("slot1").add(lbl);
+	RootPanel.get("slot1").add(Main.lbl);
 
 	// XXX - frame test
 	RootPanel.get("slot3").add(new Frame("http://www.google.com/"));
-    }
-
-    public static String getExpandCollapseState(
-	final String expandCollapseState,
-	final boolean pending)
-    {
-	if (expandCollapseState.equals(Main.expand)) {
-	    return (pending ? Main.collapse : Main.expand);
-	} else {
-	    return (pending ? Main.expand : Main.collapse);
-	}
     }
 }
 
@@ -172,7 +184,7 @@ class SVOItem
     VerticalPanel getVerticalPanel() { return verticalPanel; }
 }
 
-class SVOManager
+class SVOPanel
 {
     String expandCollapseState;
 
@@ -183,7 +195,7 @@ class SVOManager
     final Button topButton;
     final ScrollPanel scrollPanel;
 
-    SVOManager(final String svoCategory)
+    SVOPanel(final String svoCategory)
     {
 	this.expandCollapseState = Main.collapse;
 
