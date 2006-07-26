@@ -1,12 +1,12 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jun 24 (Sat) 14:07:20 by Harold Carr.
+// Last Modified : 2006 Jul 26 (Wed) 16:31:58 by Harold Carr.
 //
 
 /*
   TODO:
-  - Query with fake server-side.
-  - Server-side
+  - Move initial lists to server-side.
+  - Server-side integrated with Jena
   - Figure out how to make sov panels expand.
   - Style
  */
@@ -17,11 +17,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.Window;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -29,7 +35,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
-
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -43,6 +48,8 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.VerticalPanel;
+
+
 
 public class Main 
     implements 
@@ -64,6 +71,7 @@ public class Main
     // TODO: these should be final.
     public static Server server;
     public static MainPanel mainPanel;
+    public static MyServiceAsync myServiceAsync;
 
     /**
      * This is the entry point method.
@@ -99,6 +107,16 @@ class MainPanel
 
     MainPanel() {
 	//
+	// Setup reference to service.
+	// Must be done before setting up panels.
+	// Setup uses results from service.
+	//
+	Main.myServiceAsync = (MyServiceAsync) GWT.create(MyService.class);
+	ServiceDefTarget serviceDefTarget = (ServiceDefTarget) 
+	    Main.myServiceAsync;
+	serviceDefTarget.setServiceEntryPoint("/MyService");
+
+	//
 	// Subject, Verb, Object panels.
 	//
 
@@ -130,6 +148,21 @@ class MainPanel
 	// Better: Search for all elements with a particular CSS class 
 	// and replace them with widgets.
 
+	// XXX BEGIN RPC TEST
+	final HTML remoteHTML = new HTML();
+	Main.myServiceAsync.myMethod(
+            "FOO",
+	    new AsyncCallback() {
+		public void onSuccess(Object result) {
+		    remoteHTML.setHTML(result.toString());
+		}
+		public void onFailure(Throwable caught) {
+		    remoteHTML.setHTML(caught.toString());
+		}
+	    });
+	// XXX END RPC TEST
+
+	RootPanel.get("slot1").add(remoteHTML);
 	RootPanel.get("slot2").add(dockPanel);
 
 	// XXX - frame test
@@ -218,7 +251,7 @@ class SVOPanel
     String expandCollapseState;
 
     final String svoCategory; // For debug only.
-    final List contents; // The "raw" contents.
+    List contents; // The "raw" contents.  For debugging.
     final VerticalPanel verticalInsideScroll;
     final VerticalPanel topVerticalPanel;
     final Button topButton;
@@ -230,8 +263,6 @@ class SVOPanel
 
 	this.svoCategory = svoCategory;
 
-	contents = Main.server.getInitialContents(svoCategory);
-
 	// Begin layout.
 	topVerticalPanel = new VerticalPanel();
 	topVerticalPanel.setHorizontalAlignment(VerticalPanel.ALIGN_LEFT);
@@ -239,10 +270,15 @@ class SVOPanel
 	topVerticalPanel.add(topButton);
 	// TODO: Would like a scroll or a cloud
 	verticalInsideScroll = new VerticalPanel();
+
+	// Do the async call now that what it depends when it returns
+	// is available.
+	// "this" so that it can callback to "initialContents".
+	Main.server.getInitialContents(this, svoCategory);
+
 	scrollPanel = new ScrollPanel(verticalInsideScroll);
 	scrollPanel.setStyleName(Main.subjectVerbObject);
 	topVerticalPanel.add(scrollPanel);
-	initialContents();
 	// End layout.
 	
 	topButton.addClickListener(new ClickListener() {
@@ -264,8 +300,10 @@ class SVOPanel
 	return Main.getExpandCollapseState(expandCollapseState, true);
     }
 
-    private void initialContents()
+    // This is calledback from an async request to server.
+    public void initialContents(final List contents)
     {
+	this.contents = contents;
 	verticalInsideScroll.clear();
 	final Iterator i = contents.iterator();
 	while (i.hasNext()) {
@@ -327,21 +365,37 @@ class SVOPanel
 
 class Server
 {
-    // TODO: Really interact with service.
-    public List getInitialContents(String svoCategory)
+    static List initial; // For debugging.
+    static List getInitial() { return initial; }
+    static void setInitial(List i) { initial = i; }
+
+    public void getInitialContents(final SVOPanel svoPanel,
+				   final String svoCategory)
     {
-	final Iterator i = svoList.iterator();
-	final List result = new ArrayList();
-	while (i.hasNext()) {
-	    String uri = (String) i.next();
-	    result.add(new SVOItem(svoCategory, 
-				   uri,
-				   substringAfterLastSlash(uri),
-				   // NOTE: during development change to
-				   // Main.expand to test full range.
-				   Main.collapse));
-	}
-	return result;
+	Main.myServiceAsync.getInitialContents(
+            svoCategory,
+	    new AsyncCallback() {
+		public void onSuccess(Object x) {
+		    final Iterator i = ((List)x).iterator();
+		    final List result = new ArrayList();
+		    while (i.hasNext()) {
+			String uri = (String) i.next();
+			result.add(
+                            new SVOItem(svoCategory, 
+					uri,
+					substringAfterLastSlash(uri),
+					// NOTE: during development change to
+					// Main.expand to test full range.
+					Main.collapse));
+		    }
+		    setInitial(result);
+		    svoPanel.initialContents(result);
+		}
+
+		public void onFailure(Throwable caught) {
+		    Window.alert(".getInitialContents: " + caught);
+		}
+	    });
     }
 
     public void svoLinkClicked(final String categoryAndURL)
@@ -378,55 +432,6 @@ class Server
 	} else {
 	    return result;
 	}
-    }
-
-    // TODO: replace with real list from server.
-    private List svoList = new ArrayList();
-    { // NOTE: block needed for this to compile. 
-    svoList.add("http://haroldcarr.com");
-    svoList.add("http://www.rojo.com/");
-    svoList.add("http://google.com");
-    svoList.add("http://del.icio.us/");
-    svoList.add("http://differentity.com/haroldcarr/author");
-    svoList.add("http://differentity.com/haroldcarr/authorPrefix");
-    svoList.add("http://differentity.com/haroldcarr/authorFirstName");
-    svoList.add("http://differentity.com/haroldcarr/authorMiddleName");
-    svoList.add("http://differentity.com/haroldcarr/authorLastName");
-    svoList.add("http://differentity.com/haroldcarr/authorSuffix");
-    svoList.add("http://differentity.com/haroldcarr/authorBorn");
-    svoList.add("http://differentity.com/haroldcarr/authorDied");
-    svoList.add("http://differentity.com/haroldcarr/authorIdea");
-    svoList.add("http://differentity.com/haroldcarr/author");
-    svoList.add("http://differentity.com/haroldcarr/ideaInCategory");
-    svoList.add("http://differentity.com/haroldcarr/work");
-    svoList.add("http://differentity.com/haroldcarr/workAuthor");
-    svoList.add("http://differentity.com/haroldcarr/workTitle");
-    svoList.add("http://differentity.com/haroldcarr/workPublished");
-    svoList.add("http://differentity.com/haroldcarr/workWritten");
-    svoList.add("http://differentity.com/haroldcarr/bataille");
-    svoList.add("http://differentity.com/haroldcarr/book");
-    svoList.add("http://differentity.com/haroldcarr/guilty");
-    svoList.add("http://differentity.com/haroldcarr/eroticism");
-    svoList.add("http://differentity.com/haroldcarr/blue_of_noon");
-    svoList.add("http://differentity.com/haroldcarr/inner_experience");
-
-    svoList.add("http://differentity.com/haroldcarr/similarTo");
-    svoList.add("http://differentity.com/haroldcarr/equalTo");
-    svoList.add("http://differentity.com/haroldcarr/contraryTo");
-    svoList.add("http://differentity.com/haroldcarr/contrarstWith");
-    svoList.add("http://differentity.com/haroldcarr/relatesTo");
-    svoList.add("http://differentity.com/haroldcarr/fate");
-    svoList.add("http://differentity.com/haroldcarr/formlessness");
-    svoList.add("http://differentity.com/haroldcarr/god");
-    svoList.add("http://differentity.com/haroldcarr/stability");
-    svoList.add("http://differentity.com/haroldcarr/reason");
-    svoList.add("http://differentity.com/haroldcarr/nothingness");
-    svoList.add("http://differentity.com/haroldcarr/chance");
-    svoList.add("http://differentity.com/haroldcarr/strength");
-    svoList.add("http://differentity.com/haroldcarr/death");
-    svoList.add("http://differentity.com/haroldcarr/anguish");
-    svoList.add("http://differentity.com/haroldcarr/silence");
-    svoList.add("http://differentity.com/haroldcarr/limit");
     }
 }
 
