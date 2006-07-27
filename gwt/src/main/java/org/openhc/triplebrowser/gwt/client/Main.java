@@ -1,10 +1,12 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jul 26 (Wed) 17:06:03 by Harold Carr.
+// Last Modified : 2006 Jul 27 (Thu) 14:21:06 by Harold Carr.
 //
 
 /*
   TODO:
+  - FIX: (when trying from any separate browser while gwt-shell is running):
+Cannot find resource 'Main.html' in the public path of module 'com.differentity.Main'
   - Server-side integrated with Jena
   - Figure out how to make sov panels expand.
   - Style
@@ -39,7 +41,6 @@ public class Main
     // TODO: these should be final.
     public static ServerCalls serverCalls;
     public static MainPanel mainPanel;
-    public static MyServiceAsync myServiceAsync;
 
     /**
      * This is the entry point method.

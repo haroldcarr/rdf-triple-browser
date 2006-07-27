@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jul 26 (Wed) 16:50:59 by Harold Carr.
+// Last Modified : 2006 Jul 27 (Thu) 14:26:22 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -9,22 +9,32 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import com.differentity.client.Main;
 import com.differentity.client.SVOPanel;
 
 public class ServerCalls
 {
-    static List initial; // For debugging.
-    static List getInitial() { return initial; }
-    static void setInitial(List i) { initial = i; }
+    List initial; // For debugging.
+    List getInitial() { return initial; }
+    void setInitial(List i) { initial = i; }
+    MyServiceAsync myServiceAsync;
+
+    public ServerCalls()
+    {
+	myServiceAsync = (MyServiceAsync) GWT.create(MyService.class);
+	ServiceDefTarget serviceDefTarget = (ServiceDefTarget) myServiceAsync;
+	serviceDefTarget.setServiceEntryPoint("/MyService");
+    }
 
     public void getInitialContents(final SVOPanel svoPanel,
 				   final String svoCategory)
     {
-	Main.myServiceAsync.getInitialContents(
+	myServiceAsync.getInitialContents(
             svoCategory,
 	    new AsyncCallback() {
 		public void onSuccess(Object x) {

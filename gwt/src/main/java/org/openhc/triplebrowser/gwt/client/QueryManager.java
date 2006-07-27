@@ -1,14 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jul 26 (Wed) 17:12:25 by Harold Carr.
+// Last Modified : 2006 Jul 27 (Thu) 14:28:42 by Harold Carr.
 //
 
 package com.differentity.client;
-
-import com.google.gwt.core.client.GWT;
-
-import com.google.gwt.user.client.rpc.AsyncCallback; // *****
-import com.google.gwt.user.client.rpc.ServiceDefTarget; // *****
 
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Frame; // *****
@@ -32,15 +27,6 @@ public class MainPanel
     final QueryPanel queryPanel;
 
     MainPanel() {
-	//
-	// Setup reference to service.
-	// Must be done before setting up panels.
-	// Setup uses results from service.
-	//
-	Main.myServiceAsync = (MyServiceAsync) GWT.create(MyService.class);
-	ServiceDefTarget serviceDefTarget = (ServiceDefTarget) 
-	    Main.myServiceAsync;
-	serviceDefTarget.setServiceEntryPoint("/MyService");
 
 	//
 	// Subject, Verb, Object panels.
@@ -74,21 +60,7 @@ public class MainPanel
 	// Better: Search for all elements with a particular CSS class 
 	// and replace them with widgets.
 
-	// XXX BEGIN RPC TEST
-	final HTML remoteHTML = new HTML();
-	Main.myServiceAsync.myMethod(
-            "FOO",
-	    new AsyncCallback() {
-		public void onSuccess(Object result) {
-		    remoteHTML.setHTML(result.toString());
-		}
-		public void onFailure(Throwable caught) {
-		    remoteHTML.setHTML(caught.toString());
-		}
-	    });
-	// XXX END RPC TEST
-
-	RootPanel.get("slot1").add(remoteHTML);
+	RootPanel.get("slot1").add(new HTML("FOO"));
 	RootPanel.get("slot2").add(dockPanel);
 
 	// XXX - frame test
