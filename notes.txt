@@ -1,0 +1,19 @@
+2006-06-14:
+
+$GWTHOME/applicationCreator.cmd -out z:\\ftptmp\\gwt\\differentity com.differentity.client.Main
+
+2006-07-23:
+
+# This works in gwt shell.
+# Not in general browser (but I think it did before I changed something).
+
+# These two steps put the server side stuff and client interface in the path.
+mkdir bin
+./Main-server-compile.cmd
+#
+./Main-shell.cmd&
+# In the shell do compile/browse - or do
+./Main-compile.cmd
+# Now any browser will get service (if GWT shell is still running).
+
+# End of file.
