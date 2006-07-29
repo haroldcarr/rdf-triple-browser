@@ -1,19 +1,36 @@
 package com.differentity.server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import com.differentity.client.MyService;
+import com.differentity.server.Jena;
 
-public class MyServiceImpl
+import com.differentity.client.Service;
+
+public class ServiceImpl
     extends RemoteServiceServlet
-    implements MyService
+    implements Service
 {
-    public String myMethod(String s) 
+    private boolean initialized = false;
+    private Jena jena;
+
+    public String initialize(String notUsed) 
     {
-	return "YES:" + s;
+	if (initialized) {
+	    return "already initialized";
+	}
+	
+	jena = new Jena();
+	try {
+	    jena.readRDF("all.rdf");
+	} catch (IOException e) {
+	    return e.toString();
+	}
+
+	return "initialization complete";
     }
 
     public List getInitialContents(String svoCategory)
