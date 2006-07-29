@@ -1,6 +1,8 @@
 package com.differentity.server;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +28,13 @@ public class ServiceImpl
 	jena = new Jena();
 	try {
 	    jena.readRDF("all.rdf");
-	} catch (IOException e) {
-	    return e.toString();
+	} catch (Throwable t) {
+	    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+	    PrintWriter printWriter = new PrintWriter(stream);
+	    t.printStackTrace(printWriter);
+	    printWriter.flush();
+	    printWriter.close();
+	    return stream.toString();
 	}
 
 	return "initialization complete";
