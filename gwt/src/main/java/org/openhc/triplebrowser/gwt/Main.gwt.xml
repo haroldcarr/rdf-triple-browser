@@ -7,7 +7,7 @@
 	<entry-point class='com.differentity.client.Main'/>
 
 	<!-- The RPC point                                        -->
-	<servlet path="/MyService"
-                 class='com.differentity.server.MyServiceImpl'/>
+	<servlet path="/Service"
+                 class='com.differentity.server.ServiceImpl'/>
 
 </module>
