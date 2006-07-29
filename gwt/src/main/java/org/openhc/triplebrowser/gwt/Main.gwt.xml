@@ -1,0 +1,13 @@
+<module>
+
+	<!-- Inherit the core Web Toolkit stuff.                  -->
+	<inherits name='com.google.gwt.user.User'/>
+
+	<!-- Specify the app entry point class.                   -->
+	<entry-point class='com.differentity.client.Main'/>
+
+	<!-- The RPC point                                        -->
+	<servlet path="/MyService"
+                 class='com.differentity.server.MyServiceImpl'/>
+
+</module>
