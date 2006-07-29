@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jul 27 (Thu) 14:26:22 by Harold Carr.
+// Last Modified : 2006 Jul 28 (Fri) 21:42:25 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -16,25 +16,41 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import com.differentity.client.Main;
 import com.differentity.client.SVOPanel;
+import com.differentity.client.Service;
+import com.differentity.client.ServiceAsync;
 
 public class ServerCalls
 {
-    List initial; // For debugging.
+    private List initial; // For debugging.
     List getInitial() { return initial; }
     void setInitial(List i) { initial = i; }
-    MyServiceAsync myServiceAsync;
+    private ServiceAsync serviceAsync;
 
     public ServerCalls()
     {
-	myServiceAsync = (MyServiceAsync) GWT.create(MyService.class);
-	ServiceDefTarget serviceDefTarget = (ServiceDefTarget) myServiceAsync;
-	serviceDefTarget.setServiceEntryPoint("/MyService");
+	serviceAsync = (ServiceAsync) GWT.create(Service.class);
+	ServiceDefTarget serviceDefTarget = (ServiceDefTarget) serviceAsync;
+	serviceDefTarget.setServiceEntryPoint("/Service");
+    }
+
+    public void initialize()
+    {
+	serviceAsync.initialize(
+            "FOO",
+	    new AsyncCallback() {
+		public void onSuccess(Object result) {
+		    MainPanel.getStatusHTML().setHTML(result.toString());
+		}
+		public void onFailure(Throwable caught) {
+		    MainPanel.getStatusHTML().setHTML(caught.toString());
+		}
+	    });
     }
 
     public void getInitialContents(final SVOPanel svoPanel,
 				   final String svoCategory)
     {
-	myServiceAsync.getInitialContents(
+	serviceAsync.getInitialContents(
             svoCategory,
 	    new AsyncCallback() {
 		public void onSuccess(Object x) {

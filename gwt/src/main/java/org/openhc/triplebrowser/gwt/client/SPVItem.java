@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jul 26 (Wed) 16:57:37 by Harold Carr.
+// Last Modified : 2006 Jul 28 (Fri) 18:13:32 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -15,14 +15,14 @@ import com.differentity.client.Main;
 
 public class SVOItem
 {
-    final String svoCategory;
-    final String expandedName;
-    final String collapsedName;
-    String expandCollapseState;
-    final Button button;
-    final Hyperlink hyperlink;
-    final HorizontalPanel horizontalPanel;
-    final VerticalPanel verticalPanel;
+    private final String svoCategory;
+    private final String expandedName;
+    private final String collapsedName;
+    private String expandCollapseState;
+    private final Button button;
+    private final Hyperlink hyperlink;
+    private final HorizontalPanel horizontalPanel;
+    private final VerticalPanel verticalPanel;
     
     SVOItem(String svoCategory, String expandedName, String collapsedName,
 	    String expandCollapseState)
@@ -49,6 +49,7 @@ public class SVOItem
 	    verticalPanel.add(new Frame(expandedName));
 	}
     }
+
     String getSVOCategory() { return svoCategory; }
     String getExpandedName() { return expandedName; }
     String getCollapsedName() { return collapsedName; }

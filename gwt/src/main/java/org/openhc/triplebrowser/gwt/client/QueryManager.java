@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jul 27 (Thu) 14:28:42 by Harold Carr.
+// Last Modified : 2006 Jul 28 (Fri) 21:45:34 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -17,14 +17,16 @@ import com.differentity.client.Main;
 
 public class MainPanel
 {
-    final VerticalPanel subjectVerticalPanel;
-    final VerticalPanel verbVerticalPanel;
-    final VerticalPanel objectVerticalPanel;
-    final HorizontalPanel svoHorizontalPanel;
-    final DockPanel dockPanel;
-    final HTML north;
-    final HTML south;
-    final QueryPanel queryPanel;
+    private final VerticalPanel subjectVerticalPanel;
+    private final VerticalPanel verbVerticalPanel;
+    private final VerticalPanel objectVerticalPanel;
+    private final HorizontalPanel svoHorizontalPanel;
+    private final DockPanel dockPanel;
+    private final HTML north;
+    private final HTML south;
+    private final QueryPanel queryPanel;
+    // TODO - there is a race here.
+    private static final HTML statusHTML = new HTML();
 
     MainPanel() {
 
@@ -60,13 +62,22 @@ public class MainPanel
 	// Better: Search for all elements with a particular CSS class 
 	// and replace them with widgets.
 
-	RootPanel.get("slot1").add(new HTML("FOO"));
+	RootPanel.get("slot1").add(statusHTML);
 	RootPanel.get("slot2").add(dockPanel);
 
 	// XXX - frame test
 	RootPanel.get("slot3").add(new Frame("http://www.google.com/"));
     }
-    public QueryPanel getQueryPanel() { return queryPanel; }
+
+    public QueryPanel getQueryPanel() 
+    {
+	return queryPanel; 
+    }
+
+    public static HTML getStatusHTML()
+    {
+	return statusHTML;
+    }
 }
 
 // End of file.

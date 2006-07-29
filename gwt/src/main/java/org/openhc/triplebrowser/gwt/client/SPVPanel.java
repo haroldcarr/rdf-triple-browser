@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jul 26 (Wed) 16:55:29 by Harold Carr.
+// Last Modified : 2006 Jul 28 (Fri) 18:13:57 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -22,12 +22,12 @@ public class SVOPanel
 {
     String expandCollapseState;
 
-    final String svoCategory; // For debug only.
-    List contents; // The "raw" contents.  For debugging.
-    final VerticalPanel verticalInsideScroll;
-    final VerticalPanel topVerticalPanel;
-    final Button topButton;
-    final ScrollPanel scrollPanel;
+    private final String svoCategory; // For debug only.
+    private List contents; // The "raw" contents.  For debugging.
+    private final VerticalPanel verticalInsideScroll;
+    private final VerticalPanel topVerticalPanel;
+    private final Button topButton;
+    private final ScrollPanel scrollPanel;
 
     SVOPanel(final String svoCategory)
     {

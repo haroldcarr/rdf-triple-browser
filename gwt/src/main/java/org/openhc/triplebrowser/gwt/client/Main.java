@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jul 27 (Thu) 14:21:06 by Harold Carr.
+// Last Modified : 2006 Jul 28 (Fri) 21:47:27 by Harold Carr.
 //
 
 /*
@@ -48,6 +48,9 @@ public class Main
     public void onModuleLoad() 
     {
 	serverCalls = new ServerCalls();
+	// TODO: a race with next statement that sets up the HTML 
+	// used by initialize
+	serverCalls.initialize();
 	mainPanel = new MainPanel();
     }
 

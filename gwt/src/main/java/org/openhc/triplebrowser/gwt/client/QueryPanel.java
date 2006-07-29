@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jul 26 (Wed) 17:00:04 by Harold Carr.
+// Last Modified : 2006 Jul 28 (Fri) 18:12:56 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -10,10 +10,10 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class QueryPanel
 {
-    final HorizontalPanel horizontalPanel;
-    final TextBox         subjectTextBox;
-    final TextBox         verbTextBox;
-    final TextBox         objectTextBox;
+    private final HorizontalPanel horizontalPanel;
+    private final TextBox         subjectTextBox;
+    private final TextBox         verbTextBox;
+    private final TextBox         objectTextBox;
 
     QueryPanel()
     {
