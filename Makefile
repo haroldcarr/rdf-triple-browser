@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2006 Jul 28 (Fri) 17:55:18 by Harold Carr.
+# Last Modified : 2006 Jul 29 (Sat) 09:21:45 by Harold Carr.
 #
 
 SRCDIR		= ./src
@@ -32,7 +32,7 @@ GWT_COMPILE	= $(GWT_COMPILER) -out $(OUTDIR) $(URL)
 SERVER_COMPILE	= $(JAVAC) -cp $(CP) -sourcepath $(SRCDIR) -d $(BINDIR) $(SERVER_FILES)
 
 GWT_SHELLER	= $(JAVA)  -cp $(CP) com.google.gwt.dev.GWTShell
-GWT_SHELLER_HELP= $(GWT_SHELLER) --help
+GWT_SHELLER_HELP= $(GWT_SHELLER) -help
 GWT_SHELL	= $(GWT_SHELLER) -out $(OUTDIR) $(URL)/Main.html
 
 all :
