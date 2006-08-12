@@ -1,10 +1,11 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jul 28 (Fri) 18:13:57 by Harold Carr.
+// Last Modified : 2006 Aug 12 (Sat) 16:30:20 by Harold Carr.
 //
 
 package com.differentity.client;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class SVOPanel
     String expandCollapseState;
 
     private final String svoCategory; // For debug only.
-    private List contents; // The "raw" contents.  For debugging.
+    private List  contents;
     private final VerticalPanel verticalInsideScroll;
     private final VerticalPanel topVerticalPanel;
     private final Button topButton;
@@ -43,10 +44,7 @@ public class SVOPanel
 	// TODO: Would like a scroll or a cloud
 	verticalInsideScroll = new VerticalPanel();
 
-	// Do the async call now that what it depends when it returns
-	// is available.
-	// "this" so that it can callback to "initialContents".
-	Main.serverCalls.getInitialContents(this, svoCategory);
+
 
 	scrollPanel = new ScrollPanel(verticalInsideScroll);
 	scrollPanel.setStyleName(Main.subjectVerbObject);
@@ -72,10 +70,28 @@ public class SVOPanel
 	return Main.getExpandCollapseState(expandCollapseState, true);
     }
 
-    // This is calledback from an async request to server.
-    public void initialContents(final List contents)
+    private List convertContents(final List x)
     {
-	this.contents = contents;
+	final Iterator i = ((List)x).iterator();
+	final List result = new ArrayList();
+	while (i.hasNext()) {
+	    String uri = (String) i.next();
+	    result.add(
+		       new SVOItem(svoCategory, 
+				   uri,
+				   substringAfterLastSlash(uri),
+				   // NOTE: during development change to
+				   // Main.expand to test full range.
+				   Main.collapse));
+	}
+	return result;
+    }
+
+
+    // This is a calledback from an async request to server.
+    public void setContents(final List x)
+    {
+	contents = convertContents(x);
 	verticalInsideScroll.clear();
 	final Iterator i = contents.iterator();
 	while (i.hasNext()) {
@@ -132,6 +148,24 @@ public class SVOPanel
 	}
 	expandCollapseState = pendingExpandCollapseState;
 	return getPendingExpandCollapseState();
+    }
+
+    private String substringAfterLastSlash(final String x)
+    {
+	int indexOfLastSlash = 0;
+	int i;
+	for (i = 0; i < x.length(); ++i) {
+	    if (x.charAt(i) == '/') {
+		indexOfLastSlash = i;
+	    }
+	}
+	final String result = x.substring(indexOfLastSlash + 1);
+	// If it ends in a slash then remove the ending slash and try again.
+	if (result.length() == 0) {
+	    return substringAfterLastSlash(x.substring(0, x.length()-1));
+	} else {
+	    return result;
+	}
     }
 }
 

@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jul 28 (Fri) 21:42:25 by Harold Carr.
+// Last Modified : 2006 Aug 12 (Sat) 15:30:06 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -21,9 +21,6 @@ import com.differentity.client.ServiceAsync;
 
 public class ServerCalls
 {
-    private List initial; // For debugging.
-    List getInitial() { return initial; }
-    void setInitial(List i) { initial = i; }
     private ServiceAsync serviceAsync;
 
     public ServerCalls()
@@ -47,27 +44,14 @@ public class ServerCalls
 	    });
     }
 
-    public void getInitialContents(final SVOPanel svoPanel,
-				   final String svoCategory)
+    public void doQuery(final MainPanel mainPanel,
+			final QueryRequest queryRequest)
     {
-	serviceAsync.getInitialContents(
-            svoCategory,
+	serviceAsync.doQuery(
+            queryRequest,
 	    new AsyncCallback() {
 		public void onSuccess(Object x) {
-		    final Iterator i = ((List)x).iterator();
-		    final List result = new ArrayList();
-		    while (i.hasNext()) {
-			String uri = (String) i.next();
-			result.add(
-                            new SVOItem(svoCategory, 
-					uri,
-					substringAfterLastSlash(uri),
-					// NOTE: during development change to
-					// Main.expand to test full range.
-					Main.collapse));
-		    }
-		    setInitial(result);
-		    svoPanel.initialContents(result);
+		    mainPanel.handleQueryResponse((QueryResponse) x);
 		}
 
 		public void onFailure(Throwable caught) {
@@ -91,24 +75,6 @@ public class ServerCalls
 	} else {
 	    // TODO: FIX
 	    Main.mainPanel.getQueryPanel().getSubjectTextBox().setText("ERROR");
-	}
-    }
-
-    private String substringAfterLastSlash(final String x)
-    {
-	int indexOfLastSlash = 0;
-	int i;
-	for (i = 0; i < x.length(); ++i) {
-	    if (x.charAt(i) == '/') {
-		indexOfLastSlash = i;
-	    }
-	}
-	final String result = x.substring(indexOfLastSlash + 1);
-	// If it ends in a slash then remove the ending slash and try again.
-	if (result.length() == 0) {
-	    return substringAfterLastSlash(x.substring(0, x.length()-1));
-	} else {
-	    return result;
 	}
     }
 }

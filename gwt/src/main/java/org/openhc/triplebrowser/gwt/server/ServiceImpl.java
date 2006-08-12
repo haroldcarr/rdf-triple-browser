@@ -10,6 +10,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.differentity.server.Jena;
 
+import com.differentity.client.QueryRequest;
+import com.differentity.client.QueryResponse;
 import com.differentity.client.Service;
 
 public class ServiceImpl
@@ -40,12 +42,20 @@ public class ServiceImpl
 	return "initialization complete";
     }
 
-    public List getInitialContents(String svoCategory)
+    public QueryResponse doQuery(QueryRequest queryRequest)
     {
-	return svoList;
+	List subjectList = (List) svoList.clone();
+	List verbList    = (List) svoList.clone();
+	List objectList  = (List) svoList.clone();
+
+	subjectList.add(0, "http://subject.com/");
+	verbList.add(0, "http://verb.com/");
+	objectList.add(0, "http://object.com/");
+
+	return new QueryResponse(subjectList, verbList, objectList);
     }
 
-    private List svoList = new ArrayList();
+    private ArrayList svoList = new ArrayList();
     {
     svoList.add("http://haroldcarr.com");
     svoList.add("http://www.rojo.com/");

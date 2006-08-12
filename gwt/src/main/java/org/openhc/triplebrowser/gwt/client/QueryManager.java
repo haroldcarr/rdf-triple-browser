@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jul 30 (Sun) 16:02:15 by Harold Carr.
+// Last Modified : 2006 Aug 12 (Sat) 16:24:42 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -10,14 +10,20 @@ import com.google.gwt.user.client.ui.Frame; // *****
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.Window; // *****
 
 import com.differentity.client.Main;
+import com.differentity.client.QueryRequest;
 import com.differentity.client.Test; // *****
+
 
 public class MainPanel
 {
+    private final SVOPanel subjectPanel;
+    private final SVOPanel verbPanel;
+    private final SVOPanel objectPanel;
     private final VerticalPanel subjectVerticalPanel;
     private final VerticalPanel verbVerticalPanel;
     private final VerticalPanel objectVerticalPanel;
@@ -32,17 +38,29 @@ public class MainPanel
     MainPanel() {
 
 	//
-	// Subject, Verb, Object panels.
+	// QueryPanel created before SVO panels since needed.
 	//
 
-	subjectVerticalPanel = new SVOPanel(Main.subject).getPanel();
-	verbVerticalPanel    = new SVOPanel(Main.verb).getPanel();
-	objectVerticalPanel  = new SVOPanel(Main.object).getPanel();
+	queryPanel = new QueryPanel();
+
+	//
+	// Subject, Verb, Object panels.
+	// Create now to get contents from server.
+	//
+
+	subjectPanel = new SVOPanel(Main.subject);
+	verbPanel    = new SVOPanel(Main.verb);
+	objectPanel  = new SVOPanel(Main.object);
+	subjectVerticalPanel = subjectPanel.getPanel();
+	verbVerticalPanel    = verbPanel.getPanel();
+	objectVerticalPanel  = objectPanel.getPanel();
 	svoHorizontalPanel = new HorizontalPanel();
 	svoHorizontalPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
 	svoHorizontalPanel.add(subjectVerticalPanel);
 	svoHorizontalPanel.add(verbVerticalPanel);
 	svoHorizontalPanel.add(objectVerticalPanel);
+
+	doQuery();
 
 	//
 	// Main panel.
@@ -53,7 +71,7 @@ public class MainPanel
 	north = new HTML(Main.differentityDotCom, true);
 	south = new HTML(Main.copyright, true);
 	dockPanel.add(north, DockPanel.NORTH);
-	queryPanel = new QueryPanel();
+
 	dockPanel.add(queryPanel.getHorizontalPanel(), DockPanel.NORTH);
 	// NOTE: - if SOUTH added after CENTER does not show up.
 	dockPanel.add(south, DockPanel.SOUTH);
@@ -73,15 +91,38 @@ public class MainPanel
 	RootPanel.get("slot4"). add(new Test().getWidget());
     }
 
-    public QueryPanel getQueryPanel() 
+    public void doQuery()
     {
-	return queryPanel; 
+	String subject = getSVOQueryValue("?s",queryPanel.getSubjectTextBox());
+	String verb    = getSVOQueryValue("?v",queryPanel.getVerbTextBox());
+	String object  = getSVOQueryValue("?o",queryPanel.getObjectTextBox());
+	QueryRequest queryRequest = new QueryRequest(subject, verb, object);
+	// "this" so async request can call handleQueryResponse.
+	Main.serverCalls.doQuery(this, queryRequest);
     }
 
-    public static HTML getStatusHTML()
+    public void handleQueryResponse(QueryResponse queryResponse)
     {
-	return statusHTML;
+	subjectPanel.setContents(queryResponse.getSubject());
+	verbPanel.setContents(queryResponse.getVerb());
+	objectPanel.setContents(queryResponse.getObject());
     }
+
+    private String getSVOQueryValue(String def, TextBox textBox)
+    {
+	String text = textBox.getText();
+	if (text != null && (! text.equals(""))) {
+	    return text;
+	}
+	return def;
+    }
+
+    public QueryPanel getQueryPanel()             {return queryPanel; }
+    public VerticalPanel getSubjectVerticalPanel(){return subjectVerticalPanel;}
+    public VerticalPanel getVerbVerticalPanel()   {return verbVerticalPanel;}
+    public VerticalPanel getObjectVerticalPanel() {return objectVerticalPanel;}
+
+    public static HTML getStatusHTML()  {return statusHTML;}
 }
 
 // End of file.
