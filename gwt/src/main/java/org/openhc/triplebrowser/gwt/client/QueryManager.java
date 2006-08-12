@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jul 28 (Fri) 21:45:34 by Harold Carr.
+// Last Modified : 2006 Jul 30 (Sun) 16:02:15 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.Window; // *****
 
 import com.differentity.client.Main;
+import com.differentity.client.Test; // *****
 
 public class MainPanel
 {
@@ -67,6 +68,9 @@ public class MainPanel
 
 	// XXX - frame test
 	RootPanel.get("slot3").add(new Frame("http://www.google.com/"));
+
+	// XXX - test
+	RootPanel.get("slot4"). add(new Test().getWidget());
     }
 
     public QueryPanel getQueryPanel() 
