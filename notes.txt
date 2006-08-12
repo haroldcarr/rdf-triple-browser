@@ -1,6 +1,40 @@
-2006-06-14:
+#
+# Created       : 2006 Jul 14 (Wed) 19:15:16 by Harold Carr.
+# Last Modified : 2006 Jul 30 (Sun) 11:33:08 by Harold Carr.
+#
 
-$GWTHOME/applicationCreator.cmd -out z:\\ftptmp\\gwt\\differentity com.differentity.client.Main
+2006-07-30:
+
+-------------------------
+Initial:
+
+send(?s, ?v, ?o) -->
+ <-- ?s-results, ?v-results, ?o-results
+
+-------------------------
+Choose an S
+
+send(s-uri, ?v, ?o) -->
+ <-- v-results, ?o-results
+
+-------------------------
+Choose a V
+
+send(s-uri, v-uri, ?o) -->
+ <-- ?o-results
+
+-------------------------
+Choose an O
+
+nothing
+
+-------------------------
+Clear V
+
+send(s-uri, ?v, o-uri) -->
+ <-- ?v-results
+
+------------------------------------------------------------------------------
 
 2006-07-23:
 
@@ -15,5 +49,11 @@ mkdir bin
 # In the shell do compile/browse - or do
 ./Main-compile.cmd
 # Now any browser will get service (if GWT shell is still running).
+
+------------------------------------------------------------------------------
+
+2006-06-14:
+
+$GWTHOME/applicationCreator.cmd -out z:\\ftptmp\\gwt\\differentity com.differentity.client.Main
 
 # End of file.
