@@ -1,3 +1,8 @@
+//
+// Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
+// Last Modified : 2006 Aug 12 (Sat) 19:19:39 by Harold Carr.
+//
+
 package com.differentity.server;
 
 import java.io.ByteArrayOutputStream;
@@ -49,8 +54,11 @@ public class ServiceImpl
 	List objectList  = (List) svoList.clone();
 
 	subjectList.add(0, "http://subject.com/");
+	subjectList.add(0, queryRequest.getSubject());
 	verbList.add(0, "http://verb.com/");
+	verbList.add(0, queryRequest.getVerb());
 	objectList.add(0, "http://object.com/");
+	objectList.add(0, queryRequest.getObject());
 
 	return new QueryResponse(subjectList, verbList, objectList);
     }
