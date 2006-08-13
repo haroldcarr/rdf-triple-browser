@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 12 (Sat) 16:24:42 by Harold Carr.
+// Last Modified : 2006 Aug 12 (Sat) 19:37:03 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -98,7 +98,7 @@ public class MainPanel
 	String object  = getSVOQueryValue("?o",queryPanel.getObjectTextBox());
 	QueryRequest queryRequest = new QueryRequest(subject, verb, object);
 	// "this" so async request can call handleQueryResponse.
-	Main.serverCalls.doQuery(this, queryRequest);
+	Main.getServerCalls().doQuery(this, queryRequest);
     }
 
     public void handleQueryResponse(QueryResponse queryResponse)
@@ -106,6 +106,30 @@ public class MainPanel
 	subjectPanel.setContents(queryResponse.getSubject());
 	verbPanel.setContents(queryResponse.getVerb());
 	objectPanel.setContents(queryResponse.getObject());
+    }
+
+    public void svoLinkClicked(final String categoryAndURL)
+    {
+	// TODO: Send to server.  Receive updates for other panels.
+	int i = categoryAndURL.indexOf(" ");
+	String category = categoryAndURL.substring(0, i);
+	String url = categoryAndURL.substring(i+1);
+	if (category.equals(Main.subject)) {
+	    Main.getMainPanel()
+		.getQueryPanel().getSubjectTextBox().setText(url);
+	} else if (category.equals(Main.verb)) {
+	    Main.getMainPanel()
+		.getQueryPanel().getVerbTextBox().setText(url);
+	} else if (category.equals(Main.object)) {
+            Main.getMainPanel()
+		.getQueryPanel().getObjectTextBox().setText(url);
+	} else {
+	    // TODO: FIX
+	    Main.getMainPanel()
+		.getQueryPanel().getSubjectTextBox().setText("ERROR");
+	    return;
+	}
+	doQuery();
     }
 
     private String getSVOQueryValue(String def, TextBox textBox)
@@ -117,11 +141,7 @@ public class MainPanel
 	return def;
     }
 
-    public QueryPanel getQueryPanel()             {return queryPanel; }
-    public VerticalPanel getSubjectVerticalPanel(){return subjectVerticalPanel;}
-    public VerticalPanel getVerbVerticalPanel()   {return verbVerticalPanel;}
-    public VerticalPanel getObjectVerticalPanel() {return objectVerticalPanel;}
-
+    public QueryPanel getQueryPanel()   {return queryPanel;}
     public static HTML getStatusHTML()  {return statusHTML;}
 }
 
