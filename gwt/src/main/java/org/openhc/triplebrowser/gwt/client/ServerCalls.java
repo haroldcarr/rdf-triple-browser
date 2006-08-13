@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 12 (Sat) 15:30:06 by Harold Carr.
+// Last Modified : 2006 Aug 12 (Sat) 19:24:47 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -58,24 +58,6 @@ public class ServerCalls
 		    Window.alert(".getInitialContents: " + caught);
 		}
 	    });
-    }
-
-    public void svoLinkClicked(final String categoryAndURL)
-    {
-	// TODO: Send to server.  Receive updates for other panels.
-	int i = categoryAndURL.indexOf(" ");
-	String category = categoryAndURL.substring(0, i);
-	String url = categoryAndURL.substring(i+1);
-	if (category.equals(Main.subject)) {
-	    Main.mainPanel.getQueryPanel().getSubjectTextBox().setText(url);
-	} else if (category.equals(Main.verb)) {
-	    Main.mainPanel.getQueryPanel().getVerbTextBox().setText(url);
-	} else if (category.equals(Main.object)) {
-            Main.mainPanel.getQueryPanel().getObjectTextBox().setText(url);
-	} else {
-	    // TODO: FIX
-	    Main.mainPanel.getQueryPanel().getSubjectTextBox().setText("ERROR");
-	}
     }
 }
 
