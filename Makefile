@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2006 Jul 29 (Sat) 09:21:45 by Harold Carr.
+# Last Modified : 2006 Aug 12 (Sat) 19:08:19 by Harold Carr.
 #
 
 SRCDIR		= ./src
@@ -16,15 +16,16 @@ JAVA		= $(JAVA_HOME)/java
 JAVAC		= $(JAVA_HOME)/javac
 GWT_HOME	= $(shell hcGwtHome)
 PSEP		= $(shell hcPathSep)
-GWT_DEV		= $(GWT_HOME)/gwt-dev-windows.jar
-GWT_RUN		= $(GWT_HOME)/gwt-user.jar
+GWT_DEV         = $(GWT_HOME)/gwt-dev-windows.jar
+GWT_SERVLET     = $(GWT_HOME)/gwt-servlet.jar
+GWT_USER        = $(GWT_HOME)/gwt-user.jar
 JENA_CP		= $(shell hcJenaClasspath)
 
 SERVER_FILES	= \
 	$(SERVER_PATH)/Jena.java \
 	$(SERVER_PATH)/ServiceImpl.java
 
-CP		= "$(SRCDIR)$(PSEP)$(BINDIR)$(PSEP)$(GWT_DEV)$(PSEP)$(GWT_RUN)$(PSEP)$(JENA_CP)"
+CP		= "$(SRCDIR)$(PSEP)$(BINDIR)$(PSEP)$(GWT_DEV)$(PSEP)$(GWT_USER)$(PSEP)$(GWT_SERVLET)$(PSEP)$(JENA_CP)"
 GWT_COMPILER	= $(JAVA) -cp $(CP) com.google.gwt.dev.GWTCompiler
 GWT_COMPILER_HELP = $(GWT_COMPILER) --help
 GWT_COMPILE	= $(GWT_COMPILER) -out $(OUTDIR) $(URL)
