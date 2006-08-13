@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jul 28 (Fri) 21:47:27 by Harold Carr.
+// Last Modified : 2006 Aug 12 (Sat) 19:35:19 by Harold Carr.
 //
 
 /*
@@ -25,22 +25,22 @@ public class Main
     implements 
 	EntryPoint // Entry point classes define onModuleLoad()
 {
-    public static String collapse           = "collapse";
-    public static String collapseAllTags    = "collapse all tags";
-    public static String copyright          = "copyright 2006";
-    public static String differentityDotCom = "differentity.com";
-    public static String expand             = "expand";
-    public static String expandAllTags      = "expand all tags";
-    public static String minusSymbol        = "-";
-    public static String object             = "object";
-    public static String plusSymbol         = "+";
-    public static String subject            = "subject";
-    public static String subjectVerbObject  = "subjectVerbObject";
-    public static String verb               = "verb";
+    public static final String collapse           = "collapse";
+    public static final String collapseAllTags    = "collapse all tags";
+    public static final String copyright          = "copyright 2006";
+    public static final String differentityDotCom = "differentity.com";
+    public static final String expand             = "expand";
+    public static final String expandAllTags      = "expand all tags";
+    public static final String minusSymbol        = "-";
+    public static final String object             = "object";
+    public static final String plusSymbol         = "+";
+    public static final String subject            = "subject";
+    public static final String subjectVerbObject  = "subjectVerbObject";
+    public static final String verb               = "verb";
 
     // TODO: these should be final.
-    public static ServerCalls serverCalls;
-    public static MainPanel mainPanel;
+    private static MainPanel mainPanel;
+    private static ServerCalls serverCalls;
 
     /**
      * This is the entry point method.
@@ -64,6 +64,8 @@ public class Main
 	    return (pending ? Main.expand : Main.collapse);
 	}
     }
+    public static MainPanel getMainPanel()     { return mainPanel; }
+    public static ServerCalls getServerCalls() { return serverCalls; }
 }
 
 // End of file.

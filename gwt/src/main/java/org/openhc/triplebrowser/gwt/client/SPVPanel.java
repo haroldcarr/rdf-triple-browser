@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 12 (Sat) 16:30:20 by Harold Carr.
+// Last Modified : 2006 Aug 12 (Sat) 19:30:59 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -104,7 +104,7 @@ public class SVOPanel
 
 	    svoItem.getHyperlink().addClickListener(new ClickListener() {
 		public void onClick(final Widget sender) {
-		    Main.serverCalls.svoLinkClicked(((Hyperlink)sender).getTargetHistoryToken());
+		    Main.getMainPanel().svoLinkClicked(((Hyperlink)sender).getTargetHistoryToken());
 		}
 	    });
 
