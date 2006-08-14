@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 12 (Sat) 19:35:19 by Harold Carr.
+// Last Modified : 2006 Aug 12 (Sat) 21:11:43 by Harold Carr.
 //
 
 /*
@@ -34,6 +34,7 @@ public class Main
     public static final String minusSymbol        = "-";
     public static final String object             = "object";
     public static final String plusSymbol         = "+";
+    public static final String questionMarkSymbol = "?";
     public static final String subject            = "subject";
     public static final String subjectVerbObject  = "subjectVerbObject";
     public static final String verb               = "verb";
@@ -51,8 +52,15 @@ public class Main
 	// TODO: a race with next statement that sets up the HTML 
 	// used by initialize
 	serverCalls.initialize();
-	mainPanel = new MainPanel();
     }
+
+    // NOTE: After initial development - when the server is NOT
+    // started by the client, then this async callback will not be
+    // necessary.
+    public static void makeMainPanel()
+    {
+	mainPanel = new MainPanel();
+    }	
 
     public static String getExpandCollapseState(
 	final String expandCollapseState,
