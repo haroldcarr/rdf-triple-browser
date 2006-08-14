@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 12 (Sat) 19:37:03 by Harold Carr.
+// Last Modified : 2006 Aug 12 (Sat) 21:34:24 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -93,10 +93,15 @@ public class MainPanel
 
     public void doQuery()
     {
-	String subject = getSVOQueryValue("?s",queryPanel.getSubjectTextBox());
-	String verb    = getSVOQueryValue("?v",queryPanel.getVerbTextBox());
-	String object  = getSVOQueryValue("?o",queryPanel.getObjectTextBox());
+	String subject = 
+	    getSVOQueryValue(Main.subject, queryPanel.getSubjectTextBox());
+	String verb    = 
+	    getSVOQueryValue(Main.verb,    queryPanel.getVerbTextBox());
+	String object  = 
+	    getSVOQueryValue(Main.object,  queryPanel.getObjectTextBox());
+
 	QueryRequest queryRequest = new QueryRequest(subject, verb, object);
+
 	// "this" so async request can call handleQueryResponse.
 	Main.getServerCalls().doQuery(this, queryRequest);
     }
@@ -106,6 +111,7 @@ public class MainPanel
 	subjectPanel.setContents(queryResponse.getSubject());
 	verbPanel.setContents(queryResponse.getVerb());
 	objectPanel.setContents(queryResponse.getObject());
+	getStatusHTML().setHTML(queryResponse.getStatus());
     }
 
     public void svoLinkClicked(final String categoryAndURL)
@@ -138,7 +144,7 @@ public class MainPanel
 	if (text != null && (! text.equals(""))) {
 	    return text;
 	}
-	return def;
+	return Main.questionMarkSymbol + def;
     }
 
     public QueryPanel getQueryPanel()   {return queryPanel;}
