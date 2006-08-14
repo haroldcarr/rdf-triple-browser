@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 12 (Sat) 19:24:47 by Harold Carr.
+// Last Modified : 2006 Aug 12 (Sat) 20:17:10 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -36,6 +36,7 @@ public class ServerCalls
             "FOO",
 	    new AsyncCallback() {
 		public void onSuccess(Object result) {
+		    Main.makeMainPanel();
 		    MainPanel.getStatusHTML().setHTML(result.toString());
 		}
 		public void onFailure(Throwable caught) {
@@ -55,7 +56,7 @@ public class ServerCalls
 		}
 
 		public void onFailure(Throwable caught) {
-		    Window.alert(".getInitialContents: " + caught);
+		    Window.alert(".doQuery: " + caught);
 		}
 	    });
     }
