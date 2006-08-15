@@ -1,13 +1,15 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 12 (Sat) 21:11:43 by Harold Carr.
+// Last Modified : 2006 Aug 14 (Mon) 22:36:16 by Harold Carr.
 //
 
 /*
   TODO:
   - FIX: (when trying from any separate browser while gwt-shell is running):
-Cannot find resource 'Main.html' in the public path of module 'com.differentity.Main'
-  - Server-side integrated with Jena
+         When selectinga SVO URI starts extra new window.
+         Kill that window and the original window with the Request/Response
+         done.
+  - More Jena.
   - Figure out how to make sov panels expand.
   - Style
  */
