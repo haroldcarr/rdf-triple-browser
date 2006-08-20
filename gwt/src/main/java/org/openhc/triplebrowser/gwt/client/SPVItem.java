@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Jul 28 (Fri) 18:13:32 by Harold Carr.
+// Last Modified : 2006 Aug 20 (Sun) 13:29:46 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -13,9 +13,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.differentity.client.Main;
 
-public class SVOItem
+public class SPVItem
 {
-    private final String svoCategory;
+    private final String spvCategory;
     private final String expandedName;
     private final String collapsedName;
     private String expandCollapseState;
@@ -24,16 +24,16 @@ public class SVOItem
     private final HorizontalPanel horizontalPanel;
     private final VerticalPanel verticalPanel;
     
-    SVOItem(String svoCategory, String expandedName, String collapsedName,
+    SPVItem(String spvCategory, String expandedName, String collapsedName,
 	    String expandCollapseState)
     {
-	this.svoCategory = svoCategory;
+	this.spvCategory = spvCategory;
 	this.expandedName = expandedName;
 	this.collapsedName = collapsedName;
 	this.expandCollapseState = expandCollapseState;
 	button = new Button(Main.plusSymbol);
 	hyperlink = new Hyperlink(expandedName,
-				  svoCategory + " " + expandedName);
+				  spvCategory + " " + expandedName);
 	horizontalPanel = new HorizontalPanel();
 	verticalPanel = new VerticalPanel();
 
@@ -50,20 +50,25 @@ public class SVOItem
 	}
     }
 
-    String getSVOCategory() { return svoCategory; }
-    String getExpandedName() { return expandedName; }
-    String getCollapsedName() { return collapsedName; }
+    String getSPVCategory()              { return spvCategory; }
+    String getExpandedName()             { return expandedName; }
+    String getCollapsedName()            { return collapsedName; }
+    Button getButton()                   { return button; }
+    Hyperlink getHyperlink()             { return hyperlink; }
+    HorizontalPanel getHorizontalPanel() { return horizontalPanel; }
+    VerticalPanel getVerticalPanel()     { return verticalPanel; }
+
     String getCurrentExpandCollapseState() {
 	return Main.getExpandCollapseState(expandCollapseState, false);
     }
+
     String getPendingExpandCollapseState() {
 	return Main.getExpandCollapseState(expandCollapseState, true);
     }
-    void   setExpandCollapseState(String x) { expandCollapseState = x; }
-    Button getButton() { return button; }
-    Hyperlink getHyperlink() { return hyperlink; }
-    HorizontalPanel getHorizontalPanel() { return horizontalPanel; }
-    VerticalPanel getVerticalPanel() { return verticalPanel; }
+
+    void   setExpandCollapseState(String x) {
+	expandCollapseState = x; 
+    }
 }
 
 // End of file.

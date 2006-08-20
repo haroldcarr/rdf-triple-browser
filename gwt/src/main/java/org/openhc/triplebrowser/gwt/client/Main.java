@@ -1,12 +1,12 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 14 (Mon) 22:36:16 by Harold Carr.
+// Last Modified : 2006 Aug 20 (Sun) 13:23:27 by Harold Carr.
 //
 
 /*
   TODO:
   - FIX: (when trying from any separate browser while gwt-shell is running):
-         When selectinga SVO URI starts extra new window.
+         When selectinga SPV URI starts extra new window.
          Kill that window and the original window with the Request/Response
          done.
   - More Jena.
@@ -27,19 +27,22 @@ public class Main
     implements 
 	EntryPoint // Entry point classes define onModuleLoad()
 {
-    public static final String collapse           = "collapse";
-    public static final String collapseAllTags    = "collapse all tags";
-    public static final String copyright          = "copyright 2006";
-    public static final String differentityDotCom = "differentity.com";
-    public static final String expand             = "expand";
-    public static final String expandAllTags      = "expand all tags";
-    public static final String minusSymbol        = "-";
-    public static final String object             = "object";
-    public static final String plusSymbol         = "+";
-    public static final String questionMarkSymbol = "?";
-    public static final String subject            = "subject";
-    public static final String subjectVerbObject  = "subjectVerbObject";
-    public static final String verb               = "verb";
+    public static final String collapse             = "collapse";
+    public static final String collapseAllTags      = "collapse all tags";
+    public static final String copyright            = "copyright 2006";
+    public static final String differentityDotCom   = "differentity.com";
+    public static final String expand               = "expand";
+    public static final String expandAllTags        = "expand all tags";
+    public static final String minusSymbol          = "-";
+    public static final String plusSymbol           = "+";
+    public static final String property             = "property";
+    public static final String questionMarkSymbol   = "?";
+    public static final String qsubject             = "?subject";
+    public static final String qproperty            = "?property";
+    public static final String qvalue               = "?value";
+    public static final String subject              = "subject";
+    public static final String subjectPropertyValue = "subjectPropertyValue";
+    public static final String value                = "value";
 
     // TODO: these should be final.
     private static MainPanel mainPanel;

@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 12 (Sat) 19:30:59 by Harold Carr.
+// Last Modified : 2006 Aug 20 (Sun) 13:20:13 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -19,22 +19,22 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.differentity.client.Main;
 
-public class SVOPanel
+public class SPVPanel
 {
     String expandCollapseState;
 
-    private final String svoCategory; // For debug only.
+    private final String spvCategory; // For debug only.
     private List  contents;
     private final VerticalPanel verticalInsideScroll;
     private final VerticalPanel topVerticalPanel;
     private final Button topButton;
     private final ScrollPanel scrollPanel;
 
-    SVOPanel(final String svoCategory)
+    SPVPanel(final String spvCategory)
     {
 	this.expandCollapseState = Main.collapse;
 
-	this.svoCategory = svoCategory;
+	this.spvCategory = spvCategory;
 
 	// Begin layout.
 	topVerticalPanel = new VerticalPanel();
@@ -47,7 +47,7 @@ public class SVOPanel
 
 
 	scrollPanel = new ScrollPanel(verticalInsideScroll);
-	scrollPanel.setStyleName(Main.subjectVerbObject);
+	scrollPanel.setStyleName(Main.subjectPropertyValue);
 	topVerticalPanel.add(scrollPanel);
 	// End layout.
 	
@@ -77,7 +77,7 @@ public class SVOPanel
 	while (i.hasNext()) {
 	    String uri = (String) i.next();
 	    result.add(
-		       new SVOItem(svoCategory, 
+		       new SPVItem(spvCategory, 
 				   uri,
 				   substringAfterLastSlash(uri),
 				   // NOTE: during development change to
@@ -95,36 +95,36 @@ public class SVOPanel
 	verticalInsideScroll.clear();
 	final Iterator i = contents.iterator();
 	while (i.hasNext()) {
-	    final SVOItem svoItem = (SVOItem) i.next();
-	    verticalInsideScroll.add(svoItem.getVerticalPanel());
+	    final SPVItem spvItem = (SPVItem) i.next();
+	    verticalInsideScroll.add(spvItem.getVerticalPanel());
 
 	    if (expandCollapseState.equals(Main.expand)) {
-		svoItem.getHyperlink().setText(svoItem.getExpandedName());
+		spvItem.getHyperlink().setText(spvItem.getExpandedName());
 	    }
 
-	    svoItem.getHyperlink().addClickListener(new ClickListener() {
+	    spvItem.getHyperlink().addClickListener(new ClickListener() {
 		public void onClick(final Widget sender) {
-		    Main.getMainPanel().svoLinkClicked(((Hyperlink)sender).getTargetHistoryToken());
+		    Main.getMainPanel().spvLinkClicked(((Hyperlink)sender).getTargetHistoryToken());
 		}
 	    });
 
-	    svoItem.getButton().addClickListener(new ClickListener() {
+	    spvItem.getButton().addClickListener(new ClickListener() {
 	        public void onClick(Widget sender) {
 		    // TODO: Triple expand/collapse:
 		    // + = expand to full URL and N "characters" of source.
 		    // * = expand to full URL and all source.
 		    // - = collapse to short URL and no source.
-		    if (svoItem.getPendingExpandCollapseState().equals(Main.expand)) {
-			svoItem.getHyperlink().setText(svoItem.getExpandedName());
-			svoItem.getVerticalPanel().add(new Frame(svoItem.getExpandedName()));
-			svoItem.setExpandCollapseState(Main.expand);
-			svoItem.getButton().setText(Main.minusSymbol);
+		    if (spvItem.getPendingExpandCollapseState().equals(Main.expand)) {
+			spvItem.getHyperlink().setText(spvItem.getExpandedName());
+			spvItem.getVerticalPanel().add(new Frame(spvItem.getExpandedName()));
+			spvItem.setExpandCollapseState(Main.expand);
+			spvItem.getButton().setText(Main.minusSymbol);
 		    } else {
-			Widget w = svoItem.getVerticalPanel().getWidget(1);
-			svoItem.getVerticalPanel().remove(w);
-			svoItem.getHyperlink().setText(svoItem.getCollapsedName());
-			svoItem.setExpandCollapseState(Main.collapse);
-			svoItem.getButton().setText(Main.plusSymbol);
+			Widget w = spvItem.getVerticalPanel().getWidget(1);
+			spvItem.getVerticalPanel().remove(w);
+			spvItem.getHyperlink().setText(spvItem.getCollapsedName());
+			spvItem.setExpandCollapseState(Main.collapse);
+			spvItem.getButton().setText(Main.plusSymbol);
 		    }
 		}});
 	}
@@ -137,12 +137,12 @@ public class SVOPanel
 	final Iterator j = contents.iterator();
 	while (i.hasNext()) {
 	    final VerticalPanel verticalPanel = (VerticalPanel) i.next();
-	    final SVOItem svoItem = (SVOItem) j.next();
-	    if (svoItem.getCurrentExpandCollapseState().equals(Main.collapse)){
+	    final SPVItem spvItem = (SPVItem) j.next();
+	    if (spvItem.getCurrentExpandCollapseState().equals(Main.collapse)){
 		if (pendingExpandCollapseState.equals(Main.expand)) {
-		    svoItem.getHyperlink().setText(svoItem.getExpandedName());
+		    spvItem.getHyperlink().setText(spvItem.getExpandedName());
 		} else {
-		    svoItem.getHyperlink().setText(svoItem.getCollapsedName());
+		    spvItem.getHyperlink().setText(spvItem.getCollapsedName());
 		}
 	    }
 	}

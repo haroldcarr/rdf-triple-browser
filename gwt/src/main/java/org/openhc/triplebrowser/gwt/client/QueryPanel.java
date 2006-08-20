@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 14 (Mon) 22:21:15 by Harold Carr.
+// Last Modified : 2006 Aug 20 (Sun) 13:27:13 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -15,49 +15,49 @@ public class QueryPanel
 {
     private final HorizontalPanel horizontalPanel;
     private final TextBox         subjectTextBox;
-    private final TextBox         verbTextBox;
-    private final TextBox         objectTextBox;
+    private final TextBox         propertyTextBox;
+    private final TextBox         valueTextBox;
     private final Button          subjectResetButton;
-    private final Button          verbResetButton;
-    private final Button          objectResetButton;
+    private final Button          propertyResetButton;
+    private final Button          valueResetButton;
 
     QueryPanel()
     {
-	subjectTextBox = new TextBox();
-	verbTextBox    = new TextBox();
-	objectTextBox  = new TextBox();
-	subjectResetButton = new Button("*");
-	verbResetButton    = new Button("*");
-	objectResetButton  = new Button("*");
+	subjectTextBox  = new TextBox();
+	propertyTextBox = new TextBox();
+	valueTextBox    = new TextBox();
+	subjectResetButton  = new Button("*");
+	propertyResetButton = new Button("*");
+	valueResetButton    = new Button("*");
 	subjectResetButton.addClickListener(new ClickListener() {
 	    public void onClick(Widget sender) {
 		subjectTextBox.setText("");
 		Main.getMainPanel().doQuery();
 	    }
 	});
-	verbResetButton.addClickListener(new ClickListener() {
+	propertyResetButton.addClickListener(new ClickListener() {
 	    public void onClick(Widget sender) {
-		verbTextBox.setText("");
+		propertyTextBox.setText("");
 		Main.getMainPanel().doQuery();
 	    }
 	});
-	objectResetButton.addClickListener(new ClickListener() {
+	valueResetButton.addClickListener(new ClickListener() {
 	    public void onClick(Widget sender) {
-		objectTextBox.setText("");
+		valueTextBox.setText("");
 		Main.getMainPanel().doQuery();
 	    }
 	});
 	horizontalPanel = new HorizontalPanel();
 	horizontalPanel.add(subjectResetButton);
 	horizontalPanel.add(subjectTextBox);
-	horizontalPanel.add(verbResetButton);
-	horizontalPanel.add(verbTextBox);
-	horizontalPanel.add(objectResetButton);
-	horizontalPanel.add(objectTextBox);
+	horizontalPanel.add(propertyResetButton);
+	horizontalPanel.add(propertyTextBox);
+	horizontalPanel.add(valueResetButton);
+	horizontalPanel.add(valueTextBox);
     }
-    TextBox         getSubjectTextBox() { return subjectTextBox; }
-    TextBox         getVerbTextBox   () { return verbTextBox; }
-    TextBox         getObjectTextBox () { return objectTextBox; }
+    TextBox         getSubjectTextBox()  { return subjectTextBox; }
+    TextBox         getPropertyTextBox() { return propertyTextBox; }
+    TextBox         getValueTextBox()    { return valueTextBox; }
     HorizontalPanel getHorizontalPanel() { return horizontalPanel; }
 }
 

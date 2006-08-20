@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Aug 12 (Sat) 14:56:41 by Harold Carr.
-// Last Modified : 2006 Aug 12 (Sat) 21:32:49 by Harold Carr.
+// Last Modified : 2006 Aug 20 (Sun) 13:28:06 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -23,25 +23,25 @@ public class QueryResponse
     /**
      * @gwt.typeArgs <java.lang.String>
      */
-    private List verb;
+    private List property;
 
     /**
      * @gwt.typeArgs <java.lang.String>
      */
-    private List object;
+    private List value;
 
     private String status;
 
     // GWT requires zero arg constructor.
     public QueryResponse() {}
 
-    public QueryResponse(final List subject, final List verb, 
-			 final List object, final String status)
+    public QueryResponse(final List subject, final List property, 
+			 final List value, final String status)
     {
-	this.subject = subject;
-	this.verb    = verb;
-	this.object  = object;
-	this.status  = status;
+	this.subject  = subject;
+	this.property = property;
+	this.value    = value;
+	this.status   = status;
     }
 
     /**
@@ -52,12 +52,12 @@ public class QueryResponse
     /**
      * @gwt.typeArgs <java.lang.String>
      */
-    public List getVerb() { return verb; }
+    public List getProperty() { return property; }
 
     /**
      * @gwt.typeArgs <java.lang.String>
      */
-    public List getObject() { return object; }
+    public List getValue() { return value; }
 
     public String getStatus() { return status; }
 }

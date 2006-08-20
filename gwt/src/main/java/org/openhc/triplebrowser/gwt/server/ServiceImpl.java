@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2006 Aug 13 (Sun) 20:31:42 by Harold Carr.
+// Last Modified : 2006 Aug 20 (Sun) 13:34:34 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -62,8 +62,8 @@ public class ServiceImpl
 	}
 	QueryResults queryResults = 
 	    jena.doQuery(queryRequest.getSubject(),
-			 queryRequest.getVerb(),
-			 queryRequest.getObject());
+			 queryRequest.getProperty(),
+			 queryRequest.getValue());
 
 	return makeResponse(queryRequest, queryResults);
     }
@@ -73,17 +73,17 @@ public class ServiceImpl
     {
 	String status =
 	    " Service: " +
-	    "[subject " + queryRequest.getSubject() + "]" +
-	    "[verb "    + queryRequest.getVerb()    + "]" +
-	    "[object "  + queryRequest.getObject()  + "]" + "<br/>" +
+	    "[subject "  + queryRequest.getSubject()  + "]" +
+	    "[property " + queryRequest.getProperty() + "]" +
+	    "[value "    + queryRequest.getValue()    + "]" + "<br/>" +
 	    Jena.lastQueryString;
 	/*
 	List first  = new ArrayList();
 	List second = new ArrayList();
 	List third  = new ArrayList();
 	first.add(queryRequest.getSubject());
-	second.add(queryRequest.getVerb());
-	third.add(queryRequest.getObject());
+	second.add(queryRequest.getProperty());
+	third.add(queryRequest.getValue());
 
 	List list = queryResults.getResultVars();
 	Iterator i = list.iterator();
@@ -98,27 +98,33 @@ public class ServiceImpl
 	}
 	return new QueryResponse(first, second, third, status);
 	*/
-	boolean isSubjectVar = false;
-	boolean isVerbVar = false;
-	boolean isObjectVar = false;
+	boolean isSubjectVar  = false;
+	boolean isPropertyVar = false;
+	boolean isValueVar    = false;
 	List list = queryResults.getResultVars();
 	Iterator i = list.iterator();
 	while (i.hasNext()) {
 	    String varName = (String) i.next();
 	    if (varName.equals(Main.subject)) {
-		isSubjectVar = true;
-	    } else if (varName.equals(Main.verb)) {
-		isVerbVar = true;
-	    } else if (varName.equals(Main.object)) {
-		isObjectVar = true;
+		isSubjectVar  = true;
+	    } else if (varName.equals(Main.property)) {
+		isPropertyVar = true;
+	    } else if (varName.equals(Main.value)) {
+		isValueVar    = true;
 	    }
 	}
-	List subjectResponse = new ArrayList();
-	List verbResponse    = new ArrayList();
-	List objectResponse  = new ArrayList();
-	if (!isSubjectVar) { subjectResponse.add(queryRequest.getSubject()); }
-	if (!isVerbVar)    { verbResponse.add   (queryRequest.getVerb()); }
-	if (!isObjectVar)  { objectResponse.add (queryRequest.getObject()); }
+	List subjectResponse  = new ArrayList();
+	List propertyResponse = new ArrayList();
+	List valueResponse    = new ArrayList();
+	if (!isSubjectVar) {
+	    subjectResponse.add(queryRequest.getSubject()); 
+	}
+	if (!isPropertyVar) {
+	    propertyResponse.add(queryRequest.getProperty());
+	}
+	if (!isValueVar) {
+	    valueResponse.add (queryRequest.getValue()); 
+	}
 	while (queryResults.hasNext()) {
 	    ResultBinding resultBinding = (ResultBinding) queryResults.next();
 	    if (isSubjectVar) { 
@@ -127,21 +133,21 @@ public class ServiceImpl
 		    subjectResponse.add(x);
 		}
 	    }
-	    if (isVerbVar) {
-		String x = resultBinding.get(Main.verb).toString();
-		if (! verbResponse.contains(x)) {
-		    verbResponse.add(x);
+	    if (isPropertyVar) {
+		String x = resultBinding.get(Main.property).toString();
+		if (! propertyResponse.contains(x)) {
+		    propertyResponse.add(x);
 		}
 	    }
-	    if (isObjectVar) {
-		String x = resultBinding.get(Main.object).toString();
-		if (! objectResponse.contains(x)) {
-		    objectResponse.add(x);
+	    if (isValueVar) {
+		String x = resultBinding.get(Main.value).toString();
+		if (! valueResponse.contains(x)) {
+		    valueResponse.add(x);
 		}
 	    }
 	}
-	return new QueryResponse(subjectResponse, verbResponse, objectResponse,
-				 status);
+	return new QueryResponse(subjectResponse, propertyResponse,
+				 valueResponse, status);
     }
 
     ////////////////////////////////////////////////////
@@ -151,66 +157,67 @@ public class ServiceImpl
 
     private QueryResponse doQueryTest(QueryRequest queryRequest)
     {
-	List subjectList = (List) svoList.clone();
-	List verbList    = (List) svoList.clone();
-	List objectList  = (List) svoList.clone();
+	List subjectList  = (List) spvList.clone();
+	List propertyList = (List) spvList.clone();
+	List valueList    = (List) spvList.clone();
 
 	subjectList.add(0, "http://subject.com/");
 	subjectList.add(0, queryRequest.getSubject());
-	verbList.add(0, "http://verb.com/");
-	verbList.add(0, queryRequest.getVerb());
-	objectList.add(0, "http://object.com/");
-	objectList.add(0, queryRequest.getObject());
+	propertyList.add(0, "http://property.com/");
+	propertyList.add(0, queryRequest.getProperty());
+	valueList.add(0, "http://value.com/");
+	valueList.add(0, queryRequest.getValue());
 
-	return new QueryResponse(subjectList, verbList, objectList, "TEST");
+	return new QueryResponse(subjectList, propertyList, valueList, "TEST");
     }
 
-    private ArrayList svoList = new ArrayList();
+    // TEST DATA
+    private ArrayList spvList = new ArrayList();
     {
-    svoList.add("http://haroldcarr.com");
-    svoList.add("http://www.rojo.com/");
-    svoList.add("http://google.com");
-    svoList.add("http://del.icio.us/");
-    svoList.add("http://differentity.com/haroldcarr/author");
-    svoList.add("http://differentity.com/haroldcarr/authorPrefix");
-    svoList.add("http://differentity.com/haroldcarr/authorFirstName");
-    svoList.add("http://differentity.com/haroldcarr/authorMiddleName");
-    svoList.add("http://differentity.com/haroldcarr/authorLastName");
-    svoList.add("http://differentity.com/haroldcarr/authorSuffix");
-    svoList.add("http://differentity.com/haroldcarr/authorBorn");
-    svoList.add("http://differentity.com/haroldcarr/authorDied");
-    svoList.add("http://differentity.com/haroldcarr/authorIdea");
-    svoList.add("http://differentity.com/haroldcarr/author");
-    svoList.add("http://differentity.com/haroldcarr/ideaInCategory");
-    svoList.add("http://differentity.com/haroldcarr/work");
-    svoList.add("http://differentity.com/haroldcarr/workAuthor");
-    svoList.add("http://differentity.com/haroldcarr/workTitle");
-    svoList.add("http://differentity.com/haroldcarr/workPublished");
-    svoList.add("http://differentity.com/haroldcarr/workWritten");
-    svoList.add("http://differentity.com/haroldcarr/bataille");
-    svoList.add("http://differentity.com/haroldcarr/book");
-    svoList.add("http://differentity.com/haroldcarr/guilty");
-    svoList.add("http://differentity.com/haroldcarr/eroticism");
-    svoList.add("http://differentity.com/haroldcarr/blue_of_noon");
-    svoList.add("http://differentity.com/haroldcarr/inner_experience");
+    spvList.add("http://haroldcarr.com");
+    spvList.add("http://www.rojo.com/");
+    spvList.add("http://google.com");
+    spvList.add("http://del.icio.us/");
+    spvList.add("http://differentity.com/haroldcarr/author");
+    spvList.add("http://differentity.com/haroldcarr/authorPrefix");
+    spvList.add("http://differentity.com/haroldcarr/authorFirstName");
+    spvList.add("http://differentity.com/haroldcarr/authorMiddleName");
+    spvList.add("http://differentity.com/haroldcarr/authorLastName");
+    spvList.add("http://differentity.com/haroldcarr/authorSuffix");
+    spvList.add("http://differentity.com/haroldcarr/authorBorn");
+    spvList.add("http://differentity.com/haroldcarr/authorDied");
+    spvList.add("http://differentity.com/haroldcarr/authorIdea");
+    spvList.add("http://differentity.com/haroldcarr/author");
+    spvList.add("http://differentity.com/haroldcarr/ideaInCategory");
+    spvList.add("http://differentity.com/haroldcarr/work");
+    spvList.add("http://differentity.com/haroldcarr/workAuthor");
+    spvList.add("http://differentity.com/haroldcarr/workTitle");
+    spvList.add("http://differentity.com/haroldcarr/workPublished");
+    spvList.add("http://differentity.com/haroldcarr/workWritten");
+    spvList.add("http://differentity.com/haroldcarr/bataille");
+    spvList.add("http://differentity.com/haroldcarr/book");
+    spvList.add("http://differentity.com/haroldcarr/guilty");
+    spvList.add("http://differentity.com/haroldcarr/eroticism");
+    spvList.add("http://differentity.com/haroldcarr/blue_of_noon");
+    spvList.add("http://differentity.com/haroldcarr/inner_experience");
 
-    svoList.add("http://differentity.com/haroldcarr/similarTo");
-    svoList.add("http://differentity.com/haroldcarr/equalTo");
-    svoList.add("http://differentity.com/haroldcarr/contraryTo");
-    svoList.add("http://differentity.com/haroldcarr/contrarstWith");
-    svoList.add("http://differentity.com/haroldcarr/relatesTo");
-    svoList.add("http://differentity.com/haroldcarr/fate");
-    svoList.add("http://differentity.com/haroldcarr/formlessness");
-    svoList.add("http://differentity.com/haroldcarr/god");
-    svoList.add("http://differentity.com/haroldcarr/stability");
-    svoList.add("http://differentity.com/haroldcarr/reason");
-    svoList.add("http://differentity.com/haroldcarr/nothingness");
-    svoList.add("http://differentity.com/haroldcarr/chance");
-    svoList.add("http://differentity.com/haroldcarr/strength");
-    svoList.add("http://differentity.com/haroldcarr/death");
-    svoList.add("http://differentity.com/haroldcarr/anguish");
-    svoList.add("http://differentity.com/haroldcarr/silence");
-    svoList.add("http://differentity.com/haroldcarr/limit");
+    spvList.add("http://differentity.com/haroldcarr/similarTo");
+    spvList.add("http://differentity.com/haroldcarr/equalTo");
+    spvList.add("http://differentity.com/haroldcarr/contraryTo");
+    spvList.add("http://differentity.com/haroldcarr/contrarstWith");
+    spvList.add("http://differentity.com/haroldcarr/relatesTo");
+    spvList.add("http://differentity.com/haroldcarr/fate");
+    spvList.add("http://differentity.com/haroldcarr/formlessness");
+    spvList.add("http://differentity.com/haroldcarr/god");
+    spvList.add("http://differentity.com/haroldcarr/stability");
+    spvList.add("http://differentity.com/haroldcarr/reason");
+    spvList.add("http://differentity.com/haroldcarr/nothingness");
+    spvList.add("http://differentity.com/haroldcarr/chance");
+    spvList.add("http://differentity.com/haroldcarr/strength");
+    spvList.add("http://differentity.com/haroldcarr/death");
+    spvList.add("http://differentity.com/haroldcarr/anguish");
+    spvList.add("http://differentity.com/haroldcarr/silence");
+    spvList.add("http://differentity.com/haroldcarr/limit");
     }
 }
 

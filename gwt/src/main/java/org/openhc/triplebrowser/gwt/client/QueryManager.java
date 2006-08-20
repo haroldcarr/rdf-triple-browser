@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 12 (Sat) 21:34:24 by Harold Carr.
+// Last Modified : 2006 Aug 20 (Sun) 13:26:16 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -21,13 +21,13 @@ import com.differentity.client.Test; // *****
 
 public class MainPanel
 {
-    private final SVOPanel subjectPanel;
-    private final SVOPanel verbPanel;
-    private final SVOPanel objectPanel;
+    private final SPVPanel subjectPanel;
+    private final SPVPanel propertyPanel;
+    private final SPVPanel valuePanel;
     private final VerticalPanel subjectVerticalPanel;
-    private final VerticalPanel verbVerticalPanel;
-    private final VerticalPanel objectVerticalPanel;
-    private final HorizontalPanel svoHorizontalPanel;
+    private final VerticalPanel propertyVerticalPanel;
+    private final VerticalPanel valueVerticalPanel;
+    private final HorizontalPanel spvHorizontalPanel;
     private final DockPanel dockPanel;
     private final HTML north;
     private final HTML south;
@@ -38,27 +38,27 @@ public class MainPanel
     MainPanel() {
 
 	//
-	// QueryPanel created before SVO panels since needed.
+	// QueryPanel created before SPV panels since needed.
 	//
 
 	queryPanel = new QueryPanel();
 
 	//
-	// Subject, Verb, Object panels.
+	// Subject, Property, Value panels.
 	// Create now to get contents from server.
 	//
 
-	subjectPanel = new SVOPanel(Main.subject);
-	verbPanel    = new SVOPanel(Main.verb);
-	objectPanel  = new SVOPanel(Main.object);
-	subjectVerticalPanel = subjectPanel.getPanel();
-	verbVerticalPanel    = verbPanel.getPanel();
-	objectVerticalPanel  = objectPanel.getPanel();
-	svoHorizontalPanel = new HorizontalPanel();
-	svoHorizontalPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
-	svoHorizontalPanel.add(subjectVerticalPanel);
-	svoHorizontalPanel.add(verbVerticalPanel);
-	svoHorizontalPanel.add(objectVerticalPanel);
+	subjectPanel  = new SPVPanel(Main.subject);
+	propertyPanel = new SPVPanel(Main.property);
+	valuePanel    = new SPVPanel(Main.value);
+	subjectVerticalPanel  = subjectPanel.getPanel();
+	propertyVerticalPanel = propertyPanel.getPanel();
+	valueVerticalPanel    = valuePanel.getPanel();
+	spvHorizontalPanel = new HorizontalPanel();
+	spvHorizontalPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
+	spvHorizontalPanel.add(subjectVerticalPanel);
+	spvHorizontalPanel.add(propertyVerticalPanel);
+	spvHorizontalPanel.add(valueVerticalPanel);
 
 	doQuery();
 
@@ -75,7 +75,7 @@ public class MainPanel
 	dockPanel.add(queryPanel.getHorizontalPanel(), DockPanel.NORTH);
 	// NOTE: - if SOUTH added after CENTER does not show up.
 	dockPanel.add(south, DockPanel.SOUTH);
-	dockPanel.add(svoHorizontalPanel, DockPanel.CENTER);
+	dockPanel.add(spvHorizontalPanel, DockPanel.CENTER);
 
 	// Host HTML has elements with IDs are "slot1", "slot2".
 	// Better: Search for all elements with a particular CSS class 
@@ -94,13 +94,13 @@ public class MainPanel
     public void doQuery()
     {
 	String subject = 
-	    getSVOQueryValue(Main.subject, queryPanel.getSubjectTextBox());
-	String verb    = 
-	    getSVOQueryValue(Main.verb,    queryPanel.getVerbTextBox());
-	String object  = 
-	    getSVOQueryValue(Main.object,  queryPanel.getObjectTextBox());
+	    getSPVQueryValue(Main.qsubject,  queryPanel.getSubjectTextBox());
+	String property    = 
+	    getSPVQueryValue(Main.qproperty, queryPanel.getPropertyTextBox());
+	String value  = 
+	    getSPVQueryValue(Main.qvalue,    queryPanel.getValueTextBox());
 
-	QueryRequest queryRequest = new QueryRequest(subject, verb, object);
+	QueryRequest queryRequest = new QueryRequest(subject, property, value);
 
 	// "this" so async request can call handleQueryResponse.
 	Main.getServerCalls().doQuery(this, queryRequest);
@@ -108,13 +108,13 @@ public class MainPanel
 
     public void handleQueryResponse(QueryResponse queryResponse)
     {
-	subjectPanel.setContents(queryResponse.getSubject());
-	verbPanel.setContents(queryResponse.getVerb());
-	objectPanel.setContents(queryResponse.getObject());
+	subjectPanel .setContents(queryResponse.getSubject());
+	propertyPanel.setContents(queryResponse.getProperty());
+	valuePanel   .setContents(queryResponse.getValue());
 	getStatusHTML().setHTML(queryResponse.getStatus());
     }
 
-    public void svoLinkClicked(final String categoryAndURL)
+    public void spvLinkClicked(final String categoryAndURL)
     {
 	// TODO: Send to server.  Receive updates for other panels.
 	int i = categoryAndURL.indexOf(" ");
@@ -123,12 +123,12 @@ public class MainPanel
 	if (category.equals(Main.subject)) {
 	    Main.getMainPanel()
 		.getQueryPanel().getSubjectTextBox().setText(url);
-	} else if (category.equals(Main.verb)) {
+	} else if (category.equals(Main.property)) {
 	    Main.getMainPanel()
-		.getQueryPanel().getVerbTextBox().setText(url);
-	} else if (category.equals(Main.object)) {
+		.getQueryPanel().getPropertyTextBox().setText(url);
+	} else if (category.equals(Main.value)) {
             Main.getMainPanel()
-		.getQueryPanel().getObjectTextBox().setText(url);
+		.getQueryPanel().getValueTextBox().setText(url);
 	} else {
 	    // TODO: FIX
 	    Main.getMainPanel()
@@ -138,17 +138,17 @@ public class MainPanel
 	doQuery();
     }
 
-    private String getSVOQueryValue(String def, TextBox textBox)
+    private String getSPVQueryValue(String def, TextBox textBox)
     {
 	String text = textBox.getText();
 	if (text != null && (! text.equals(""))) {
 	    return text;
 	}
-	return Main.questionMarkSymbol + def;
+	return def;
     }
 
-    public QueryPanel getQueryPanel()   {return queryPanel;}
-    public static HTML getStatusHTML()  {return statusHTML;}
+    public QueryPanel getQueryPanel()  { return queryPanel; }
+    public static HTML getStatusHTML() { return statusHTML; }
 }
 
 // End of file.

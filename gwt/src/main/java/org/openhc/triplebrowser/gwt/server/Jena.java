@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2006 Aug 12 (Sat) 22:24:34 by Harold Carr.
+// Last Modified : 2006 Aug 20 (Sun) 13:37:20 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -49,28 +49,28 @@ public class Jena
 	}
     }
 
-    public QueryResults doQuery(String s, String v, String o)
+    public QueryResults doQuery(String s, String p, String v)
     {
-	String subject = formatInput(s);
-	String verb    = formatInput(v);
-	String object  = formatInput(o);
+	String subject  = formatInput(s);
+	String property = formatInput(p);
+	String value    = formatInput(v);
 	String selectVars = "";
 	if (subject.startsWith(Main.questionMarkSymbol)) {
 	    selectVars = selectVars + " " + subject;
 	}
-	if (verb.startsWith(Main.questionMarkSymbol)) {
-	    selectVars = selectVars + " " + verb;
+	if (property.startsWith(Main.questionMarkSymbol)) {
+	    selectVars = selectVars + " " + property;
 	}
-	if (object.startsWith(Main.questionMarkSymbol)) {
-	    selectVars = selectVars + " " + object;
+	if (value.startsWith(Main.questionMarkSymbol)) {
+	    selectVars = selectVars + " " + value;
 	}
 
 	String queryString =
 	    " SELECT " + selectVars +
 	    " WHERE ( " +
-	    subject + " " +
-	    verb    + " " +
-	    object  + " )";
+	    subject  + " " +
+	    property + " " +
+	    value    + " )";
 
 	// Spent a lot of time here trying to figure out why URIs
 	// disappeared in the status output.
@@ -81,9 +81,9 @@ public class Jena
 
 	lastQueryString =
 	    " Jena: " +
-	    "[subject " + s + " / " + subject + "]" +
-	    "[verb "    + v + " / " + verb    + "]" +
-	    "[object "  + o + " / " + object  + "]" + "<br/>" +
+	    "[subject "  + s + " / " + subject  + "]" +
+	    "[property " + p + " / " + property + "]" +
+	    "[value "    + v + " / " + value    + "]" + "<br/>" +
 	    queryString;
 
 	return doQuery(queryString);

@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 12 (Sat) 20:17:10 by Harold Carr.
+// Last Modified : 2006 Aug 20 (Sun) 13:20:19 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -15,7 +15,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import com.differentity.client.Main;
-import com.differentity.client.SVOPanel;
+import com.differentity.client.SPVPanel;
 import com.differentity.client.Service;
 import com.differentity.client.ServiceAsync;
 
