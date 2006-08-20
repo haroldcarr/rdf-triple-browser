@@ -1,8 +1,53 @@
 #
 # Created       : 2006 Jul 14 (Wed) 19:15:16 by Harold Carr.
-# Last Modified : 2006 Jul 30 (Sun) 11:33:08 by Harold Carr.
+# Last Modified : 2006 Aug 20 (Sun) 13:17:19 by Harold Carr.
 #
 
+------------------------------------------------------------------------------
+2006-08-20:
+
+(load "hcChangeWords")
+(defun is-ignored-p (full-path-and-name)
+  (member (file-name-nondirectory full-path-and-name)
+	  '("SCCS" "RCS")))
+(defun is-ignored-suffix-p (full-path-and-name) nil)
+
+(hcChangeWords
+ '(
+  ;("verb"   . "property")
+  ;("object" . "value")
+   ("svo"    . "spv")
+  )
+ "~/ftptmp/gwt/differentity/"
+ "~/ftptmp/gwt/differentity/"
+ t)
+
+
+------------------------------------------------------------------------------
+2006-08-13:
+
+First successful query on canned data!
+
+------------------------------------------------------------------------------
+2006-08-12:
+
+Not all s/v/o combinations are valid when listing all.
+So perhaps partition:
+
+s1   s1v1  s1v1o1
+           s1v1o2
+     s1v2
+
+s2   s1v1
+
+s3   s3v1
+     s3v2
+     s3v3
+
+But first just get consolidated list working to see how it feels.
+Even though not "accurate", maybe the ease-of-use trumps?
+
+------------------------------------------------------------------------------
 2006-07-30:
 
 -------------------------
@@ -35,7 +80,6 @@ send(s-uri, ?v, o-uri) -->
  <-- ?v-results
 
 ------------------------------------------------------------------------------
-
 2006-07-23:
 
 # This works in gwt shell.
@@ -51,7 +95,6 @@ mkdir bin
 # Now any browser will get service (if GWT shell is still running).
 
 ------------------------------------------------------------------------------
-
 2006-06-14:
 
 $GWTHOME/applicationCreator.cmd -out z:\\ftptmp\\gwt\\differentity com.differentity.client.Main
