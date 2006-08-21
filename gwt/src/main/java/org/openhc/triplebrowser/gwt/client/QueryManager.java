@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 20 (Sun) 13:26:16 by Harold Carr.
+// Last Modified : 2006 Aug 20 (Sun) 17:57:05 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -138,6 +138,10 @@ public class MainPanel
 	doQuery();
     }
 
+    //
+    // The default is only there in case user puts in a blank string.
+    // The system will never do that.
+    //
     private String getSPVQueryValue(String def, TextBox textBox)
     {
 	String text = textBox.getText();
