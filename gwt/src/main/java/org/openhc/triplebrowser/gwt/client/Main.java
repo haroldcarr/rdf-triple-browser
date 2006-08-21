@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 20 (Sun) 13:23:27 by Harold Carr.
+// Last Modified : 2006 Aug 20 (Sun) 18:23:12 by Harold Carr.
 //
 
 /*
@@ -9,8 +9,10 @@
          When selectinga SPV URI starts extra new window.
          Kill that window and the original window with the Request/Response
          done.
+  - Implement AND (recursively)
+  - Implement adding triples.
   - More Jena.
-  - Figure out how to make sov panels expand.
+  - Figure out how to make spv panels expand.
   - Style
  */
 
@@ -27,10 +29,12 @@ public class Main
     implements 
 	EntryPoint // Entry point classes define onModuleLoad()
 {
+    public static final String asteriskSymbol       = "*";
     public static final String collapse             = "collapse";
     public static final String collapseAllTags      = "collapse all tags";
     public static final String copyright            = "copyright 2006";
     public static final String differentityDotCom   = "differentity.com";
+    public static final String emptyString          = "emptyString";
     public static final String expand               = "expand";
     public static final String expandAllTags        = "expand all tags";
     public static final String minusSymbol          = "-";
