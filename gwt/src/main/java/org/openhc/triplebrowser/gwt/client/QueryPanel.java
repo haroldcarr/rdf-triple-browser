@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 20 (Sun) 13:27:13 by Harold Carr.
+// Last Modified : 2006 Aug 20 (Sun) 18:15:21 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -26,24 +26,27 @@ public class QueryPanel
 	subjectTextBox  = new TextBox();
 	propertyTextBox = new TextBox();
 	valueTextBox    = new TextBox();
-	subjectResetButton  = new Button("*");
-	propertyResetButton = new Button("*");
-	valueResetButton    = new Button("*");
+	subjectTextBox.setText(Main.qsubject);
+	propertyTextBox.setText(Main.qproperty);
+	valueTextBox.setText(Main.qvalue);
+	subjectResetButton  = new Button(Main.asteriskSymbol);
+	propertyResetButton = new Button(Main.asteriskSymbol);
+	valueResetButton    = new Button(Main.asteriskSymbol);
 	subjectResetButton.addClickListener(new ClickListener() {
 	    public void onClick(Widget sender) {
-		subjectTextBox.setText("");
+		subjectTextBox.setText(Main.qsubject);
 		Main.getMainPanel().doQuery();
 	    }
 	});
 	propertyResetButton.addClickListener(new ClickListener() {
 	    public void onClick(Widget sender) {
-		propertyTextBox.setText("");
+		propertyTextBox.setText(Main.qproperty);
 		Main.getMainPanel().doQuery();
 	    }
 	});
 	valueResetButton.addClickListener(new ClickListener() {
 	    public void onClick(Widget sender) {
-		valueTextBox.setText("");
+		valueTextBox.setText(Main.qvalue);
 		Main.getMainPanel().doQuery();
 	    }
 	});
