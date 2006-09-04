@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2006 Aug 20 (Sun) 13:34:34 by Harold Carr.
+// Last Modified : 2006 Sep 03 (Sun) 22:22:54 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -31,6 +31,9 @@ public class ServiceImpl
     private boolean initialized = false;
     private Jena jena;
 
+    private final String RDF_FILENAME = 
+	"C:/cygwin/home/carr/ftptmp/gwt/differentity/all.rdf";
+
     public String initialize(String notUsed) 
     {
 	if (initialized) {
@@ -39,7 +42,7 @@ public class ServiceImpl
 	
 	jena = new Jena();
 	try {
-	    jena.readRDF("all.rdf");
+	    jena.readRDF(RDF_FILENAME);
 	} catch (Throwable t) {
 	    ByteArrayOutputStream stream = new ByteArrayOutputStream();
 	    PrintWriter printWriter = new PrintWriter(stream);
