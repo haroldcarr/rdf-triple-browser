@@ -1,12 +1,14 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2006 Aug 12 (Sat) 19:08:19 by Harold Carr.
+# Last Modified : 2006 Sep 03 (Sun) 22:46:42 by Harold Carr.
 #
 
 SRCDIR		= ./src
 BINDIR		= ./bin
 OUTDIR		= ./www
 TOMCATDIR	= ./tomcat
+TMPDIR		= ./tmp
+WAR_FILE	= ./differentity.war
 URL		= com.differentity.Main
 PKG_PATH	= com/differentity
 SERVER_PATH	= $(SRCDIR)/$(PKG_PATH)/server
@@ -55,11 +57,14 @@ gs :
 gsh :
 	$(GWT_SHELLER_HELP)
 
+war : FORCE
+	./war
+
 $(BINDIR) : FORCE
 	mkdir -p $(BINDIR)
 
 clean : FORCE
-	rm -rf $(BINDIR) $(OUTDIR) $(TOMCATDIR)
+	rm -rf $(BINDIR) $(OUTDIR) $(TOMCATDIR) $(TMPDIR) $(WAR_FILE)
 
 FORCE :
 
