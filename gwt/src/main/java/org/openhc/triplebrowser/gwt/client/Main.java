@@ -1,20 +1,7 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 20 (Sun) 18:23:12 by Harold Carr.
+// Last Modified : 2006 Sep 04 (Mon) 11:02:36 by Harold Carr.
 //
-
-/*
-  TODO:
-  - FIX: (when trying from any separate browser while gwt-shell is running):
-         When selectinga SPV URI starts extra new window.
-         Kill that window and the original window with the Request/Response
-         done.
-  - Implement AND (recursively)
-  - Implement adding triples.
-  - More Jena.
-  - Figure out how to make spv panels expand.
-  - Style
- */
 
 package com.differentity.client;
 
