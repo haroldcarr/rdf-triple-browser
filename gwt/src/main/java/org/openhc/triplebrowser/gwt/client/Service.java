@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2006 Aug 12 (Sat) 16:12:37 by Harold Carr.
+// Last Modified : 2006 Sep 04 (Mon) 10:14:04 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -12,8 +12,9 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface Service extends RemoteService 
 {
-    public String initialize(String notUsed);
+    public String initialize();
     public QueryResponse doQuery(QueryRequest queryRequest);
+    public String close();
 }
 
 // End of file.
