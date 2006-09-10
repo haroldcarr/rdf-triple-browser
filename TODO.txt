@@ -1,7 +1,25 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 04 (Mon) 11:04:17 by Harold Carr.
+// Last Modified : 2006 Sep 05 (Tue) 20:14:21 by Harold Carr.
 //
+
+------------------------------------------------------------------------------
+In order:
+
+- History
+- POST: implement adding triples
+- Create account/login
+- root of rdf data files
+- default data file
+- ability to create multiple data files
+- ability to select one or more data files for query
+- ability to save merged data files.
+- update Jena to latest
+- use indexed/db Jena
+- Implement AND (recursively)
+
+------------------------------------------------------------------------------
+Someday:
 
 - FIX: undeploy leaves jena.jar in WEB-INF/lib
        DevTime workaround not working.
@@ -10,9 +28,6 @@
        When selecting a SPV URI starts extra new window.
        Kill that window and the original window with the Request/Response
        done.
-- Implement AND (recursively)
-
-- Implement adding triples.
 
 - More Jena.
 
