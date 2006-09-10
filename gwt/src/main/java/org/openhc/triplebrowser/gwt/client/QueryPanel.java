@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 20 (Sun) 18:15:21 by Harold Carr.
+// Last Modified : 2006 Sep 10 (Sun) 15:37:32 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -26,7 +26,16 @@ public class QueryPanel
 	subjectTextBox  = new TextBox();
 	propertyTextBox = new TextBox();
 	valueTextBox    = new TextBox();
-	subjectTextBox.setText(Main.qsubject);
+	org.gwtwidgets.client.util.WindowUtils wu =
+	    new org.gwtwidgets.client.util.WindowUtils();
+	org.gwtwidgets.client.util.Location location = wu.getLocation();
+	String start = location.getParameter("location");
+	//System.out.println(start);
+	if (start == null) {
+	    subjectTextBox.setText(Main.qsubject);
+	} else {
+	    subjectTextBox.setText(start);
+	}
 	propertyTextBox.setText(Main.qproperty);
 	valueTextBox.setText(Main.qvalue);
 	subjectResetButton  = new Button(Main.asteriskSymbol);
