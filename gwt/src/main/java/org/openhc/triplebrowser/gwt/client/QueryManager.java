@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 20 (Sun) 17:57:05 by Harold Carr.
+// Last Modified : 2006 Sep 04 (Mon) 22:20:05 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -32,8 +32,6 @@ public class MainPanel
     private final HTML north;
     private final HTML south;
     private final QueryPanel queryPanel;
-    // TODO - there is a race here.
-    private static final HTML statusHTML = new HTML();
 
     MainPanel() {
 
@@ -81,7 +79,7 @@ public class MainPanel
 	// Better: Search for all elements with a particular CSS class 
 	// and replace them with widgets.
 
-	RootPanel.get("slot1").add(statusHTML);
+	RootPanel.get("slot1").add(DevTime.makeStatusWidgets());
 	RootPanel.get("slot2").add(dockPanel);
 
 	// XXX - frame test
@@ -111,7 +109,7 @@ public class MainPanel
 	subjectPanel .setContents(queryResponse.getSubject());
 	propertyPanel.setContents(queryResponse.getProperty());
 	valuePanel   .setContents(queryResponse.getValue());
-	getStatusHTML().setHTML(queryResponse.getStatus());
+	DevTime.getQueryStatusHTML().setHTML(queryResponse.getStatus());
     }
 
     public void spvLinkClicked(final String categoryAndURL)
@@ -152,7 +150,6 @@ public class MainPanel
     }
 
     public QueryPanel getQueryPanel()  { return queryPanel; }
-    public static HTML getStatusHTML() { return statusHTML; }
 }
 
 // End of file.
