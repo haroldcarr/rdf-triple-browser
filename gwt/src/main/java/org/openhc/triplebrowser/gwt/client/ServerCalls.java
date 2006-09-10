@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 04 (Mon) 22:07:16 by Harold Carr.
+// Last Modified : 2006 Sep 09 (Sat) 19:33:31 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -66,7 +66,6 @@ public class ServerCalls
 	serviceAsync.close(
 	    new AsyncCallback() {
 		public void onSuccess(Object result) {
-		    Main.makeMainPanel();
 		    DevTime.getJenaStatusHTML().setHTML(result.toString());
 		}
 		public void onFailure(Throwable caught) {
