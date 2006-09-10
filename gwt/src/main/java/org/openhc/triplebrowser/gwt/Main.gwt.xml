@@ -3,6 +3,9 @@
 	<!-- Inherit the core Web Toolkit stuff.                  -->
 	<inherits name='com.google.gwt.user.User'/>
 
+	<!-- Inherit the widgets library       .                  -->
+        <inherits name='org.gwtwidgets.WidgetLibrary'/>
+
 	<!-- Specify the app entry point class.                   -->
 	<entry-point class='com.differentity.client.Main'/>
 
