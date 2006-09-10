@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2006 Aug 20 (Sun) 13:37:20 by Harold Carr.
+// Last Modified : 2006 Sep 04 (Mon) 22:41:11 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -27,6 +27,11 @@ public class Jena
     public Jena()
     {
 	model = ModelFactory.createDefaultModel();
+    }
+
+    public void close()
+    {
+	model.close();
     }
 
     public void readRDF(String filename)
