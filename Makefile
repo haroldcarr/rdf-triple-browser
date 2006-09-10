@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2006 Sep 03 (Sun) 22:46:42 by Harold Carr.
+# Last Modified : 2006 Sep 09 (Sat) 21:06:04 by Harold Carr.
 #
 
 SRCDIR		= ./src
@@ -17,6 +17,7 @@ JAVA_HOME	= $(ALT_BOOTDIR)/bin
 JAVA		= $(JAVA_HOME)/java
 JAVAC		= $(JAVA_HOME)/javac
 GWT_HOME	= $(shell hcGwtHome)
+GWT_WIDGETS_JAR = $(shell hcGwtWidgetsJar)
 PSEP		= $(shell hcPathSep)
 GWT_DEV         = $(GWT_HOME)/gwt-dev-windows.jar
 GWT_SERVLET     = $(GWT_HOME)/gwt-servlet.jar
@@ -27,7 +28,7 @@ SERVER_FILES	= \
 	$(SERVER_PATH)/Jena.java \
 	$(SERVER_PATH)/ServiceImpl.java
 
-CP		= "$(SRCDIR)$(PSEP)$(BINDIR)$(PSEP)$(GWT_DEV)$(PSEP)$(GWT_USER)$(PSEP)$(GWT_SERVLET)$(PSEP)$(JENA_CP)"
+CP		= "$(SRCDIR)$(PSEP)$(BINDIR)$(PSEP)$(GWT_DEV)$(PSEP)$(GWT_USER)$(PSEP)$(GWT_SERVLET)$(PSEP)$(JENA_CP)$(PSEP)$(GWT_WIDGETS_JAR)"
 GWT_COMPILER	= $(JAVA) -cp $(CP) com.google.gwt.dev.GWTCompiler
 GWT_COMPILER_HELP = $(GWT_COMPILER) --help
 GWT_COMPILE	= $(GWT_COMPILER) -out $(OUTDIR) $(URL)
