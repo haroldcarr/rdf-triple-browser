@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2006 Sep 03 (Sun) 22:22:54 by Harold Carr.
+// Last Modified : 2006 Sep 05 (Tue) 18:47:25 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -34,7 +34,7 @@ public class ServiceImpl
     private final String RDF_FILENAME = 
 	"C:/cygwin/home/carr/ftptmp/gwt/differentity/all.rdf";
 
-    public String initialize(String notUsed) 
+    public String initialize() 
     {
 	if (initialized) {
 	    return "already initialized";
@@ -43,6 +43,7 @@ public class ServiceImpl
 	jena = new Jena();
 	try {
 	    jena.readRDF(RDF_FILENAME);
+	    initialized = true;
 	} catch (Throwable t) {
 	    ByteArrayOutputStream stream = new ByteArrayOutputStream();
 	    PrintWriter printWriter = new PrintWriter(stream);
@@ -53,6 +54,27 @@ public class ServiceImpl
 	}
 
 	return "initialization complete";
+    }
+
+    public String close() 
+    {
+	if (! initialized) {
+	    return "not initialized";
+	}
+	
+	try {
+	    jena.close();
+	    jena = null;
+	} catch (Throwable t) {
+	    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+	    PrintWriter printWriter = new PrintWriter(stream);
+	    t.printStackTrace(printWriter);
+	    printWriter.flush();
+	    printWriter.close();
+	    return stream.toString();
+	}
+
+	return "close complete";
     }
 
     private boolean firstTime = false;
@@ -149,6 +171,7 @@ public class ServiceImpl
 		}
 	    }
 	}
+	queryResults.close();
 	return new QueryResponse(subjectResponse, propertyResponse,
 				 valueResponse, status);
     }
