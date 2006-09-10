@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2006 Sep 05 (Tue) 18:47:25 by Harold Carr.
+// Last Modified : 2006 Sep 09 (Sat) 20:46:16 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -37,7 +37,7 @@ public class ServiceImpl
     public String initialize() 
     {
 	if (initialized) {
-	    return "already initialized";
+	    return "already initialized" + " " + params();
 	}
 	
 	jena = new Jena();
@@ -53,7 +53,7 @@ public class ServiceImpl
 	    return stream.toString();
 	}
 
-	return "initialization complete";
+	return "initialization complete" + " " + params();
     }
 
     public String close() 
@@ -75,6 +75,22 @@ public class ServiceImpl
 	}
 
 	return "close complete";
+    }
+
+    private String params()
+    {
+	String result = "Method: " + getThreadLocalRequest().getMethod();
+	result += " URI: " + getThreadLocalRequest().getRequestURI();
+	result += " Path: " + getThreadLocalRequest().getServletPath();
+	result += " Parameters: ";
+	java.util.Enumeration i = getThreadLocalRequest().getParameterNames();
+	for(; i.hasMoreElements() ;) {
+	    String name = (String)i.nextElement();
+	    result += " " + name;
+	    String value = getThreadLocalRequest().getParameter(name);
+	    result += "=" + value;
+	}
+	return result;
     }
 
     private boolean firstTime = false;
