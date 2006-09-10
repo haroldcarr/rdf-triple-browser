@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 04 (Mon) 22:20:05 by Harold Carr.
+// Last Modified : 2006 Sep 10 (Sun) 15:05:02 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -114,7 +114,6 @@ public class MainPanel
 
     public void spvLinkClicked(final String categoryAndURL)
     {
-	// TODO: Send to server.  Receive updates for other panels.
 	int i = categoryAndURL.indexOf(" ");
 	String category = categoryAndURL.substring(0, i);
 	String url = categoryAndURL.substring(i+1);
