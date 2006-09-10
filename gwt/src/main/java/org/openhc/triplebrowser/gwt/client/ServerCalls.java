@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 03 (Sun) 22:50:00 by Harold Carr.
+// Last Modified : 2006 Sep 04 (Mon) 22:07:16 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -34,14 +34,13 @@ public class ServerCalls
     public void initialize()
     {
 	serviceAsync.initialize(
-            "FOO",
 	    new AsyncCallback() {
 		public void onSuccess(Object result) {
 		    Main.makeMainPanel();
-		    MainPanel.getStatusHTML().setHTML(result.toString());
+		    DevTime.getJenaStatusHTML().setHTML(result.toString());
 		}
 		public void onFailure(Throwable caught) {
-		    MainPanel.getStatusHTML().setHTML(caught.toString());
+		    DevTime.getJenaStatusHTML().setHTML(caught.toString());
 		}
 	    });
     }
@@ -58,6 +57,20 @@ public class ServerCalls
 
 		public void onFailure(Throwable caught) {
 		    Window.alert(".doQuery: " + caught);
+		}
+	    });
+    }
+
+    public void close()
+    {
+	serviceAsync.close(
+	    new AsyncCallback() {
+		public void onSuccess(Object result) {
+		    Main.makeMainPanel();
+		    DevTime.getJenaStatusHTML().setHTML(result.toString());
+		}
+		public void onFailure(Throwable caught) {
+		    DevTime.getJenaStatusHTML().setHTML(caught.toString());
 		}
 	    });
     }
