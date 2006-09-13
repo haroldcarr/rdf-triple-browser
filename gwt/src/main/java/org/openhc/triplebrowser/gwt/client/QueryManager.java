@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 10 (Sun) 15:05:02 by Harold Carr.
+// Last Modified : 2006 Sep 12 (Tue) 18:28:57 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -97,8 +97,15 @@ public class MainPanel
 	    getSPVQueryValue(Main.qproperty, queryPanel.getPropertyTextBox());
 	String value  = 
 	    getSPVQueryValue(Main.qvalue,    queryPanel.getValueTextBox());
+	doQuery(subject, property, value, 
+		Main.qsubject + Main.qproperty + Main.qvalue);
+    }
 
-	QueryRequest queryRequest = new QueryRequest(subject, property, value);
+    public void doQuery(final String subject, final String property, 
+			final String value, final String setContentsOf)
+    {
+	QueryRequest queryRequest = 
+	    new QueryRequest(subject, property, value, setContentsOf);
 
 	// "this" so async request can call handleQueryResponse.
 	Main.getServerCalls().doQuery(this, queryRequest);
@@ -106,15 +113,22 @@ public class MainPanel
 
     public void handleQueryResponse(QueryResponse queryResponse)
     {
-	subjectPanel .setContents(queryResponse.getSubject());
-	propertyPanel.setContents(queryResponse.getProperty());
-	valuePanel   .setContents(queryResponse.getValue());
+	String setContentsOf = queryResponse.getSetContentsOf();
+	if (setContentsOf.indexOf(Main.qsubject)  != -1) {
+	    subjectPanel .setContents(queryResponse.getSubject());
+	}
+	if (setContentsOf.indexOf(Main.qproperty) != -1) {
+	    propertyPanel.setContents(queryResponse.getProperty());
+	}
+	if (setContentsOf.indexOf(Main.qvalue)    != -1) {
+	    valuePanel   .setContents(queryResponse.getValue());
+	}
 	DevTime.getQueryStatusHTML().setHTML(queryResponse.getStatus());
     }
 
     public void spvLinkClicked(final String categoryAndURL)
     {
-	int i = categoryAndURL.indexOf(" ");
+	int i = categoryAndURL.indexOf(Main.blankSpace);
 	String category = categoryAndURL.substring(0, i);
 	String url = categoryAndURL.substring(i+1);
 	if (category.equals(Main.subject)) {
