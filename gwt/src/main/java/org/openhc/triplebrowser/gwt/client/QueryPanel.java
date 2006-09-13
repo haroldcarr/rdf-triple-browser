@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 10 (Sun) 20:07:04 by Harold Carr.
+// Last Modified : 2006 Sep 12 (Tue) 18:35:13 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -30,7 +30,7 @@ public class QueryPanel
 	org.gwtwidgets.client.util.WindowUtils wu =
 	    new org.gwtwidgets.client.util.WindowUtils();
 	org.gwtwidgets.client.util.Location location = wu.getLocation();
-	String start = location.getParameter("location");
+	String start = location.getParameter(Main.url);
 	//System.out.println(start);
 	if (start == null) {
 	    subjectTextBox.setText(Main.qsubject);
@@ -39,12 +39,18 @@ public class QueryPanel
 	}
 	propertyTextBox.setText(Main.qproperty);
 	valueTextBox.setText(Main.qvalue);
-	subjectMenuBar  = makeMenuBar(Main.qsubject, valueTextBox,
-				      subjectTextBox, propertyTextBox);
-	propertyMenuBar = makeMenuBar(Main.qproperty, subjectTextBox,
-				      propertyTextBox, valueTextBox);
-	valueMenuBar    = makeMenuBar(Main.qvalue, propertyTextBox,
-				      valueTextBox, subjectTextBox);
+	subjectMenuBar  = 
+	    makeMenuBar(Main.qvalue,    valueTextBox,
+			Main.qsubject,  subjectTextBox,
+			Main.qproperty, propertyTextBox);
+	propertyMenuBar =
+	    makeMenuBar(Main.qsubject,  subjectTextBox,
+			Main.qproperty, propertyTextBox,
+			Main.qvalue,    valueTextBox);
+	valueMenuBar    =
+	    makeMenuBar(Main.qproperty, propertyTextBox,
+			Main.qvalue,    valueTextBox,
+			Main.qsubject,  subjectTextBox);
 	horizontalPanel = new HorizontalPanel();
 	horizontalPanel.add(subjectMenuBar);
 	horizontalPanel.add(subjectTextBox);
@@ -58,24 +64,58 @@ public class QueryPanel
     TextBox         getValueTextBox()    { return valueTextBox; }
     HorizontalPanel getHorizontalPanel() { return horizontalPanel; }
 
-    private MenuBar makeMenuBar(final String text,
+    private MenuBar makeMenuBar(final String  leftText,
 				final TextBox leftTextBox,
+				final String  thisText,
 				final TextBox thisTextBox,
+				final String  rightText,
 				final TextBox rightTextBox)
     {
-	Command cmd = new Command() {
+	Command resetCommand = new Command() {
 	    public void execute() {
-		thisTextBox.setText(text);
+		thisTextBox.setText(thisText);
 		Main.getMainPanel().doQuery();
 	    }
 	};
 
+	Command moveLeftCommand = new Command() {
+	    public void execute() {
+		String text = thisTextBox.getText();
+		thisTextBox.setText(thisText);
+		leftTextBox.setText(text);
+		Main.getMainPanel().doQuery();
+	    }
+	};
+
+	Command moveRightCommand = new Command() {
+	    public void execute() {
+		String text = thisTextBox.getText();
+		thisTextBox.setText(thisText);
+		rightTextBox.setText(text);
+		Main.getMainPanel().doQuery();
+	    }
+	};
+
+	Command newCommand = new Command() {
+	    public void execute() {
+		Main.getMainPanel().doQuery();
+	    }
+	};
+
+	Command allCommand = new Command() {
+	    public void execute() {
+		Main.getMainPanel()
+		    .doQuery(Main.qsubject, Main.qproperty,
+			     Main.qvalue, thisText);
+	    }
+	};
+
 	MenuBar inside = new MenuBar(true);
-	inside.addItem("*", cmd);
-	inside.addItem("->", cmd);
-	inside.addItem("<-", cmd);
-	inside.addItem("new", cmd);
-	inside.addItem("all", cmd);
+	inside.addItem(Main.asteriskSymbol, resetCommand);
+	inside.addItem(Main.shiftRight, moveRightCommand);
+	inside.addItem(Main.shiftLeft, moveLeftCommand);
+	inside.addItem(Main.NEW, newCommand);
+	inside.addItem(Main.all, allCommand);
 	MenuBar outside = new MenuBar();
 	outside.addItem(Main.asteriskSymbol, inside);
 	outside.setAutoOpen(true);
