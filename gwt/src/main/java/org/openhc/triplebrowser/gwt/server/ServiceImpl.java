@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2006 Sep 09 (Sat) 20:46:16 by Harold Carr.
+// Last Modified : 2006 Sep 10 (Sun) 20:49:53 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -189,7 +189,8 @@ public class ServiceImpl
 	}
 	queryResults.close();
 	return new QueryResponse(subjectResponse, propertyResponse,
-				 valueResponse, status);
+				 valueResponse,
+				 queryRequest.getSetContentsOf(), status);
     }
 
     ////////////////////////////////////////////////////
@@ -210,7 +211,9 @@ public class ServiceImpl
 	valueList.add(0, "http://value.com/");
 	valueList.add(0, queryRequest.getValue());
 
-	return new QueryResponse(subjectList, propertyList, valueList, "TEST");
+	return new QueryResponse(subjectList, propertyList, valueList, 
+				 queryRequest.getSetContentsOf(),
+				 "TEST");
     }
 
     // TEST DATA
