@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 20 (Sun) 13:29:46 by Harold Carr.
+// Last Modified : 2006 Sep 12 (Tue) 18:30:12 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -33,7 +33,7 @@ public class SPVItem
 	this.expandCollapseState = expandCollapseState;
 	button = new Button(Main.plusSymbol);
 	hyperlink = new Hyperlink(expandedName,
-				  spvCategory + " " + expandedName);
+				  spvCategory + Main.blankSpace+ expandedName);
 	horizontalPanel = new HorizontalPanel();
 	verticalPanel = new VerticalPanel();
 
