@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 09 (Sat) 19:33:31 by Harold Carr.
+// Last Modified : 2006 Sep 12 (Tue) 18:31:19 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -28,7 +28,8 @@ public class ServerCalls
 	serviceAsync = (ServiceAsync) GWT.create(Service.class);
 	ServiceDefTarget serviceDefTarget = (ServiceDefTarget) serviceAsync;
 	serviceDefTarget
-	    .setServiceEntryPoint(GWT.getModuleBaseURL() + "/Service");
+	    .setServiceEntryPoint(GWT.getModuleBaseURL() 
+				  + Main.serviceEntryPoint);
     }
 
     public void initialize()
