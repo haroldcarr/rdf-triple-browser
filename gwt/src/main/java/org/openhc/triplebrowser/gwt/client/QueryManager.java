@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 12 (Tue) 18:28:57 by Harold Carr.
+// Last Modified : 2006 Sep 16 (Sat) 09:46:16 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -58,8 +58,6 @@ public class MainPanel
 	spvHorizontalPanel.add(propertyVerticalPanel);
 	spvHorizontalPanel.add(valueVerticalPanel);
 
-	doQuery();
-
 	//
 	// Main panel.
 	//    
@@ -83,13 +81,14 @@ public class MainPanel
 	RootPanel.get("slot2").add(dockPanel);
 
 	// XXX - frame test
-	RootPanel.get("slot3").add(new Frame("http://www.google.com/"));
+	//RootPanel.get("slot3").add(new Frame("http://www.google.com/"));
 
 	// XXX - test
-	RootPanel.get("slot4"). add(new Test().getWidget());
+	//RootPanel.get("slot4").add(new Test().getWidget());
+	RootPanel.get("slot4").add(Main.getAction().getWidget());
     }
 
-    public void doQuery()
+    public void doQuery(boolean keepHistory)
     {
 	String subject = 
 	    getSPVQueryValue(Main.qsubject,  queryPanel.getSubjectTextBox());
@@ -97,11 +96,13 @@ public class MainPanel
 	    getSPVQueryValue(Main.qproperty, queryPanel.getPropertyTextBox());
 	String value  = 
 	    getSPVQueryValue(Main.qvalue,    queryPanel.getValueTextBox());
-	doQuery(subject, property, value, 
+	doQuery(keepHistory,
+		subject, property, value, 
 		Main.qsubject + Main.qproperty + Main.qvalue);
     }
 
-    public void doQuery(final String subject, final String property, 
+    public void doQuery(final boolean keepHistory,
+			final String subject, final String property, 
 			final String value, final String setContentsOf)
     {
 	QueryRequest queryRequest = 
@@ -109,6 +110,10 @@ public class MainPanel
 
 	// "this" so async request can call handleQueryResponse.
 	Main.getServerCalls().doQuery(this, queryRequest);
+
+	Main.getAction()
+	    .recordDoQuery(keepHistory, 
+			   subject, property, value, setContentsOf);
     }
 
     public void handleQueryResponse(QueryResponse queryResponse)
@@ -126,11 +131,8 @@ public class MainPanel
 	DevTime.getQueryStatusHTML().setHTML(queryResponse.getStatus());
     }
 
-    public void spvLinkClicked(final String categoryAndURL)
+    public void spvLinkClicked(final String category, final String url)
     {
-	int i = categoryAndURL.indexOf(Main.blankSpace);
-	String category = categoryAndURL.substring(0, i);
-	String url = categoryAndURL.substring(i+1);
 	if (category.equals(Main.subject)) {
 	    Main.getMainPanel()
 		.getQueryPanel().getSubjectTextBox().setText(url);
@@ -146,7 +148,9 @@ public class MainPanel
 		.getQueryPanel().getSubjectTextBox().setText("ERROR");
 	    return;
 	}
-	doQuery();
+	doQuery(true);
+
+	Main.getAction().recordSpvLinkClicked(category, url);
     }
 
     //

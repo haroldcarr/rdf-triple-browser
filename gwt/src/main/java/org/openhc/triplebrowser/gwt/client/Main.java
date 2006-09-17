@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 12 (Tue) 18:34:50 by Harold Carr.
+// Last Modified : 2006 Sep 16 (Sat) 09:52:43 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -28,6 +28,7 @@ public class Main
     public static final String emptyString          = "emptyString";
     public static final String expand               = "expand";
     public static final String expandAllTags        = "expand all tags";
+    public static final String historyFieldSeparator = ":;:";
     public static final String minusSymbol          = "-";
     public static final String NEW                  = "new";
     public static final String plusSymbol           = "+";
@@ -44,7 +45,8 @@ public class Main
     public static final String value                = "value";
 
     // TODO: these should be final.
-    private static MainPanel mainPanel;
+    private static Test        action;
+    private static MainPanel   mainPanel;
     private static ServerCalls serverCalls;
 
     /**
@@ -52,6 +54,8 @@ public class Main
      */
     public void onModuleLoad() 
     {
+	action = new Test();
+
 	serverCalls = new ServerCalls();
 	// TODO: a race with next statement that sets up the HTML 
 	// used by initialize
@@ -64,6 +68,9 @@ public class Main
     public static void makeMainPanel()
     {
 	mainPanel = new MainPanel();
+	// This doQuery could happen while MainPanel is begin setup.
+	// But need access to MainPanel from Main for history on the query.
+	getMainPanel().doQuery(true);
     }	
 
     public static String getExpandCollapseState(
@@ -76,8 +83,9 @@ public class Main
 	    return (pending ? Main.expand : Main.collapse);
 	}
     }
-    public static MainPanel getMainPanel()     { return mainPanel; }
+    public static MainPanel   getMainPanel()   { return mainPanel; }
     public static ServerCalls getServerCalls() { return serverCalls; }
+    public static Test        getAction()      { return action; }
 }
 
 // End of file.

@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 12 (Tue) 18:35:13 by Harold Carr.
+// Last Modified : 2006 Sep 16 (Sat) 09:47:44 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -74,7 +74,9 @@ public class QueryPanel
 	Command resetCommand = new Command() {
 	    public void execute() {
 		thisTextBox.setText(thisText);
-		Main.getMainPanel().doQuery();
+		Main.getMainPanel().doQuery(true);
+
+		Main.getAction().recordResetCommand(thisText);
 	    }
 	};
 
@@ -83,7 +85,9 @@ public class QueryPanel
 		String text = thisTextBox.getText();
 		thisTextBox.setText(thisText);
 		leftTextBox.setText(text);
-		Main.getMainPanel().doQuery();
+		Main.getMainPanel().doQuery(true);
+
+		Main.getAction().recordMoveLeftCommand(text, thisText);
 	    }
 	};
 
@@ -92,21 +96,28 @@ public class QueryPanel
 		String text = thisTextBox.getText();
 		thisTextBox.setText(thisText);
 		rightTextBox.setText(text);
-		Main.getMainPanel().doQuery();
+		Main.getMainPanel().doQuery(true);
+
+		Main.getAction().recordMoveRightCommand(thisText, text);
 	    }
 	};
 
 	Command newCommand = new Command() {
 	    public void execute() {
-		Main.getMainPanel().doQuery();
+		Main.getMainPanel().doQuery(true);
+
+		Main.getAction().recordNewCommand(thisText);
 	    }
 	};
 
 	Command allCommand = new Command() {
 	    public void execute() {
 		Main.getMainPanel()
-		    .doQuery(Main.qsubject, Main.qproperty,
+		    .doQuery(true,
+			     Main.qsubject, Main.qproperty,
 			     Main.qvalue, thisText);
+
+		Main.getAction().recordAllCommand(thisText);
 	    }
 	};
 
