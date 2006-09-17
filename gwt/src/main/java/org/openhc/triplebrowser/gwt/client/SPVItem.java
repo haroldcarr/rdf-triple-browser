@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 12 (Tue) 18:30:12 by Harold Carr.
+// Last Modified : 2006 Sep 16 (Sat) 08:19:23 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -8,7 +8,7 @@ package com.differentity.client;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.differentity.client.Main;
@@ -20,7 +20,7 @@ public class SPVItem
     private final String collapsedName;
     private String expandCollapseState;
     private final Button button;
-    private final Hyperlink hyperlink;
+    private final Label label;
     private final HorizontalPanel horizontalPanel;
     private final VerticalPanel verticalPanel;
     
@@ -32,18 +32,17 @@ public class SPVItem
 	this.collapsedName = collapsedName;
 	this.expandCollapseState = expandCollapseState;
 	button = new Button(Main.plusSymbol);
-	hyperlink = new Hyperlink(expandedName,
-				  spvCategory + Main.blankSpace+ expandedName);
+	label = new Label(expandedName);
 	horizontalPanel = new HorizontalPanel();
 	verticalPanel = new VerticalPanel();
 
 	// Item layout.
 	horizontalPanel.add(button);
-	horizontalPanel.add(hyperlink);
+	horizontalPanel.add(label);
 	verticalPanel.add(horizontalPanel);
 
 	if (expandCollapseState.equals(Main.collapse)){
-	    hyperlink.setText(collapsedName);
+	    label.setText(collapsedName);
 	} else {
 	    button.setText(Main.minusSymbol);
 	    verticalPanel.add(new Frame(expandedName));
@@ -54,7 +53,7 @@ public class SPVItem
     String getExpandedName()             { return expandedName; }
     String getCollapsedName()            { return collapsedName; }
     Button getButton()                   { return button; }
-    Hyperlink getHyperlink()             { return hyperlink; }
+    Label  getLabel()                    { return label; }
     HorizontalPanel getHorizontalPanel() { return horizontalPanel; }
     VerticalPanel getVerticalPanel()     { return verticalPanel; }
 
