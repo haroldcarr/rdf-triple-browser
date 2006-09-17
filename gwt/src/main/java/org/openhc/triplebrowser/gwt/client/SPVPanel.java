@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Aug 20 (Sun) 13:20:13 by Harold Carr.
+// Last Modified : 2006 Sep 16 (Sat) 08:22:36 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -12,7 +12,7 @@ import java.util.List;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Frame;
-import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -23,7 +23,7 @@ public class SPVPanel
 {
     String expandCollapseState;
 
-    private final String spvCategory; // For debug only.
+    private final String spvCategory;
     private List  contents;
     private final VerticalPanel verticalInsideScroll;
     private final VerticalPanel topVerticalPanel;
@@ -55,6 +55,8 @@ public class SPVPanel
 	    public void onClick(Widget sender) {
 		final String newState = expandOrCollapse();
 		topButton.setText(newState);
+
+		Main.getAction().recordExpandOrCollapseSPVClick(spvCategory);
 	    }
 	});
     }
@@ -99,12 +101,15 @@ public class SPVPanel
 	    verticalInsideScroll.add(spvItem.getVerticalPanel());
 
 	    if (expandCollapseState.equals(Main.expand)) {
-		spvItem.getHyperlink().setText(spvItem.getExpandedName());
+		spvItem.getLabel().setText(spvItem.getExpandedName());
 	    }
 
-	    spvItem.getHyperlink().addClickListener(new ClickListener() {
+	    spvItem.getLabel().addClickListener(new ClickListener() {
 		public void onClick(final Widget sender) {
-		    Main.getMainPanel().spvLinkClicked(((Hyperlink)sender).getTargetHistoryToken());
+		    Main.getMainPanel().spvLinkClicked(
+		        spvCategory, spvItem.getExpandedName());
+
+		    //Main.getAction().recordSPVItemLinkClick(((Hyperlink)sender).getTargetHistoryToken());
 		}
 	    });
 
@@ -115,17 +120,19 @@ public class SPVPanel
 		    // * = expand to full URL and all source.
 		    // - = collapse to short URL and no source.
 		    if (spvItem.getPendingExpandCollapseState().equals(Main.expand)) {
-			spvItem.getHyperlink().setText(spvItem.getExpandedName());
+			spvItem.getLabel().setText(spvItem.getExpandedName());
 			spvItem.getVerticalPanel().add(new Frame(spvItem.getExpandedName()));
 			spvItem.setExpandCollapseState(Main.expand);
 			spvItem.getButton().setText(Main.minusSymbol);
 		    } else {
 			Widget w = spvItem.getVerticalPanel().getWidget(1);
 			spvItem.getVerticalPanel().remove(w);
-			spvItem.getHyperlink().setText(spvItem.getCollapsedName());
+			spvItem.getLabel().setText(spvItem.getCollapsedName());
 			spvItem.setExpandCollapseState(Main.collapse);
 			spvItem.getButton().setText(Main.plusSymbol);
 		    }
+
+		    Main.getAction().recordExpandOrCollapseSPVItemClick("?");
 		}});
 	}
     }
@@ -140,9 +147,9 @@ public class SPVPanel
 	    final SPVItem spvItem = (SPVItem) j.next();
 	    if (spvItem.getCurrentExpandCollapseState().equals(Main.collapse)){
 		if (pendingExpandCollapseState.equals(Main.expand)) {
-		    spvItem.getHyperlink().setText(spvItem.getExpandedName());
+		    spvItem.getLabel().setText(spvItem.getExpandedName());
 		} else {
-		    spvItem.getHyperlink().setText(spvItem.getCollapsedName());
+		    spvItem.getLabel().setText(spvItem.getCollapsedName());
 		}
 	    }
 	}
