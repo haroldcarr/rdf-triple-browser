@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 12 (Tue) 18:31:19 by Harold Carr.
+// Last Modified : 2006 Sep 17 (Sun) 11:14:57 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -13,6 +13,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.ui.Label;
 
 import com.differentity.client.Main;
 import com.differentity.client.SPVPanel;
@@ -49,14 +50,20 @@ public class ServerCalls
     public void doQuery(final MainPanel mainPanel,
 			final QueryRequest queryRequest)
     {
+	final Label responseProgressLabel = 
+	    Main.getMainPanel().getResponseProgressLabel();
+	responseProgressLabel.setText("LOADING...");
+
 	serviceAsync.doQuery(
             queryRequest,
 	    new AsyncCallback() {
 		public void onSuccess(Object x) {
+		    responseProgressLabel.setText("");
 		    mainPanel.handleQueryResponse((QueryResponse) x);
 		}
 
 		public void onFailure(Throwable caught) {
+		    responseProgressLabel.setText("");
 		    Window.alert(".doQuery: " + caught);
 		}
 	    });
