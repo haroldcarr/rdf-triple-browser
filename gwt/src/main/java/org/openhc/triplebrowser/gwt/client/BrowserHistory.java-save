@@ -1,0 +1,123 @@
+//
+// Created       : 2006 Jul 30 (Sun) 15:53:20 by Harold Carr.
+// Last Modified : 2006 Sep 21 (Thu) 16:36:17 by Harold Carr.
+//
+
+package com.differentity.client;
+
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.Window;
+
+public class BrowserHistory
+    implements HistoryListener 
+{
+    private boolean newItemAdded = false;
+    private long expandCollapseCounter = 0;
+
+    public BrowserHistory()
+    {
+    }
+
+    public void initialize()
+    {
+	// onHistoryChanged() is not called when the application first runs.
+	// Call it now, if there is a history token (e.g., from a bookmark).
+	String initToken = History.getToken();
+	if (initToken.length() != 0) {
+	    onHistoryChanged(initToken);
+	}
+
+	// Add history listener
+	History.addHistoryListener(this);
+    }
+
+    public void onHistoryChanged(final String historyToken) 
+    {
+	//System.out.println(".onHistoryChanged: doQuery - " + historyToken);
+
+	DevTime.getBrowserHistoryLabel().setText("token: " + historyToken);
+
+	// Workaround.
+	if (newItemAdded) {
+	    newItemAdded = false;
+	    return;
+	}
+
+	String[] token = 
+	    decode(historyToken).split(Main.historyFieldSeparator);
+
+	if (token[0].equals(Main.doQuery)) {
+	    QueryPanel queryPanel = Main.getMainPanel().getQueryPanel();
+	    queryPanel.getSubjectTextBox().setText(token[1]);
+	    queryPanel.getPropertyTextBox().setText(token[2]);
+	    queryPanel.getValueTextBox().setText(token[3]);
+	    Main.getMainPanel()
+		.doQuery(false, token[4], token[5], token[6], token[7]);
+	} else if (token[0].equals("")) {
+	    ;
+	} else {
+	    Window.alert(".onHistoryChanged: unknown:" + historyToken);
+	}
+    }
+
+    // MainPanel()
+    public void recordDoQuery(final boolean keepHistory,
+			      final String subject, final String property, 
+			      final String value, final String setContentsOf)
+    {
+	try {
+	    //System.out.println(".recordDoQuery->:");
+	    if (! keepHistory) {
+		return;
+	    }
+
+	    QueryPanel queryPanel = Main.getMainPanel().getQueryPanel();
+
+	    newItem(Main.doQuery
+		    + Main.historyFieldSeparator
+		    + queryPanel.getSubjectTextBox().getText()
+		    + Main.historyFieldSeparator
+		    + queryPanel.getPropertyTextBox().getText()
+		    + Main.historyFieldSeparator
+		    + queryPanel.getValueTextBox().getText()
+		    + Main.historyFieldSeparator
+		    + subject
+		    + Main.historyFieldSeparator
+		    + property
+		    + Main.historyFieldSeparator
+		    + value
+		    + Main.historyFieldSeparator
+		    + setContentsOf);
+	} finally {
+	    //System.out.println(".recordDoQuery<-:");
+	}
+    }
+
+    ////////////////////////////////////////////////////
+    //
+    // Implementation
+    //
+
+    private void newItem(String x)
+    {
+	// workaround to not take action in onHistoryChanged
+	newItemAdded = true;
+
+	History.newItem(encode(x));
+    }
+
+    private String encode (String x)
+    {
+	// GWT uses # to delimit history token in URI.
+	return x.replaceAll("#", "SHARPT");
+    }
+
+    
+    private String decode (String x)
+    {
+	return x.replaceAll("SHARPT", "#");
+    }
+}
+
+// End of file.
