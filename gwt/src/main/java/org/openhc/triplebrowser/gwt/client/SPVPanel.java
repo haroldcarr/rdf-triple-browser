@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 19 (Tue) 15:31:27 by Harold Carr.
+// Last Modified : 2006 Sep 21 (Thu) 15:47:08 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -62,9 +62,6 @@ public class SPVPanel
     {
 	final String newState = expandOrCollapse();
 	topButton.setText(newState);
-
-	Main.getBrowserHistory()
-	    .recordExpandOrCollapseSPVClick(keepHistory, spvCategory);
     }
 
     public VerticalPanel getPanel() { return topVerticalPanel; }
@@ -136,9 +133,6 @@ public class SPVPanel
 			spvItem.setExpandCollapseState(Main.collapse);
 			spvItem.getButton().setText(Main.plusSymbol);
 		    }
-
-		    Main.getBrowserHistory()
-			.recordExpandOrCollapseSPVItemClick("?");
 		}});
 	}
     }

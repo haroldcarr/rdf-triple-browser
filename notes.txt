@@ -1,7 +1,12 @@
 #
 # Created       : 2006 Jul 14 (Wed) 19:15:16 by Harold Carr.
-# Last Modified : 2006 Sep 10 (Sun) 19:09:34 by Harold Carr.
+# Last Modified : 2006 Sep 21 (Thu) 16:40:02 by Harold Carr.
 #
+
+------------------------------------------------------------------------------
+2006-09-21
+
+Initial version of history (works with Bookmarks) complete.
 
 ------------------------------------------------------------------------------
 2006-09-10
