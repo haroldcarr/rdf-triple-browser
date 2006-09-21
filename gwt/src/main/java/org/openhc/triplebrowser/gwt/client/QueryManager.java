@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 16 (Sat) 09:46:16 by Harold Carr.
+// Last Modified : 2006 Sep 21 (Thu) 15:10:38 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -9,11 +9,13 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Frame; // *****
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.Window; // *****
 
+import com.differentity.client.BrowserHistory;
 import com.differentity.client.Main;
 import com.differentity.client.QueryRequest;
 import com.differentity.client.Test; // *****
@@ -21,6 +23,7 @@ import com.differentity.client.Test; // *****
 
 public class MainPanel
 {
+    private final Label responseProgressLabel;
     private final SPVPanel subjectPanel;
     private final SPVPanel propertyPanel;
     private final SPVPanel valuePanel;
@@ -34,6 +37,8 @@ public class MainPanel
     private final QueryPanel queryPanel;
 
     MainPanel() {
+
+	responseProgressLabel = new Label();
 
 	//
 	// QueryPanel created before SPV panels since needed.
@@ -77,6 +82,7 @@ public class MainPanel
 	// Better: Search for all elements with a particular CSS class 
 	// and replace them with widgets.
 
+	RootPanel.get("slot0").add(responseProgressLabel);
 	RootPanel.get("slot1").add(DevTime.makeStatusWidgets());
 	RootPanel.get("slot2").add(dockPanel);
 
@@ -85,7 +91,6 @@ public class MainPanel
 
 	// XXX - test
 	//RootPanel.get("slot4").add(new Test().getWidget());
-	RootPanel.get("slot4").add(Main.getAction().getWidget());
     }
 
     public void doQuery(boolean keepHistory)
@@ -111,7 +116,7 @@ public class MainPanel
 	// "this" so async request can call handleQueryResponse.
 	Main.getServerCalls().doQuery(this, queryRequest);
 
-	Main.getAction()
+	Main.getBrowserHistory()
 	    .recordDoQuery(keepHistory, 
 			   subject, property, value, setContentsOf);
     }
@@ -149,8 +154,6 @@ public class MainPanel
 	    return;
 	}
 	doQuery(true);
-
-	Main.getAction().recordSpvLinkClicked(category, url);
     }
 
     //
@@ -166,7 +169,12 @@ public class MainPanel
 	return def;
     }
 
-    public QueryPanel getQueryPanel()  { return queryPanel; }
+    public Label      getResponseProgressLabel()
+        { return responseProgressLabel; }
+    public QueryPanel getQueryPanel()    { return queryPanel; }
+    public SPVPanel   getSubjectPanel()  { return subjectPanel; }
+    public SPVPanel   getPropertyPanel() { return propertyPanel; }
+    public SPVPanel   getValuePanel()    { return valuePanel; }
 }
 
 // End of file.

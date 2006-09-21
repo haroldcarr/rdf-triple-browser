@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 16 (Sat) 08:22:36 by Harold Carr.
+// Last Modified : 2006 Sep 19 (Tue) 15:31:27 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -30,7 +30,7 @@ public class SPVPanel
     private final Button topButton;
     private final ScrollPanel scrollPanel;
 
-    SPVPanel(final String spvCategory)
+    public SPVPanel(final String spvCategory)
     {
 	this.expandCollapseState = Main.collapse;
 
@@ -53,21 +53,27 @@ public class SPVPanel
 	
 	topButton.addClickListener(new ClickListener() {
 	    public void onClick(Widget sender) {
-		final String newState = expandOrCollapse();
-		topButton.setText(newState);
-
-		Main.getAction().recordExpandOrCollapseSPVClick(spvCategory);
+		expandOrCollapseSPVClick(true);
 	    }
 	});
     }
 
-    VerticalPanel getPanel() { return topVerticalPanel; }
+    public void expandOrCollapseSPVClick(final boolean keepHistory)
+    {
+	final String newState = expandOrCollapse();
+	topButton.setText(newState);
 
-    String getCurrentExpandCollapseState()
+	Main.getBrowserHistory()
+	    .recordExpandOrCollapseSPVClick(keepHistory, spvCategory);
+    }
+
+    public VerticalPanel getPanel() { return topVerticalPanel; }
+
+    private String getCurrentExpandCollapseState()
     {
 	return Main.getExpandCollapseState(expandCollapseState, false);
     }
-    String getPendingExpandCollapseState()
+    private String getPendingExpandCollapseState()
     {
 	return Main.getExpandCollapseState(expandCollapseState, true);
     }
@@ -108,8 +114,7 @@ public class SPVPanel
 		public void onClick(final Widget sender) {
 		    Main.getMainPanel().spvLinkClicked(
 		        spvCategory, spvItem.getExpandedName());
-
-		    //Main.getAction().recordSPVItemLinkClick(((Hyperlink)sender).getTargetHistoryToken());
+		    // Causes doQuery so no history necessary here.
 		}
 	    });
 
@@ -132,7 +137,8 @@ public class SPVPanel
 			spvItem.getButton().setText(Main.plusSymbol);
 		    }
 
-		    Main.getAction().recordExpandOrCollapseSPVItemClick("?");
+		    Main.getBrowserHistory()
+			.recordExpandOrCollapseSPVItemClick("?");
 		}});
 	}
     }

@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 16 (Sat) 09:52:43 by Harold Carr.
+// Last Modified : 2006 Sep 21 (Thu) 15:36:19 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -25,9 +25,14 @@ public class Main
     public static final String collapseAllTags      = "collapse all tags";
     public static final String copyright            = "copyright 2006";
     public static final String differentityDotCom   = "differentity.com";
+    public static final String doQuery              = "doQuery";
     public static final String emptyString          = "emptyString";
     public static final String expand               = "expand";
     public static final String expandAllTags        = "expand all tags";
+    public static final String expandOrCollapseSPVClick 
+	= "expandOrCollapseSPVClick";
+    public static final String expandOrCollapseSPVItemClick
+	= "expandOrCollapseSPVItemClick";
     public static final String historyFieldSeparator = ":;:";
     public static final String minusSymbol          = "-";
     public static final String NEW                  = "new";
@@ -45,17 +50,15 @@ public class Main
     public static final String value                = "value";
 
     // TODO: these should be final.
-    private static Test        action;
-    private static MainPanel   mainPanel;
-    private static ServerCalls serverCalls;
+    private static BrowserHistory browserHistory;
+    private static MainPanel      mainPanel;
+    private static ServerCalls    serverCalls;
 
     /**
      * This is the entry point method.
      */
     public void onModuleLoad() 
     {
-	action = new Test();
-
 	serverCalls = new ServerCalls();
 	// TODO: a race with next statement that sets up the HTML 
 	// used by initialize
@@ -68,11 +71,22 @@ public class Main
     public static void makeMainPanel()
     {
 	mainPanel = new MainPanel();
+
+	// Need to set this up after MainPanel available in case
+	// a bookmark with history is invoked.
+	browserHistory = new BrowserHistory();
+	// Need to create in two parts since initialize, if using
+	// a bookmark, may make a query - and that query will use
+	// browserHistory.  If in the constructor then it is not
+	// available because above assignment happens after construction.
+	browserHistory.initialize();
+
 	// This doQuery could happen while MainPanel is begin setup.
 	// But need access to MainPanel from Main for history on the query.
 	getMainPanel().doQuery(true);
     }	
 
+    // Utility
     public static String getExpandCollapseState(
 	final String expandCollapseState,
 	final boolean pending)
@@ -83,9 +97,9 @@ public class Main
 	    return (pending ? Main.expand : Main.collapse);
 	}
     }
-    public static MainPanel   getMainPanel()   { return mainPanel; }
-    public static ServerCalls getServerCalls() { return serverCalls; }
-    public static Test        getAction()      { return action; }
+    public static MainPanel      getMainPanel()      { return mainPanel; }
+    public static ServerCalls    getServerCalls()    { return serverCalls; }
+    public static BrowserHistory getBrowserHistory() { return browserHistory; }
 }
 
 // End of file.

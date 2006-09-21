@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 16 (Sat) 09:47:44 by Harold Carr.
+// Last Modified : 2006 Sep 17 (Sun) 09:45:53 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -31,7 +31,6 @@ public class QueryPanel
 	    new org.gwtwidgets.client.util.WindowUtils();
 	org.gwtwidgets.client.util.Location location = wu.getLocation();
 	String start = location.getParameter(Main.url);
-	//System.out.println(start);
 	if (start == null) {
 	    subjectTextBox.setText(Main.qsubject);
 	} else {
@@ -75,8 +74,6 @@ public class QueryPanel
 	    public void execute() {
 		thisTextBox.setText(thisText);
 		Main.getMainPanel().doQuery(true);
-
-		Main.getAction().recordResetCommand(thisText);
 	    }
 	};
 
@@ -86,8 +83,6 @@ public class QueryPanel
 		thisTextBox.setText(thisText);
 		leftTextBox.setText(text);
 		Main.getMainPanel().doQuery(true);
-
-		Main.getAction().recordMoveLeftCommand(text, thisText);
 	    }
 	};
 
@@ -97,16 +92,12 @@ public class QueryPanel
 		thisTextBox.setText(thisText);
 		rightTextBox.setText(text);
 		Main.getMainPanel().doQuery(true);
-
-		Main.getAction().recordMoveRightCommand(thisText, text);
 	    }
 	};
 
 	Command newCommand = new Command() {
 	    public void execute() {
 		Main.getMainPanel().doQuery(true);
-
-		Main.getAction().recordNewCommand(thisText);
 	    }
 	};
 
@@ -116,8 +107,6 @@ public class QueryPanel
 		    .doQuery(true,
 			     Main.qsubject, Main.qproperty,
 			     Main.qvalue, thisText);
-
-		Main.getAction().recordAllCommand(thisText);
 	    }
 	};
 
