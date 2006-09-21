@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 17 (Sun) 11:14:57 by Harold Carr.
+// Last Modified : 2006 Sep 21 (Thu) 15:59:22 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -42,7 +42,7 @@ public class ServerCalls
 		    DevTime.getJenaStatusHTML().setHTML(result.toString());
 		}
 		public void onFailure(Throwable caught) {
-		    DevTime.getJenaStatusHTML().setHTML(caught.toString());
+		    Window.alert(".doQuery: " + caught);
 		}
 	    });
     }
@@ -77,7 +77,7 @@ public class ServerCalls
 		    DevTime.getJenaStatusHTML().setHTML(result.toString());
 		}
 		public void onFailure(Throwable caught) {
-		    DevTime.getJenaStatusHTML().setHTML(caught.toString());
+		    Window.alert(".doQuery: " + caught);
 		}
 	    });
     }
