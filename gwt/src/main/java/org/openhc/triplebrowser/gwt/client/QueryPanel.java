@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 17 (Sun) 09:45:53 by Harold Carr.
+// Last Modified : 2006 Sep 21 (Thu) 21:11:27 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -70,7 +70,7 @@ public class QueryPanel
 				final String  rightText,
 				final TextBox rightTextBox)
     {
-	Command resetCommand = new Command() {
+	Command clearCommand = new Command() {
 	    public void execute() {
 		thisTextBox.setText(thisText);
 		Main.getMainPanel().doQuery(true);
@@ -95,13 +95,15 @@ public class QueryPanel
 	    }
 	};
 
-	Command newCommand = new Command() {
+	/*
+	Command showMatchCommand = new Command() {
 	    public void execute() {
 		Main.getMainPanel().doQuery(true);
 	    }
 	};
+	*/
 
-	Command allCommand = new Command() {
+	Command showAllCommand = new Command() {
 	    public void execute() {
 		Main.getMainPanel()
 		    .doQuery(true,
@@ -111,14 +113,14 @@ public class QueryPanel
 	};
 
 	MenuBar inside = new MenuBar(true);
-	inside.addItem(Main.asteriskSymbol, resetCommand);
+	inside.addItem(Main.clear, clearCommand);
+	//inside.addItem(Main.showMatch, showMatchCommand);
+	inside.addItem(Main.showAll, showAllCommand);
 	inside.addItem(Main.shiftRight, moveRightCommand);
 	inside.addItem(Main.shiftLeft, moveLeftCommand);
-	inside.addItem(Main.NEW, newCommand);
-	inside.addItem(Main.all, allCommand);
 	MenuBar outside = new MenuBar();
-	outside.addItem(Main.asteriskSymbol, inside);
-	outside.setAutoOpen(true);
+	outside.addItem("v" /*Main.asteriskSymbol*/, inside);
+	//outside.setAutoOpen(true);
 	return outside;
     }
 }

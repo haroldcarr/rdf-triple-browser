@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 21 (Thu) 15:36:19 by Harold Carr.
+// Last Modified : 2006 Sep 21 (Thu) 17:22:00 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -18,7 +18,7 @@ public class Main
 {
     public static final String serviceEntryPoint    = "/Service";
 
-    public static final String all                  = "all";
+    public static final String clear                = "clear";
     public static final String asteriskSymbol       = "*";
     public static final String blankSpace           = " ";
     public static final String collapse             = "collapse";
@@ -35,8 +35,7 @@ public class Main
 	= "expandOrCollapseSPVItemClick";
     public static final String historyFieldSeparator = ":;:";
     public static final String minusSymbol          = "-";
-    public static final String NEW                  = "new";
-    public static final String plusSymbol           = "+";
+     public static final String plusSymbol           = "+";
     public static final String property             = "property";
     public static final String questionMarkSymbol   = "?";
     public static final String qsubject             = "?subject";
@@ -44,6 +43,8 @@ public class Main
     public static final String qvalue               = "?value";
     public static final String shiftLeft            = "<-";
     public static final String shiftRight           = "->";
+    public static final String showAll              = "show all";
+    public static final String showMatch            = "show match";
     public static final String subject              = "subject";
     public static final String subjectPropertyValue = "subjectPropertyValue";
     public static final String url                  = "url";
