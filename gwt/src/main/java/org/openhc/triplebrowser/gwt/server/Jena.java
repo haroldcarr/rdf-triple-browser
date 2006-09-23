@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2006 Sep 23 (Sat) 14:18:32 by Harold Carr.
+// Last Modified : 2006 Sep 23 (Sat) 16:20:08 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -78,6 +78,10 @@ public class Jena
 	}
 	if (value.startsWith(Main.questionMarkSymbol)) {
 	    selectVars = selectVars + " " + value;
+	}
+
+	if (selectVars.equals("")) {
+	    selectVars = "?ddduuummmyyy";
 	}
 
 	String queryString =
