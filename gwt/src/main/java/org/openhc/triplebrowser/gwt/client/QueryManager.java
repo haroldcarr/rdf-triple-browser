@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 21 (Thu) 15:10:38 by Harold Carr.
+// Last Modified : 2006 Sep 23 (Sat) 15:59:42 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -73,7 +73,7 @@ public class MainPanel
 	south = new HTML(Main.copyright, true);
 	dockPanel.add(north, DockPanel.NORTH);
 
-	dockPanel.add(queryPanel.getHorizontalPanel(), DockPanel.NORTH);
+	dockPanel.add(queryPanel.getPanel(), DockPanel.NORTH);
 	// NOTE: - if SOUTH added after CENTER does not show up.
 	dockPanel.add(south, DockPanel.SOUTH);
 	dockPanel.add(spvHorizontalPanel, DockPanel.CENTER);

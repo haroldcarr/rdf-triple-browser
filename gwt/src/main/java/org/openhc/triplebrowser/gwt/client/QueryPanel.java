@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 23 (Sat) 15:14:22 by Harold Carr.
+// Last Modified : 2006 Sep 23 (Sat) 16:08:14 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -11,11 +11,14 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class QueryPanel
 {
-    private final HorizontalPanel horizontalPanel;
+    private final VerticalPanel   verticalPanel;
+    private final HorizontalPanel topHorizontalPanel;
+    private final HorizontalPanel bottomHorizontalPanel;
     private final TextBox         subjectTextBox;
     private final TextBox         propertyTextBox;
     private final TextBox         valueTextBox;
@@ -51,13 +54,13 @@ public class QueryPanel
 	    makeMenuBar(Main.qproperty, propertyTextBox,
 			Main.qvalue,    valueTextBox,
 			Main.qsubject,  subjectTextBox);
-	horizontalPanel = new HorizontalPanel();
-	horizontalPanel.add(subjectMenuBar);
-	horizontalPanel.add(subjectTextBox);
-	horizontalPanel.add(propertyMenuBar);
-	horizontalPanel.add(propertyTextBox);
-	horizontalPanel.add(valueMenuBar);
-	horizontalPanel.add(valueTextBox);
+	bottomHorizontalPanel = new HorizontalPanel();
+	bottomHorizontalPanel.add(subjectMenuBar);
+	bottomHorizontalPanel.add(subjectTextBox);
+	bottomHorizontalPanel.add(propertyMenuBar);
+	bottomHorizontalPanel.add(propertyTextBox);
+	bottomHorizontalPanel.add(valueMenuBar);
+	bottomHorizontalPanel.add(valueTextBox);
 
 	Button saveButton = new Button("save");
 	saveButton.addClickListener(new ClickListener() {
@@ -68,12 +71,23 @@ public class QueryPanel
 				     valueTextBox.getText(),
 				     Main.qsubject+Main.qproperty+Main.qvalue));
 	    }});
-	horizontalPanel.add(saveButton);
+	topHorizontalPanel = new HorizontalPanel();
+	// ***** Fix space kludge temporary spacing.
+	topHorizontalPanel.add(new com.google.gwt.user.client.ui.Label(
+            "                                                                                                                "));
+	topHorizontalPanel.add(new com.google.gwt.user.client.ui.Label(
+            "                                                                                                                "));
+	topHorizontalPanel.add(saveButton);
+
+	verticalPanel = new VerticalPanel();
+	verticalPanel.add(topHorizontalPanel);
+	verticalPanel.add(bottomHorizontalPanel);
     }
+
     TextBox         getSubjectTextBox()  { return subjectTextBox; }
     TextBox         getPropertyTextBox() { return propertyTextBox; }
     TextBox         getValueTextBox()    { return valueTextBox; }
-    HorizontalPanel getHorizontalPanel() { return horizontalPanel; }
+    VerticalPanel   getPanel()           { return verticalPanel; }
 
     private MenuBar makeMenuBar(final String  leftText,
 				final TextBox leftTextBox,
