@@ -1,11 +1,12 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 21 (Thu) 21:11:27 by Harold Carr.
+// Last Modified : 2006 Sep 23 (Sat) 15:14:22 by Harold Carr.
 //
 
 package com.differentity.client;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -57,6 +58,17 @@ public class QueryPanel
 	horizontalPanel.add(propertyTextBox);
 	horizontalPanel.add(valueMenuBar);
 	horizontalPanel.add(valueTextBox);
+
+	Button saveButton = new Button("save");
+	saveButton.addClickListener(new ClickListener() {
+	    public void onClick(Widget sender) {
+		Main.getServerCalls().assertFact(
+	            new QueryRequest(subjectTextBox.getText(),
+				     propertyTextBox.getText(),
+				     valueTextBox.getText(),
+				     Main.qsubject+Main.qproperty+Main.qvalue));
+	    }});
+	horizontalPanel.add(saveButton);
     }
     TextBox         getSubjectTextBox()  { return subjectTextBox; }
     TextBox         getPropertyTextBox() { return propertyTextBox; }

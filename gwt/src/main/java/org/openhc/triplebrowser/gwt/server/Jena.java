@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2006 Sep 04 (Mon) 22:41:11 by Harold Carr.
+// Last Modified : 2006 Sep 23 (Sat) 14:18:32 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -10,6 +10,8 @@ import java.io.IOException;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdql.Query;
 import com.hp.hpl.jena.rdql.QueryEngine;
 import com.hp.hpl.jena.rdql.QueryResults;
@@ -52,6 +54,14 @@ public class Jena
 		try { in.close(); } catch (IOException e) {}
 	    }
 	}
+    }
+
+    public void assertFact(String s, String p, String v)	
+    {
+	Resource subj = model.createResource(s);
+	Property prop = model.createProperty(p);
+	Resource val  = model.createResource(v);
+	subj.addProperty(prop, val);
     }
 
     public QueryResults doQuery(String s, String p, String v)

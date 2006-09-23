@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 21 (Thu) 15:59:22 by Harold Carr.
+// Last Modified : 2006 Sep 23 (Sat) 15:13:03 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -65,6 +65,27 @@ public class ServerCalls
 		public void onFailure(Throwable caught) {
 		    responseProgressLabel.setText("");
 		    Window.alert(".doQuery: " + caught);
+		}
+	    });
+    }
+
+    public void assertFact(final QueryRequest queryRequest)
+    {
+	final Label responseProgressLabel = 
+	    Main.getMainPanel().getResponseProgressLabel();
+	responseProgressLabel.setText("LOADING...");
+
+	serviceAsync.assertFact(
+            queryRequest,
+	    new AsyncCallback() {
+		public void onSuccess(Object x) {
+		    responseProgressLabel.setText("");
+		    Main.getMainPanel().handleQueryResponse((QueryResponse) x);
+		}
+
+		public void onFailure(Throwable caught) {
+		    responseProgressLabel.setText("");
+		    Window.alert(".assertFact: " + caught);
 		}
 	    });
     }

@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2006 Sep 10 (Sun) 20:49:53 by Harold Carr.
+// Last Modified : 2006 Sep 23 (Sat) 14:27:30 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -191,6 +191,23 @@ public class ServiceImpl
 	return new QueryResponse(subjectResponse, propertyResponse,
 				 valueResponse,
 				 queryRequest.getSetContentsOf(), status);
+    }
+
+    public QueryResponse assertFact(QueryRequest queryRequest)
+    {
+	jena.assertFact(queryRequest.getSubject(),
+			queryRequest.getProperty(),
+			queryRequest.getValue());
+
+	List subjectResponse  = new ArrayList();
+	List propertyResponse = new ArrayList();
+	List valueResponse    = new ArrayList();
+	subjectResponse.add(queryRequest.getSubject());
+	propertyResponse.add(queryRequest.getProperty());
+	valueResponse.add(queryRequest.getValue());
+	return new QueryResponse(subjectResponse, propertyResponse,
+				 valueResponse,
+				 queryRequest.getSetContentsOf(), "OK");
     }
 
     ////////////////////////////////////////////////////
