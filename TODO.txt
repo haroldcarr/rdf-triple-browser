@@ -1,12 +1,11 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 21 (Thu) 16:39:26 by Harold Carr.
+// Last Modified : 2006 Sep 23 (Sat) 17:56:32 by Harold Carr.
 //
 
 ------------------------------------------------------------------------------
 In order:
 
-- POST: implement adding triples
 - SPVItem: enable "open in new window"
 - Create account/login
 - root of rdf data files
