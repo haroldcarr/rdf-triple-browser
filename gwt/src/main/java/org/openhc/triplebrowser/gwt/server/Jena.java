@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2006 Oct 06 (Fri) 22:11:37 by Harold Carr.
+// Last Modified : 2006 Oct 07 (Sat) 15:57:11 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -24,7 +24,6 @@ public class Jena
 {
     public final String NOWHERE = "http://nowhere/";
     public final String RDF_XML = "RDF/XML";
-    public static String lastQueryString; // for debug
 
     Model model;
 
@@ -38,13 +37,13 @@ public class Jena
 	model.close();
     }
 
-    public void readRDF(String filename)
+    public void readRDF(final String filename)
 	throws IOException
     {
 	readRDF(filename, RDF_XML);
     }
 
-    public void readRDF(String filename, String format)
+    public void readRDF(final String filename, final String format)
 	throws IOException
     {
 	FileInputStream in = null;
@@ -58,19 +57,20 @@ public class Jena
 	}
     }
 
-    public void assertFact(String s, String p, String v)	
+    public void assertFact(final String s, final String p, final String v)
     {
-	Resource subj = model.createResource(s);
-	Property prop = model.createProperty(p);
-	Resource val  = model.createResource(v);
-	subj.addProperty(prop, val);
+	Resource subject  = model.createResource(s);
+	Property property = model.createProperty(p);
+	Resource value    = model.createResource(v);
+	subject.addProperty(property, value);
     }
 
-    public ResultSet doQuery(String s, String p, String v)
+    public QueryReturnValue doQuery(String subject, 
+				    String property, String value)
     {
-	String subject  = formatInput(s);
-	String property = formatInput(p);
-	String value    = formatInput(v);
+	subject  = formatInput(subject);
+	property = formatInput(property);
+	value    = formatInput(value);
 	String selectVars = "";
 	if (subject.startsWith(Main.questionMarkSymbol)) {
 	    selectVars = selectVars + " " + subject;
@@ -93,38 +93,42 @@ public class Jena
 	    property + " " +
 	    value    + " . }";
 
-	System.out.println(queryString);
-
-	// Spent a lot of time here trying to figure out why URIs
-	// disappeared in the status output.
-	// It's simple: because they look like "<URI>" - when
-	// that is put in an HTML element it disappears as an unknown tag.
-	// TODO: make it visible - either "ampersand" it our change
-	// status area from HTML to TextBox.
-
-	lastQueryString =
-	    " Jena: " +
-	    "[subject "  + s + " / " + subject  + "]" +
-	    "[property " + p + " / " + property + "]" +
-	    "[value "    + v + " / " + value    + "]" + "<br/>" +
-	    queryString;
-
 	return doQuery(queryString);
     }
 
-    public ResultSet doQuery(String queryString)
+    public QueryReturnValue doQuery(final String queryString)
     {
 	Query query = QueryFactory.create(queryString);
-	QueryExecution qe = QueryExecutionFactory.create(query, model);
-	return qe.execSelect();
+	QueryExecution queryExecution = 
+	    QueryExecutionFactory.create(query, model);
+	ResultSet resultSet = queryExecution.execSelect();
+	return new QueryReturnValue(queryString, queryExecution, resultSet);
     }
 
-    private String formatInput(String x)
+    private String formatInput(final String x)
     {
 	if (x.startsWith("?")) {
 	    return x;
 	}
 	return "<" + x + ">";
+    }
+
+    class QueryReturnValue
+    {
+	private String         queryString;
+	private QueryExecution queryExecution;
+	private ResultSet      resultSet;
+	QueryReturnValue(final String         queryString,
+			 final QueryExecution queryExecution,
+			 final ResultSet      resultSet)
+	{
+	    this.queryString    = queryString;
+	    this.queryExecution = queryExecution;
+	    this.resultSet      = resultSet;
+	}
+	String         getQueryString()    { return queryString; }
+	QueryExecution getQueryExecution() { return queryExecution; }
+	ResultSet      getResultSet()      { return resultSet; }
     }
 }
 
