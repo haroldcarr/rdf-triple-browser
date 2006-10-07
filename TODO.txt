@@ -1,36 +1,32 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 23 (Sat) 17:56:32 by Harold Carr.
+// Last Modified : 2006 Oct 02 (Mon) 17:12:11 by Harold Carr.
 //
 
 ------------------------------------------------------------------------------
 In order:
 
-- SPVItem: enable "open in new window"
-- Create account/login
+- create account/login
 - root of rdf data files
 - default data file
+- ability to download/upload data files
+
+- update Jena to latest
+- use indexed/db Jena
+- more Jena.
+
+- tag cloud
+- style
+- figure out how to make spv panels expand.
+
+- SPVItem: enable "open in new window"
+- implement AND (recursively)
 - ability to create multiple data files
 - ability to select one or more data files for query
 - ability to save merged data files.
-- update Jena to latest
-- use indexed/db Jena
-- Implement AND (recursively)
-
-------------------------------------------------------------------------------
-Someday:
 
 - FIX: undeploy leaves jena.jar in WEB-INF/lib
-       DevTime workaround not working.
+       DevTime workaround (ie CloseJena) not working.
 
-- FIX: (when trying from any separate browser while gwt-shell is running):
-       When selecting a SPV URI starts extra new window.
-       Kill that window and the original window with the Request/Response
-       done.
 
-- More Jena.
-
-- Figure out how to make spv panels expand.
-
-- Style
-
+;;; End of file.
