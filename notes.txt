@@ -1,7 +1,40 @@
 #
 # Created       : 2006 Jul 14 (Wed) 19:15:16 by Harold Carr.
-# Last Modified : 2006 Sep 21 (Thu) 16:40:02 by Harold Carr.
+# Last Modified : 2006 Oct 07 (Sat) 16:23:40 by Harold Carr.
 #
+
+------------------------------------------------------------------------------
+2006-10-06
+
+Updating from Jena 2.1 to Jena 2.4 (but 2.4 with SPARQL seems slower).
+
+-------------------------
+Problem:
+
+xercesImpl.jar used by Jena 2.4 and one delivered in
+gwt-dev-windows.jar conflict.
+
+Solution: Put Jena classpath(s) before gwt-dev-windows.jar in
+GWT_SHELLER classpath.
+
+-------------------------
+Problem:
+
+xercesImpl.jar used by Jena 2.4 and one delivered in
+Tomcat in NetBeans 5.5 beta conflict.
+
+Solution: Replace common/endorsed/xercesImpl.jar and xml-apis.jar
+with Jena versions.
+
+-------------------------
+Problem:
+
+Example query in ARQ doc shows QueryExecution.execSelect() followed by
+QueryExecution.close().  If you do that before iterating on the
+ResultSet then ResultSet.hasNext returns false.
+
+Solution:  Call close() after getting results (needed to
+pass QueryExecution between classes in order to close).
 
 ------------------------------------------------------------------------------
 2006-09-21
