@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Oct 02 (Mon) 17:12:11 by Harold Carr.
+// Last Modified : 2006 Oct 07 (Sat) 16:31:05 by Harold Carr.
 //
 
 ------------------------------------------------------------------------------
@@ -11,7 +11,6 @@ In order:
 - default data file
 - ability to download/upload data files
 
-- update Jena to latest
 - use indexed/db Jena
 - more Jena.
 
@@ -27,6 +26,5 @@ In order:
 
 - FIX: undeploy leaves jena.jar in WEB-INF/lib
        DevTime workaround (ie CloseJena) not working.
-
 
 ;;; End of file.
