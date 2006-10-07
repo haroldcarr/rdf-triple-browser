@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2006 Sep 23 (Sat) 14:27:30 by Harold Carr.
+// Last Modified : 2006 Oct 02 (Mon) 17:42:16 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -65,6 +65,7 @@ public class ServiceImpl
 	try {
 	    jena.close();
 	    jena = null;
+	    initialized = false;
 	} catch (Throwable t) {
 	    ByteArrayOutputStream stream = new ByteArrayOutputStream();
 	    PrintWriter printWriter = new PrintWriter(stream);
