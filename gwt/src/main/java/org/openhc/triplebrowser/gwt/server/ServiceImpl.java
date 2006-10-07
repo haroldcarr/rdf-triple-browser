@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2006 Oct 02 (Mon) 17:42:16 by Harold Carr.
+// Last Modified : 2006 Oct 06 (Fri) 21:27:12 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -14,8 +14,8 @@ import java.util.List;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import com.hp.hpl.jena.rdql.QueryResults;
-import com.hp.hpl.jena.rdql.ResultBinding;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
 
 import com.differentity.client.Main;
 import com.differentity.client.QueryRequest;
@@ -102,16 +102,16 @@ public class ServiceImpl
 	    firstTime = false;
 	    return doQueryTest(queryRequest);
 	}
-	QueryResults queryResults = 
+	ResultSet resultSet = 
 	    jena.doQuery(queryRequest.getSubject(),
 			 queryRequest.getProperty(),
 			 queryRequest.getValue());
 
-	return makeResponse(queryRequest, queryResults);
+	return makeResponse(queryRequest, resultSet);
     }
 
     private QueryResponse makeResponse(QueryRequest queryRequest,
-				       QueryResults queryResults)
+				       ResultSet resultSet)
     {
 	String status =
 	    " Service: " +
@@ -127,7 +127,7 @@ public class ServiceImpl
 	second.add(queryRequest.getProperty());
 	third.add(queryRequest.getValue());
 
-	List list = queryResults.getResultVars();
+	List list = resultSet.getResultVars();
 	Iterator i = list.iterator();
 	if (i.hasNext()) {
 	    first.add(0, "http://one/" + i.next());
@@ -143,7 +143,7 @@ public class ServiceImpl
 	boolean isSubjectVar  = false;
 	boolean isPropertyVar = false;
 	boolean isValueVar    = false;
-	List list = queryResults.getResultVars();
+	List list = resultSet.getResultVars();
 	Iterator i = list.iterator();
 	while (i.hasNext()) {
 	    String varName = (String) i.next();
@@ -167,28 +167,29 @@ public class ServiceImpl
 	if (!isValueVar) {
 	    valueResponse.add (queryRequest.getValue()); 
 	}
-	while (queryResults.hasNext()) {
-	    ResultBinding resultBinding = (ResultBinding) queryResults.next();
+	System.out.println(resultSet.hasNext());
+	while (resultSet.hasNext()) {
+	    QuerySolution querySolution = resultSet.nextSolution();
+	    System.out.println(querySolution.toString());
 	    if (isSubjectVar) { 
-		String x = resultBinding.get(Main.subject).toString();
+		String x = querySolution.get(Main.subject).toString();
 		if (! subjectResponse.contains(x)) {
 		    subjectResponse.add(x);
 		}
 	    }
 	    if (isPropertyVar) {
-		String x = resultBinding.get(Main.property).toString();
+		String x = querySolution.get(Main.property).toString();
 		if (! propertyResponse.contains(x)) {
 		    propertyResponse.add(x);
 		}
 	    }
 	    if (isValueVar) {
-		String x = resultBinding.get(Main.value).toString();
+		String x = querySolution.get(Main.value).toString();
 		if (! valueResponse.contains(x)) {
 		    valueResponse.add(x);
 		}
 	    }
 	}
-	queryResults.close();
 	return new QueryResponse(subjectResponse, propertyResponse,
 				 valueResponse,
 				 queryRequest.getSetContentsOf(), status);

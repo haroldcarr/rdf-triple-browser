@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2006 Sep 23 (Sat) 16:20:08 by Harold Carr.
+// Last Modified : 2006 Oct 06 (Fri) 22:11:37 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -8,13 +8,15 @@ package com.differentity.server;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdql.Query;
-import com.hp.hpl.jena.rdql.QueryEngine;
-import com.hp.hpl.jena.rdql.QueryResults;
 
 import com.differentity.client.Main;
 
@@ -64,7 +66,7 @@ public class Jena
 	subj.addProperty(prop, val);
     }
 
-    public QueryResults doQuery(String s, String p, String v)
+    public ResultSet doQuery(String s, String p, String v)
     {
 	String subject  = formatInput(s);
 	String property = formatInput(p);
@@ -86,10 +88,12 @@ public class Jena
 
 	String queryString =
 	    " SELECT " + selectVars +
-	    " WHERE ( " +
+	    " WHERE { " +
 	    subject  + " " +
 	    property + " " +
-	    value    + " )";
+	    value    + " . }";
+
+	System.out.println(queryString);
 
 	// Spent a lot of time here trying to figure out why URIs
 	// disappeared in the status output.
@@ -108,12 +112,11 @@ public class Jena
 	return doQuery(queryString);
     }
 
-    public QueryResults doQuery(String queryString)
+    public ResultSet doQuery(String queryString)
     {
-	Query query = new Query(queryString);
-	query.setSource(model);
-	QueryEngine qe = new QueryEngine(query);
-	return qe.exec();
+	Query query = QueryFactory.create(queryString);
+	QueryExecution qe = QueryExecutionFactory.create(query, model);
+	return qe.execSelect();
     }
 
     private String formatInput(String x)
