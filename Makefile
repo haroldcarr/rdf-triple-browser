@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2006 Oct 06 (Fri) 21:19:15 by Harold Carr.
+# Last Modified : 2006 Oct 08 (Sun) 14:07:38 by Harold Carr.
 #
 
 SRCDIR		= ./src
@@ -23,6 +23,7 @@ GWT_DEV         = $(GWT_HOME)/gwt-dev-windows.jar
 GWT_SERVLET     = $(GWT_HOME)/gwt-servlet.jar
 GWT_USER        = $(GWT_HOME)/gwt-user.jar
 JENA_CP		= $(shell hcJenaClasspath)
+DEPLOY_DIR	= $(shell hcTomcatHome)/webapps
 
 SERVER_FILES	= \
 	$(SERVER_PATH)/Jena.java \
@@ -38,6 +39,10 @@ SERVER_COMPILE	= $(JAVAC) -cp $(CP) -sourcepath $(SRCDIR) -d $(BINDIR) $(SERVER_
 GWT_SHELLER	= $(JAVA)  -cp $(CP) com.google.gwt.dev.GWTShell
 GWT_SHELLER_HELP= $(GWT_SHELLER) -help
 GWT_SHELL	= $(GWT_SHELLER) -out $(OUTDIR) $(URL)/Main.html
+
+####
+#### 
+####
 
 all :
 	-@echo "Usage: make [ sc | gc | gs ]"
@@ -61,6 +66,28 @@ gsh :
 war : FORCE
 	./war
 
+####
+#### Tomcat
+####
+
+tb : FORCE
+	hcTomcatStart
+
+te : FORCE
+	hcTomcatStop
+
+undeploy : FORCE
+	rm -rf $(DEPLOY_DIR)/differentity*
+
+deploy : FORCE
+	cp differentity.war $(DEPLOY_DIR)
+
+ta : te undeploy tb deploy
+
+####
+#### Misc.
+####
+
 $(BINDIR) : FORCE
 	mkdir -p $(BINDIR)
 
@@ -68,7 +95,5 @@ clean : FORCE
 	rm -rf $(BINDIR) $(OUTDIR) $(TOMCATDIR) $(TMPDIR) $(WAR_FILE)
 
 FORCE :
-
-
 
 # End of file.
