@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2006 Oct 07 (Sat) 15:57:52 by Harold Carr.
+// Last Modified : 2006 Oct 09 (Mon) 13:14:10 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -31,8 +31,7 @@ public class ServiceImpl
     private boolean initialized = false;
     private Jena jena;
 
-    private final String RDF_FILENAME = 
-	"C:/cygwin/home/carr/ftptmp/gwt/differentity/all.rdf";
+    private final String RDF_FILENAME = "/all.rdf";
 
     public String initialize() 
     {
@@ -42,7 +41,7 @@ public class ServiceImpl
 	
 	jena = new Jena();
 	try {
-	    jena.readRDF(RDF_FILENAME);
+	    jena.readRDF(getServletContext().getRealPath(RDF_FILENAME));
 	    initialized = true;
 	} catch (Throwable t) {
 	    ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -162,7 +161,9 @@ public class ServiceImpl
 	    new QueryResponse(subjectResponse, propertyResponse,
 			      valueResponse,
 			      queryRequest.getSetContentsOf(),
-			      returnValue.getQueryString());
+			      returnValue.getQueryString()
+			      + " " + getServletContext().getRealPath("/")
+			      );
 
 	// VERY IMPORTANT: close Jena's query engine to release resources.
 	returnValue.getQueryExecution().close();
