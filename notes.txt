@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 14 (Wed) 19:15:16 by Harold Carr.
-# Last Modified : 2006 Oct 07 (Sat) 16:23:40 by Harold Carr.
+# Last Modified : 2007 May 21 (Mon) 19:32:48 by Harold Carr.
 #
 
 ------------------------------------------------------------------------------
@@ -69,6 +69,12 @@ I am closing but still have problem.  Skipping fixing it for now.
 -------------------------
 
 I successfully did a WAR deployment to Tomcat.
+
+In Tomcat the address is:
+   http://localhost:8080/differentity/Main.html
+whereas in GwtShell the address is:
+   http://localhost:8888/com.differentity.Main/Main.html
+
 See the shell script "war"
 I used the following instructions to do it:
 
