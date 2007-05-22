@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2006 Oct 08 (Sun) 14:07:38 by Harold Carr.
+# Last Modified : 2006 Dec 31 (Sun) 09:53:39 by Harold Carr.
 #
 
 SRCDIR		= ./src
@@ -58,6 +58,7 @@ sc : $(BINDIR)
 	$(SERVER_COMPILE)
 
 gs :
+	cp ./all.rdf ./tomcat/webapps/ROOT
 	$(GWT_SHELL)&
 
 gsh :
@@ -76,10 +77,10 @@ tb : FORCE
 te : FORCE
 	hcTomcatStop
 
-undeploy : FORCE
+undeploy u : FORCE
 	rm -rf $(DEPLOY_DIR)/differentity*
 
-deploy : FORCE
+deploy d : FORCE
 	cp differentity.war $(DEPLOY_DIR)
 
 ta : te undeploy tb deploy
