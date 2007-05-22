@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2007 May 21 (Mon) 20:44:17 by Harold Carr.
+// Last Modified : 2007 May 21 (Mon) 21:11:48 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -70,18 +70,17 @@ public class Jena
 
     public void assertFact(final String s, final String p, final String v)
     {
-	Resource subject  = model.createResource(s);
-	Property property = model.createProperty(p);
-	Resource value    = model.createResource(v);
+	final Resource subject  = model.createResource(s);
+	final Property property = model.createProperty(p);
+	final Resource value    = model.createResource(v);
 	subject.addProperty(property, value);
     }
 
-    public QueryResponse doQuery(final QueryRequest queryRequest,
-				 final String servletContextRealPathOfSlash)
+    public String makeQueryString(final String s, final String p, final String v)
     {
-	final String subject  = formatInput(queryRequest.getSubject());
-	final String property = formatInput(queryRequest.getProperty());
-	final String value    = formatInput(queryRequest.getValue());
+	final String subject  = formatInput(s);
+	final String property = formatInput(p);
+	final String value    = formatInput(v);
 	String selectVars = "";
 	if (subject.startsWith(Main.questionMarkSymbol)) {
 	    selectVars = selectVars + " " + subject;
@@ -104,28 +103,58 @@ public class Jena
 	    property + " " +
 	    value    + " . }";
 
-	return doQuery2(queryRequest, queryString, 
-			servletContextRealPathOfSlash);
+	return queryString;
     }
 
-    private QueryResponse doQuery2(final QueryRequest queryRequest,
-				   final String queryString,
-				   final String servletContextRealPathOfSlash)
+
+    private String formatInput(final String x)
+    {
+	if (x.startsWith("?")) {
+	    return x;
+	}
+	return "<" + x + ">";
+    }
+
+    ////////////////////////////////////////////////////
+    //
+    // Differentity specific methods
+    //
+
+    public QueryResponse doQuery(final QueryRequest queryRequest,
+				 final String servletContextRealPathOfSlash)
+    {
+	final String queryString =
+	    makeQueryString(queryRequest.getSubject(),
+			    queryRequest.getProperty(),
+			    queryRequest.getValue());
+
+	return doQuery(queryString, queryRequest,
+		       servletContextRealPathOfSlash);
+    }
+
+    private QueryResponse doQuery(final String queryString,
+				  final QueryRequest queryRequest,
+				  final String servletContextRealPathOfSlash)
     {
 	final Query query = QueryFactory.create(queryString);
 	final QueryExecution queryExecution = 
 	    QueryExecutionFactory.create(query, model);
 	final ResultSet resultSet = queryExecution.execSelect();
-	return makeResponse(queryRequest, queryString, 
-			    queryExecution, resultSet,
-			    servletContextRealPathOfSlash);
+
+	// This method is almost generic except for this method call:
+	final QueryResponse queryResponse =
+	    makeResponse(queryRequest, resultSet,
+			 queryString, servletContextRealPathOfSlash);
+
+	// VERY IMPORTANT: close Jena's query engine to release resources.
+	queryExecution.close();
+
+	return queryResponse;
     }
 
-    private QueryResponse makeResponse(final QueryRequest queryRequest,
-				       final String queryString,
-				       final QueryExecution queryExecution,
-				       final ResultSet resultSet,
-				       final String servletContextRealPathOfSlash)
+    private QueryResponse makeResponse(
+        final QueryRequest queryRequest, final ResultSet resultSet,
+	final String queryString, final String servletContextRealPathOfSlash)
     {
 	//
 	// Determine which parts of query were variables.
@@ -195,22 +224,12 @@ public class Jena
 	final QueryResponse queryResponse = 
 	    new QueryResponse(subjectResponse, propertyResponse,
 			      valueResponse,
-			      queryRequest.getSetContentsOf(),
+			      queryRequest.getSetContentsOf(), // Cookie
+			      // Debug:
 			      queryString + " " + servletContextRealPathOfSlash
 			      );
 
-	// VERY IMPORTANT: close Jena's query engine to release resources.
-	queryExecution.close();
-
 	return queryResponse;
-    }
-
-    private String formatInput(final String x)
-    {
-	if (x.startsWith("?")) {
-	    return x;
-	}
-	return "<" + x + ">";
     }
 }
 
