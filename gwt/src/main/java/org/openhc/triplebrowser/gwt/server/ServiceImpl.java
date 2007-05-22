@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2006 Oct 09 (Mon) 13:14:10 by Harold Carr.
+// Last Modified : 2007 May 21 (Mon) 20:29:24 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -9,13 +9,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
 
 import com.differentity.client.Main;
 import com.differentity.client.QueryRequest;
@@ -79,96 +75,8 @@ public class ServiceImpl
 
     public QueryResponse doQuery(final QueryRequest queryRequest)
     {
-	Jena.QueryReturnValue returnValue = 
-	    jena.doQuery(queryRequest.getSubject(),
-			 queryRequest.getProperty(),
-			 queryRequest.getValue());
-
-	return makeResponse(queryRequest, returnValue);
-    }
-
-    private QueryResponse makeResponse(final QueryRequest queryRequest,
-				       final Jena.QueryReturnValue returnValue)
-    {
-	ResultSet resultSet = returnValue.getResultSet();
-
-	//
-	// Determine which parts of query were variables.
-	//
-
-	boolean isSubjectVar  = false;
-	boolean isPropertyVar = false;
-	boolean isValueVar    = false;
-	List list = resultSet.getResultVars();
-	Iterator i = list.iterator();
-	while (i.hasNext()) {
-	    String varName = (String) i.next();
-	    if (varName.equals(Main.subject)) {
-		isSubjectVar  = true;
-	    } else if (varName.equals(Main.property)) {
-		isPropertyVar = true;
-	    } else if (varName.equals(Main.value)) {
-		isValueVar    = true;
-	    }
-	}
-
-	List subjectResponse  = new ArrayList();
-	List propertyResponse = new ArrayList();
-	List valueResponse    = new ArrayList();
-
-	//
-	// For the parts of the query that are NOT variables
-	// return what was given in the query.
-	//
-
-	if (!isSubjectVar) {
-	    subjectResponse.add(queryRequest.getSubject()); 
-	}
-	if (!isPropertyVar) {
-	    propertyResponse.add(queryRequest.getProperty());
-	}
-	if (!isValueVar) {
-	    valueResponse.add (queryRequest.getValue()); 
-	}
-
-	//
-	// For the parts of the query that ARE variables
-	// return what was found.
-	// 
-
-	while (resultSet.hasNext()) {
-	    QuerySolution querySolution = resultSet.nextSolution();
-	    if (isSubjectVar) { 
-		String x = querySolution.get(Main.subject).toString();
-		if (! subjectResponse.contains(x)) {
-		    subjectResponse.add(x);
-		}
-	    }
-	    if (isPropertyVar) {
-		String x = querySolution.get(Main.property).toString();
-		if (! propertyResponse.contains(x)) {
-		    propertyResponse.add(x);
-		}
-	    }
-	    if (isValueVar) {
-		String x = querySolution.get(Main.value).toString();
-		if (! valueResponse.contains(x)) {
-		    valueResponse.add(x);
-		}
-	    }
-	}
-	QueryResponse queryResponse = 
-	    new QueryResponse(subjectResponse, propertyResponse,
-			      valueResponse,
-			      queryRequest.getSetContentsOf(),
-			      returnValue.getQueryString()
-			      + " " + getServletContext().getRealPath("/")
-			      );
-
-	// VERY IMPORTANT: close Jena's query engine to release resources.
-	returnValue.getQueryExecution().close();
-
-	return queryResponse;
+	return jena.doQuery(queryRequest,
+			    getServletContext().getRealPath("/"));
     }
 
     public QueryResponse assertFact(QueryRequest queryRequest)

@@ -1,17 +1,21 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2006 Oct 07 (Sat) 15:57:11 by Harold Carr.
+// Last Modified : 2007 May 21 (Mon) 20:44:17 by Harold Carr.
 //
 
 package com.differentity.server;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -19,6 +23,8 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 import com.differentity.client.Main;
+import com.differentity.client.QueryRequest;
+import com.differentity.client.QueryResponse;
 
 public class Jena
 {
@@ -26,6 +32,11 @@ public class Jena
     public final String RDF_XML = "RDF/XML";
 
     Model model;
+
+    ////////////////////////////////////////////////////
+    //
+    // Generic Jena methods
+    //
 
     public Jena()
     {
@@ -65,12 +76,12 @@ public class Jena
 	subject.addProperty(property, value);
     }
 
-    public QueryReturnValue doQuery(String subject, 
-				    String property, String value)
+    public QueryResponse doQuery(final QueryRequest queryRequest,
+				 final String servletContextRealPathOfSlash)
     {
-	subject  = formatInput(subject);
-	property = formatInput(property);
-	value    = formatInput(value);
+	final String subject  = formatInput(queryRequest.getSubject());
+	final String property = formatInput(queryRequest.getProperty());
+	final String value    = formatInput(queryRequest.getValue());
 	String selectVars = "";
 	if (subject.startsWith(Main.questionMarkSymbol)) {
 	    selectVars = selectVars + " " + subject;
@@ -86,23 +97,112 @@ public class Jena
 	    selectVars = "?ddduuummmyyy";
 	}
 
-	String queryString =
+	final String queryString =
 	    " SELECT " + selectVars +
 	    " WHERE { " +
 	    subject  + " " +
 	    property + " " +
 	    value    + " . }";
 
-	return doQuery(queryString);
+	return doQuery2(queryRequest, queryString, 
+			servletContextRealPathOfSlash);
     }
 
-    public QueryReturnValue doQuery(final String queryString)
+    private QueryResponse doQuery2(final QueryRequest queryRequest,
+				   final String queryString,
+				   final String servletContextRealPathOfSlash)
     {
-	Query query = QueryFactory.create(queryString);
-	QueryExecution queryExecution = 
+	final Query query = QueryFactory.create(queryString);
+	final QueryExecution queryExecution = 
 	    QueryExecutionFactory.create(query, model);
-	ResultSet resultSet = queryExecution.execSelect();
-	return new QueryReturnValue(queryString, queryExecution, resultSet);
+	final ResultSet resultSet = queryExecution.execSelect();
+	return makeResponse(queryRequest, queryString, 
+			    queryExecution, resultSet,
+			    servletContextRealPathOfSlash);
+    }
+
+    private QueryResponse makeResponse(final QueryRequest queryRequest,
+				       final String queryString,
+				       final QueryExecution queryExecution,
+				       final ResultSet resultSet,
+				       final String servletContextRealPathOfSlash)
+    {
+	//
+	// Determine which parts of query were variables.
+	//
+
+	boolean isSubjectVar  = false;
+	boolean isPropertyVar = false;
+	boolean isValueVar    = false;
+	final List list = resultSet.getResultVars();
+	final Iterator i = list.iterator();
+	while (i.hasNext()) {
+	    final String varName = (String) i.next();
+	    if (varName.equals(Main.subject)) {
+		isSubjectVar  = true;
+	    } else if (varName.equals(Main.property)) {
+		isPropertyVar = true;
+	    } else if (varName.equals(Main.value)) {
+		isValueVar    = true;
+	    }
+	}
+
+	final List subjectResponse  = new ArrayList();
+	final List propertyResponse = new ArrayList();
+	final List valueResponse    = new ArrayList();
+
+	//
+	// For the parts of the query that are NOT variables
+	// return what was given in the query.
+	//
+
+	if (!isSubjectVar) {
+	    subjectResponse.add(queryRequest.getSubject()); 
+	}
+	if (!isPropertyVar) {
+	    propertyResponse.add(queryRequest.getProperty());
+	}
+	if (!isValueVar) {
+	    valueResponse.add (queryRequest.getValue()); 
+	}
+
+	//
+	// For the parts of the query that ARE variables
+	// return what was found.
+	// 
+
+	while (resultSet.hasNext()) {
+	    final QuerySolution querySolution = resultSet.nextSolution();
+	    if (isSubjectVar) { 
+		final String x = querySolution.get(Main.subject).toString();
+		if (! subjectResponse.contains(x)) {
+		    subjectResponse.add(x);
+		}
+	    }
+	    if (isPropertyVar) {
+		final String x = querySolution.get(Main.property).toString();
+		if (! propertyResponse.contains(x)) {
+		    propertyResponse.add(x);
+		}
+	    }
+	    if (isValueVar) {
+		final String x = querySolution.get(Main.value).toString();
+		if (! valueResponse.contains(x)) {
+		    valueResponse.add(x);
+		}
+	    }
+	}
+	final QueryResponse queryResponse = 
+	    new QueryResponse(subjectResponse, propertyResponse,
+			      valueResponse,
+			      queryRequest.getSetContentsOf(),
+			      queryString + " " + servletContextRealPathOfSlash
+			      );
+
+	// VERY IMPORTANT: close Jena's query engine to release resources.
+	queryExecution.close();
+
+	return queryResponse;
     }
 
     private String formatInput(final String x)
@@ -111,24 +211,6 @@ public class Jena
 	    return x;
 	}
 	return "<" + x + ">";
-    }
-
-    class QueryReturnValue
-    {
-	private String         queryString;
-	private QueryExecution queryExecution;
-	private ResultSet      resultSet;
-	QueryReturnValue(final String         queryString,
-			 final QueryExecution queryExecution,
-			 final ResultSet      resultSet)
-	{
-	    this.queryString    = queryString;
-	    this.queryExecution = queryExecution;
-	    this.resultSet      = resultSet;
-	}
-	String         getQueryString()    { return queryString; }
-	QueryExecution getQueryExecution() { return queryExecution; }
-	ResultSet      getResultSet()      { return resultSet; }
     }
 }
 
