@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2006 Dec 31 (Sun) 09:53:39 by Harold Carr.
+# Last Modified : 2007 May 22 (Tue) 17:17:27 by Harold Carr.
 #
 
 SRCDIR		= ./src
@@ -58,6 +58,7 @@ sc : $(BINDIR)
 	$(SERVER_COMPILE)
 
 gs :
+	mkdir -p ./tomcat/webapps/ROOT
 	cp ./all.rdf ./tomcat/webapps/ROOT
 	$(GWT_SHELL)&
 
