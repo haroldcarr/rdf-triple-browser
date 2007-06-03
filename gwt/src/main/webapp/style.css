@@ -1,5 +1,11 @@
 /* HC */
 
+.frameCurrentSelection {
+  color: darkblue;
+  height: 800px%;
+  width: 800px%;
+}
+
 .subjectPropertyValue {
   height: 300px;
   width: 300px;
