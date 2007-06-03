@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2007 May 21 (Mon) 21:11:48 by Harold Carr.
+// Last Modified : 2007 May 29 (Tue) 20:39:51 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -221,6 +221,10 @@ public class Jena
 		}
 	    }
 	}
+	java.util.Collections.sort(subjectResponse);
+	java.util.Collections.sort(propertyResponse);
+	java.util.Collections.sort(valueResponse);
+
 	final QueryResponse queryResponse = 
 	    new QueryResponse(subjectResponse, propertyResponse,
 			      valueResponse,
