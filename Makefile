@@ -1,14 +1,24 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2007 May 22 (Tue) 17:17:27 by Harold Carr.
+# Last Modified : 2007 Jun 03 (Sun) 14:18:58 by Harold Carr.
 #
+
+###
+### Tomcat defs
+###
+
+TOMCAT_WAR_NAME	= differentity
+TOMCAT_DEPLOY_DIR	= $(shell hcTomcatHome)/webapps
+
+###
+### GWT defs
+###
 
 SRCDIR		= ./src
 BINDIR		= ./bin
 OUTDIR		= ./www
 TOMCATDIR	= ./tomcat
 TMPDIR		= ./tmp
-WAR_FILE	= ./differentity.war
 URL		= com.differentity.Main
 PKG_PATH	= com/differentity
 SERVER_PATH	= $(SRCDIR)/$(PKG_PATH)/server
@@ -23,7 +33,6 @@ GWT_DEV         = $(GWT_HOME)/gwt-dev-windows.jar
 GWT_SERVLET     = $(GWT_HOME)/gwt-servlet.jar
 GWT_USER        = $(GWT_HOME)/gwt-user.jar
 JENA_CP		= $(shell hcJenaClasspath)
-DEPLOY_DIR	= $(shell hcTomcatHome)/webapps
 
 SERVER_FILES	= \
 	$(SERVER_PATH)/Jena.java \
@@ -69,33 +78,15 @@ war : FORCE
 	./war
 
 ####
-#### Tomcat
-####
-
-tb : FORCE
-	hcTomcatStart
-
-te : FORCE
-	hcTomcatStop
-
-undeploy u : FORCE
-	rm -rf $(DEPLOY_DIR)/differentity*
-
-deploy d : FORCE
-	cp differentity.war $(DEPLOY_DIR)
-
-ta : te undeploy tb deploy
-
-####
 #### Misc.
 ####
-
-$(BINDIR) : FORCE
-	mkdir -p $(BINDIR)
 
 clean : FORCE
 	rm -rf $(BINDIR) $(OUTDIR) $(TOMCATDIR) $(TMPDIR) $(WAR_FILE)
 
-FORCE :
+hcMakefiles=$(shell hcMakefiles)
+include $(hcMakefiles)/tomcatDefs.gmk
+include $(hcMakefiles)/tomcatRules.gmk
+include $(hcMakefiles)/binDirForceRules.gmk
 
 # End of file.
