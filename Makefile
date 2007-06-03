@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2007 Jun 03 (Sun) 14:18:58 by Harold Carr.
+# Last Modified : 2007 Jun 03 (Sun) 16:36:37 by Harold Carr.
 #
 
 ###
@@ -75,7 +75,7 @@ gsh :
 	$(GWT_SHELLER_HELP)
 
 war : FORCE
-	./war
+	./make-gwt-service-war `pwd` differentity.war all.rdf
 
 ####
 #### Misc.
