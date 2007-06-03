@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 23 (Sat) 15:59:42 by Harold Carr.
+// Last Modified : 2007 Jun 02 (Sat) 17:15:01 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -67,27 +67,37 @@ public class MainPanel
 	// Main panel.
 	//    
 
+	// ** RootPanel.get("slot0").add(DevTime.makeStatusWidgets());
+
+	RootPanel.get("slot1").add(responseProgressLabel);
+
 	dockPanel = new DockPanel();
+	RootPanel.get("slot2").add(dockPanel);
+
 	dockPanel.setHorizontalAlignment(DockPanel.ALIGN_CENTER);
 	north = new HTML(Main.differentityDotCom, true);
-	south = new HTML(Main.copyright, true);
 	dockPanel.add(north, DockPanel.NORTH);
 
 	dockPanel.add(queryPanel.getPanel(), DockPanel.NORTH);
-	// NOTE: - if SOUTH added after CENTER does not show up.
-	dockPanel.add(south, DockPanel.SOUTH);
+
 	dockPanel.add(spvHorizontalPanel, DockPanel.CENTER);
+
+	// NOTE: - Seem to need to add most southern first.
+	south = new HTML(Main.copyright, true);
+	dockPanel.add(south, DockPanel.SOUTH);
+
+	Frame frameCurrentSelection = new Frame("http://openhc.org/");
+	frameCurrentSelection.setStyleName("frameCurrentSelection");
+	dockPanel.add(frameCurrentSelection, DockPanel.SOUTH);
 
 	// Host HTML has elements with IDs are "slot1", "slot2".
 	// Better: Search for all elements with a particular CSS class 
 	// and replace them with widgets.
 
-	RootPanel.get("slot0").add(responseProgressLabel);
-	RootPanel.get("slot1").add(DevTime.makeStatusWidgets());
-	RootPanel.get("slot2").add(dockPanel);
-
 	// XXX - frame test
-	//RootPanel.get("slot3").add(new Frame("http://www.google.com/"));
+	//**Frame frameCurrentSelection = new Frame("http://openhc.org/");
+	//**frameCurrentSelection.setStyleName("frameCurrentSelection");
+	//**RootPanel.get("slot3").add(frameCurrentSelection);
 
 	// XXX - test
 	//RootPanel.get("slot4").add(new Test().getWidget());
