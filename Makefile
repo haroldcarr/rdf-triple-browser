@@ -1,13 +1,13 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2007 Jun 03 (Sun) 21:05:37 by Harold Carr.
+# Last Modified : 2007 Jun 03 (Sun) 22:05:29 by Harold Carr.
 #
 
 # tomcat order
-# clean sc gc war tb deploy te undeploy
+# gm clean sc gc war tb deploy te undeploy
 
 # gwt shell order
-# clean sc gc bgs gs
+# gm clean sc gc bgs gs
 
 ###
 ### variables used by tomcatRules
@@ -41,7 +41,7 @@ bgs : FORCE
 	cp ./all.rdf ./tomcat/webapps/ROOT
 
 war : FORCE
-	hcMakeGwtServiceWar `pwd` $(TOMCAT_WAR_NAME).war all.rdf
+	hcMakeGwtServiceWar -d `pwd` -w $(TOMCAT_WAR_NAME).war  -t all.rdf -l `hcJenaClasspath`
 
 ####
 #### Misc.
