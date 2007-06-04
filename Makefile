@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2007 Jun 03 (Sun) 22:05:29 by Harold Carr.
+# Last Modified : 2007 Jun 03 (Sun) 22:21:41 by Harold Carr.
 #
 
 # tomcat order
@@ -14,7 +14,6 @@
 ###
 
 TOMCAT_WAR_NAME	= differentity
-TOMCAT_DEPLOY_DIR	= $(shell hcTomcatHome)/webapps
 
 ###
 ### variables used by gwtRules
