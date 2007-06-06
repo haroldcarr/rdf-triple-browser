@@ -1,13 +1,13 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2007 Jun 03 (Sun) 22:21:41 by Harold Carr.
+# Last Modified : 2007 Jun 05 (Tue) 19:30:47 by Harold Carr.
 #
 
 # tomcat order
 # gm clean sc gc war tb deploy te undeploy
 
 # gwt shell order
-# gm clean sc gc bgs gs
+# gm clean sc bgs gs
 
 ###
 ### variables used by tomcatRules
