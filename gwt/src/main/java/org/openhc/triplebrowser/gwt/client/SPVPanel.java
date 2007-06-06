@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 21 (Thu) 15:47:08 by Harold Carr.
+// Last Modified : 2007 Jun 05 (Tue) 17:49:45 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -109,9 +109,12 @@ public class SPVPanel
 
 	    spvItem.getLabel().addClickListener(new ClickListener() {
 		public void onClick(final Widget sender) {
+		    // Causes doQuery so no history necessary here.
 		    Main.getMainPanel().spvLinkClicked(
 		        spvCategory, spvItem.getExpandedName());
-		    // Causes doQuery so no history necessary here.
+
+		    Main.getMainPanel().getFrameCurrentSelection()
+			.setUrl(spvItem.getExpandedName());
 		}
 	    });
 

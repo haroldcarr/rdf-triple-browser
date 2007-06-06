@@ -1,12 +1,12 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 04 (Mon) 21:50:42 by Harold Carr.
+// Last Modified : 2007 Jun 05 (Tue) 18:22:46 by Harold Carr.
 //
 
 package com.differentity.client;
 
 import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.Frame; // *****
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
@@ -35,6 +35,7 @@ public class MainPanel
     private final HTML north;
     private final HTML south;
     private final QueryPanel queryPanel;
+    private final Frame frameCurrentSelection;
 
     MainPanel() {
 
@@ -86,21 +87,16 @@ public class MainPanel
 	south = new HTML(Main.copyright, true);
 	dockPanel.add(south, DockPanel.SOUTH);
 
-	Frame frameCurrentSelection = new Frame("http://openhc.org/");
+	frameCurrentSelection = new Frame("http://openhc.org/");
 	frameCurrentSelection.setPixelSize(1000, 300);
-	dockPanel.add(frameCurrentSelection, DockPanel.SOUTH);
+	RootPanel.get("slot3").add(frameCurrentSelection);
 
 	// Host HTML has elements with IDs are "slot1", "slot2".
 	// Better: Search for all elements with a particular CSS class 
 	// and replace them with widgets.
 
-	// XXX - frame test
-	//**Frame frameCurrentSelection = new Frame("http://openhc.org/");
-	//**frameCurrentSelection.setStyleName("frameCurrentSelection");
-	//**RootPanel.get("slot3").add(frameCurrentSelection);
-
 	// XXX - test
-	//RootPanel.get("slot4").add(new Test().getWidget());
+	//RootPanel.get("slotXXX").add(new Test().getWidget());
     }
 
     public void doQuery(boolean keepHistory)
@@ -185,6 +181,8 @@ public class MainPanel
     public SPVPanel   getSubjectPanel()  { return subjectPanel; }
     public SPVPanel   getPropertyPanel() { return propertyPanel; }
     public SPVPanel   getValuePanel()    { return valuePanel; }
+    public Frame      getFrameCurrentSelection() 
+                                         { return frameCurrentSelection; }
 }
 
 // End of file.
