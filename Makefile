@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2007 Jun 05 (Tue) 19:30:47 by Harold Carr.
+# Last Modified : 2007 Jun 05 (Tue) 20:03:46 by Harold Carr.
 #
 
 # tomcat order
@@ -24,6 +24,7 @@ BINDIR		= ./bin
 OUTDIR		= ./www
 TOMCATDIR	= ./tomcat
 URL		= com.differentity.Main
+ENTRY_PAGE	= Main.html
 PKG_PATH	= com/differentity
 SERVER_PATH	= $(SRCDIR)/$(PKG_PATH)/server
 
