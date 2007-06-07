@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2007 Jun 05 (Tue) 20:03:46 by Harold Carr.
+# Last Modified : 2007 Jun 05 (Tue) 22:30:02 by Harold Carr.
 #
 
 # tomcat order
@@ -48,7 +48,7 @@ war : FORCE
 ####
 
 clean : FORCE
-	rm -rf $(BINDIR) $(OUTDIR) $(TOMCATDIR) $(TOMCAT_WAR_NAME).war
+	rm -rf .gwt-cache $(BINDIR) $(OUTDIR) $(TOMCATDIR) $(TOMCAT_WAR_NAME).war
 
 hcMakefiles=$(shell hcMakefiles)
 include $(hcMakefiles)/gwtDefs.gmk
