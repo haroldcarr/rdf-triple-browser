@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 05 (Tue) 18:22:46 by Harold Carr.
+// Last Modified : 2007 Jun 07 (Thu) 15:17:57 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -88,8 +88,8 @@ public class MainPanel
 	dockPanel.add(south, DockPanel.SOUTH);
 
 	frameCurrentSelection = new Frame("http://openhc.org/");
-	frameCurrentSelection.setPixelSize(1000, 300);
-	RootPanel.get("slot3").add(frameCurrentSelection);
+	frameCurrentSelection.setPixelSize(980, 300);
+	dockPanel.add(frameCurrentSelection, DockPanel.SOUTH);
 
 	// Host HTML has elements with IDs are "slot1", "slot2".
 	// Better: Search for all elements with a particular CSS class 
