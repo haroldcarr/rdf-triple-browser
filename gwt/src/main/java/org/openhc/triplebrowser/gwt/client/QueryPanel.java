@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 07 (Thu) 22:43:00 by Harold Carr.
+// Last Modified : 2007 Jun 08 (Fri) 06:39:30 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -18,19 +18,20 @@ import com.google.gwt.user.client.ui.Widget;
 public class QueryPanel
 {
     private final VerticalPanel   verticalPanel;
-    private       TextBox         TsubjectTextBox;
-    private       TextBox         TpropertyTextBox;
-    private       TextBox         TvalueTextBox;
+    private       TextBox         selectedSubjectTextBox;
+    private       TextBox         selectedPropertyTextBox;
+    private       TextBox         selectedValueTextBox;
 
     QueryPanel()
     {
 	verticalPanel = new VerticalPanel();
+	verticalPanel.setStyleName("queryPanel");
 	verticalPanel.add(makeTriplePanel());	
     }
 
-    TextBox         getSubjectTextBox()  { return TsubjectTextBox; }
-    TextBox         getPropertyTextBox() { return TpropertyTextBox; }
-    TextBox         getValueTextBox()    { return TvalueTextBox; }
+    TextBox         getSubjectTextBox()  { return selectedSubjectTextBox; }
+    TextBox         getPropertyTextBox() { return selectedPropertyTextBox; }
+    TextBox         getValueTextBox()    { return selectedValueTextBox; }
     VerticalPanel   getPanel()           { return verticalPanel; }
 
     private HorizontalPanel makeTriplePanel()
@@ -65,15 +66,15 @@ public class QueryPanel
 	if (!verticalPanel.iterator().hasNext()) {
 	    radioButton.setEnabled(true);
 	    radioButton.setChecked(true);
-	    TsubjectTextBox  = subjectTextBox;
-	    TpropertyTextBox = propertyTextBox;
-	    TvalueTextBox    = valueTextBox;
+	    selectedSubjectTextBox  = subjectTextBox;
+	    selectedPropertyTextBox = propertyTextBox;
+	    selectedValueTextBox    = valueTextBox;
 	}
 	radioButton.addClickListener(new ClickListener() {
 	    public void onClick(Widget sender) {
-		TsubjectTextBox  = subjectTextBox;
-		TpropertyTextBox = propertyTextBox;
-		TvalueTextBox    = valueTextBox;
+		selectedSubjectTextBox  = subjectTextBox;
+		selectedPropertyTextBox = propertyTextBox;
+		selectedValueTextBox    = valueTextBox;
 	    }});
 		
 	org.gwtwidgets.client.util.WindowUtils wu =
@@ -112,9 +113,9 @@ public class QueryPanel
 	    saveButton.addClickListener(new ClickListener() {
 		public void onClick(Widget sender) {
 		    Main.getServerCalls().assertFact(
-	                new QueryRequest(TsubjectTextBox.getText(),
-					 TpropertyTextBox.getText(),
-					 TvalueTextBox.getText(),
+	                new QueryRequest(selectedSubjectTextBox.getText(),
+					 selectedPropertyTextBox.getText(),
+					 selectedValueTextBox.getText(),
 					 Main.qsubject+Main.qproperty+Main.qvalue));
 		}});
 
