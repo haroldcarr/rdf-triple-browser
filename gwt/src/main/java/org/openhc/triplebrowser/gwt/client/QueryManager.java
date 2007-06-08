@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 07 (Thu) 16:24:45 by Harold Carr.
+// Last Modified : 2007 Jun 08 (Fri) 06:33:26 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -72,6 +72,7 @@ public class MainPanel
 	// ** RootPanel.get("slot0").add(DevTime.makeStatusWidgets());
 
 	final HorizontalPanel topPanel = new HorizontalPanel();
+	topPanel.setStyleName("topPanel");
 	topPanel.setHorizontalAlignment(DockPanel.ALIGN_LEFT);
 	topPanel.add(new HTML("a.nalogo.us / haroldcarr"));
 	topPanel.add(responseProgressLabel);
