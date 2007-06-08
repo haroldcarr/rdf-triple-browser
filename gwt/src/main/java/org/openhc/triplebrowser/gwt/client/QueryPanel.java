@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 07 (Thu) 20:33:28 by Harold Carr.
+// Last Modified : 2007 Jun 07 (Thu) 22:23:13 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -10,13 +10,13 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class QueryPanel
 {
-    private final HorizontalPanel horizontalPanel;
     private final VerticalPanel   verticalPanel;
     private       TextBox         TsubjectTextBox;
     private       TextBox         TpropertyTextBox;
@@ -27,40 +27,40 @@ public class QueryPanel
 
     QueryPanel()
     {
-	horizontalPanel = new HorizontalPanel();
 	verticalPanel = new VerticalPanel();
-
-	Button addTripleButton = new Button("+");
-	addTripleButton.addClickListener(new ClickListener() {
-	    public void onClick(Widget sender) {
-		verticalPanel.add(makeTriplePanel());
-	    }});
-
-	horizontalPanel.add(addTripleButton);	
-
-	verticalPanel.add(makeTriplePanel());
-
-	horizontalPanel.add(verticalPanel);
-
-	Button saveButton = new Button("s");
-	saveButton.addClickListener(new ClickListener() {
-	    public void onClick(Widget sender) {
-		Main.getServerCalls().assertFact(
-	            new QueryRequest(TsubjectTextBox.getText(),
-				     TpropertyTextBox.getText(),
-				     TvalueTextBox.getText(),
-				     Main.qsubject+Main.qproperty+Main.qvalue));
-	    }});
-	horizontalPanel.add(saveButton);
+	verticalPanel.add(makeTriplePanel());	
     }
 
     TextBox         getSubjectTextBox()  { return TsubjectTextBox; }
     TextBox         getPropertyTextBox() { return TpropertyTextBox; }
     TextBox         getValueTextBox()    { return TvalueTextBox; }
-    HorizontalPanel getPanel()           { return horizontalPanel; }
+    VerticalPanel   getPanel()           { return verticalPanel; }
 
     private HorizontalPanel makeTriplePanel()
     {
+	final HorizontalPanel horizontalPanel = new HorizontalPanel();
+
+	final RadioButton radioButton = new RadioButton("current-triple");
+	horizontalPanel.add(radioButton);
+
+	final Button leftButton;
+	if (!verticalPanel.iterator().hasNext()) {
+	    leftButton = new Button("+");
+	    leftButton.addClickListener(new ClickListener() {
+		public void onClick(Widget sender) {
+		    verticalPanel.add(makeTriplePanel());
+		}});
+	} else {
+	    leftButton = new Button("-");
+	    leftButton.addClickListener(new ClickListener() {
+		public void onClick(Widget sender) {
+		    verticalPanel.remove(horizontalPanel);
+		}});
+	}
+
+	horizontalPanel.add(leftButton);	
+
+
 	TextBox subjectTextBox  = new TextBox();
 	TextBox propertyTextBox = new TextBox();
 	TextBox valueTextBox    = new TextBox();
@@ -95,16 +95,28 @@ public class QueryPanel
 	if (TvalueTextBox    == null) TvalueTextBox    = valueTextBox;
 	if (TvalueMenuBar    == null) TvalueMenuBar    = valueMenuBar;
 	
-	HorizontalPanel triplePanel = new HorizontalPanel();
+	horizontalPanel.add(subjectMenuBar);
+	horizontalPanel.add(subjectTextBox);
+	horizontalPanel.add(propertyMenuBar);
+	horizontalPanel.add(propertyTextBox);
+	horizontalPanel.add(valueMenuBar);
+	horizontalPanel.add(valueTextBox);
 
-	triplePanel.add(subjectMenuBar);
-	triplePanel.add(subjectTextBox);
-	triplePanel.add(propertyMenuBar);
-	triplePanel.add(propertyTextBox);
-	triplePanel.add(valueMenuBar);
-	triplePanel.add(valueTextBox);
+	if (!verticalPanel.iterator().hasNext()) {
+	    Button saveButton = new Button("s");
+	    saveButton.addClickListener(new ClickListener() {
+		public void onClick(Widget sender) {
+		    Main.getServerCalls().assertFact(
+	                new QueryRequest(TsubjectTextBox.getText(),
+					 TpropertyTextBox.getText(),
+					 TvalueTextBox.getText(),
+					 Main.qsubject+Main.qproperty+Main.qvalue));
+		}});
 
-	return triplePanel;
+	    horizontalPanel.add(saveButton);
+	}
+
+	return horizontalPanel;
     }
 
     private MenuBar makeMenuBar(final String  leftText,
