@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 07 (Thu) 22:40:01 by Harold Carr.
+// Last Modified : 2007 Jun 07 (Thu) 22:43:00 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -21,9 +21,6 @@ public class QueryPanel
     private       TextBox         TsubjectTextBox;
     private       TextBox         TpropertyTextBox;
     private       TextBox         TvalueTextBox;
-    private       MenuBar         TsubjectMenuBar;
-    private       MenuBar         TpropertyMenuBar;
-    private       MenuBar         TvalueMenuBar;
 
     QueryPanel()
     {
@@ -103,15 +100,6 @@ public class QueryPanel
 			Main.qvalue,    valueTextBox,
 			    Main.qsubject,  subjectTextBox);
 
-	/*
-	if (TsubjectTextBox  == null) TsubjectTextBox  = subjectTextBox;
-	if (TsubjectMenuBar  == null) TsubjectMenuBar  = subjectMenuBar;
-	if (TpropertyTextBox == null) TpropertyTextBox = propertyTextBox;
-	if (TpropertyMenuBar == null) TpropertyMenuBar = propertyMenuBar;
-	if (TvalueTextBox    == null) TvalueTextBox    = valueTextBox;
-	if (TvalueMenuBar    == null) TvalueMenuBar    = valueMenuBar;
-	*/
-	
 	horizontalPanel.add(subjectMenuBar);
 	horizontalPanel.add(subjectTextBox);
 	horizontalPanel.add(propertyMenuBar);
