@@ -1,17 +1,30 @@
 /* HC */
 
+.topPanel {
+  margin-bottom: 8px;
+}
+
+.queryPanel {
+  margin-bottom: 8px;
+}
+
 .subjectPropertyValue {
   height: 150px;
   width: 300px;
   border: 2px solid #C3D9FF;
-  padding: 8px;
-  margin: 8px;
+  padding: 2px;
+  /* margin: 8px; */
+  margin: 0px;
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-bottom: 8px;
 }
 
 .gwt-TextBox {
   /* Padding is inside the box. */
   /* Margin is outside the box. */
-  width: 295px;
+  /*width: 295px;*/
+  width: 290px;	
 }
 
 /* Google */
