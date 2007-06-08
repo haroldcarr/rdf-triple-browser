@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2007 May 29 (Tue) 20:39:51 by Harold Carr.
+// Last Modified : 2007 Jun 07 (Thu) 15:38:15 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -92,8 +92,12 @@ public class Jena
 	    selectVars = selectVars + " " + value;
 	}
 
+	final String orderBy;
 	if (selectVars.equals("")) {
 	    selectVars = "?ddduuummmyyy";
+	    orderBy = "";
+	} else {
+	    orderBy = " ORDER BY " + selectVars;
 	}
 
 	final String queryString =
@@ -101,7 +105,8 @@ public class Jena
 	    " WHERE { " +
 	    subject  + " " +
 	    property + " " +
-	    value    + " . }";
+	    value    + " . }" +
+	    orderBy;
 
 	return queryString;
     }
@@ -221,9 +226,11 @@ public class Jena
 		}
 	    }
 	}
+	/*
 	java.util.Collections.sort(subjectResponse);
 	java.util.Collections.sort(propertyResponse);
 	java.util.Collections.sort(valueResponse);
+	*/
 
 	final QueryResponse queryResponse = 
 	    new QueryResponse(subjectResponse, propertyResponse,
