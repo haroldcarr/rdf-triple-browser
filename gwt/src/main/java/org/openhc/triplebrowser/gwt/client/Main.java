@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 02 (Sat) 16:02:53 by Harold Carr.
+// Last Modified : 2007 Jun 07 (Thu) 16:05:41 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -24,7 +24,6 @@ public class Main
     public static final String collapse             = "collapse";
     public static final String collapseAllTags      = "collapse all tags";
     public static final String copyright            = "copyright 2007";
-    public static final String differentityDotCom   = "differentity.com";
     public static final String doQuery              = "doQuery";
     public static final String emptyString          = "emptyString";
     public static final String expand               = "expand";
