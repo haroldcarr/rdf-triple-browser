@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 07 (Thu) 20:25:38 by Harold Carr.
+// Last Modified : 2007 Jun 07 (Thu) 20:33:28 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -27,13 +27,16 @@ public class QueryPanel
 
     QueryPanel()
     {
-
 	horizontalPanel = new HorizontalPanel();
-
-	Button button = new Button("+");
-	horizontalPanel.add(button);	
-
 	verticalPanel = new VerticalPanel();
+
+	Button addTripleButton = new Button("+");
+	addTripleButton.addClickListener(new ClickListener() {
+	    public void onClick(Widget sender) {
+		verticalPanel.add(makeTriplePanel());
+	    }});
+
+	horizontalPanel.add(addTripleButton);	
 
 	verticalPanel.add(makeTriplePanel());
 
