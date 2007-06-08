@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 07 (Thu) 19:28:15 by Harold Carr.
+// Last Modified : 2007 Jun 07 (Thu) 19:31:08 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -21,11 +21,11 @@ public class Main
     public static final String clear                = "clear";
     public static final String asteriskSymbol       = "*";
     public static final String blankSpace           = " ";
-    public static final String collapse             = "collapse";
+    public static final String collapse             = "-";
     public static final String copyright            = "copyright 2007";
     public static final String doQuery              = "doQuery";
     public static final String emptyString          = "emptyString";
-    public static final String expand               = "expand";
+    public static final String expand               = "+";
     public static final String expandOrCollapseSPVClick 
 	= "expandOrCollapseSPVClick";
     public static final String expandOrCollapseSPVItemClick
