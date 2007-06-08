@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 07 (Thu) 18:42:52 by Harold Carr.
+// Last Modified : 2007 Jun 07 (Thu) 20:07:37 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class QueryPanel
 {
     private final HorizontalPanel horizontalPanel;
+    private final VerticalPanel   verticalPanel;
     private final TextBox         subjectTextBox;
     private final TextBox         propertyTextBox;
     private final TextBox         valueTextBox;
@@ -58,12 +59,18 @@ public class QueryPanel
 	Button button = new Button("+");
 	horizontalPanel.add(button);	
 
-	horizontalPanel.add(subjectMenuBar);
-	horizontalPanel.add(subjectTextBox);
-	horizontalPanel.add(propertyMenuBar);
-	horizontalPanel.add(propertyTextBox);
-	horizontalPanel.add(valueMenuBar);
-	horizontalPanel.add(valueTextBox);
+	verticalPanel = new VerticalPanel();
+
+	HorizontalPanel triplePanel = new HorizontalPanel();
+	triplePanel.add(subjectMenuBar);
+	triplePanel.add(subjectTextBox);
+	triplePanel.add(propertyMenuBar);
+	triplePanel.add(propertyTextBox);
+	triplePanel.add(valueMenuBar);
+	triplePanel.add(valueTextBox);
+	verticalPanel.add(triplePanel);
+
+	horizontalPanel.add(verticalPanel);
 
 	Button saveButton = new Button("s");
 	saveButton.addClickListener(new ClickListener() {
