@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 07 (Thu) 15:17:57 by Harold Carr.
+// Last Modified : 2007 Jun 07 (Thu) 16:24:45 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -32,8 +32,7 @@ public class MainPanel
     private final VerticalPanel valueVerticalPanel;
     private final HorizontalPanel spvHorizontalPanel;
     private final DockPanel dockPanel;
-    private final HTML north;
-    private final HTML south;
+    private final HTML copyright;
     private final QueryPanel queryPanel;
     private final Frame frameCurrentSelection;
 
@@ -68,24 +67,30 @@ public class MainPanel
 	// Main panel.
 	//    
 
+	// TOP
+
 	// ** RootPanel.get("slot0").add(DevTime.makeStatusWidgets());
 
-	RootPanel.get("slot1").add(responseProgressLabel);
+	final HorizontalPanel topPanel = new HorizontalPanel();
+	topPanel.setHorizontalAlignment(DockPanel.ALIGN_LEFT);
+	topPanel.add(new HTML("a.nalogo.us / haroldcarr"));
+	topPanel.add(responseProgressLabel);
+	RootPanel.get("top").add(topPanel);
+
+	// MIDDLE
 
 	dockPanel = new DockPanel();
-	RootPanel.get("slot2").add(dockPanel);
+	RootPanel.get("middle").add(dockPanel);
 
 	dockPanel.setHorizontalAlignment(DockPanel.ALIGN_CENTER);
-	north = new HTML(Main.differentityDotCom, true);
-	dockPanel.add(north, DockPanel.NORTH);
 
 	dockPanel.add(queryPanel.getPanel(), DockPanel.NORTH);
 
 	dockPanel.add(spvHorizontalPanel, DockPanel.CENTER);
 
 	// NOTE: - Seem to need to add most southern first.
-	south = new HTML(Main.copyright, true);
-	dockPanel.add(south, DockPanel.SOUTH);
+	copyright = new HTML(Main.copyright, true);
+	dockPanel.add(copyright, DockPanel.SOUTH);
 
 	frameCurrentSelection = new Frame("http://openhc.org/");
 	frameCurrentSelection.setPixelSize(980, 300);
@@ -96,7 +101,7 @@ public class MainPanel
 	// and replace them with widgets.
 
 	// XXX - test
-	//RootPanel.get("slotXXX").add(new Test().getWidget());
+	//RootPanel.get("bottom").add(new Test().getWidget());
     }
 
     public void doQuery(boolean keepHistory)
