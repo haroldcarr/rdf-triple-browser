@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 07 (Thu) 20:17:27 by Harold Carr.
+// Last Modified : 2007 Jun 07 (Thu) 20:25:38 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -35,51 +35,7 @@ public class QueryPanel
 
 	verticalPanel = new VerticalPanel();
 
-	for (int i = 0; i < 3; ++i) {
-	    TextBox subjectTextBox  = new TextBox();
-	    TextBox propertyTextBox = new TextBox();
-	    TextBox valueTextBox    = new TextBox();
-	    org.gwtwidgets.client.util.WindowUtils wu =
-		new org.gwtwidgets.client.util.WindowUtils();
-	    org.gwtwidgets.client.util.Location location = wu.getLocation();
-	    String start = location.getParameter(Main.url);
-	    if (start == null) {
-		subjectTextBox.setText(Main.qsubject);
-	    } else {
-		subjectTextBox.setText(start);
-	    }
-	    propertyTextBox.setText(Main.qproperty);
-	    valueTextBox.setText(Main.qvalue);
-	    MenuBar subjectMenuBar  = 
-		makeMenuBar(Main.qvalue,    valueTextBox,
-			    Main.qsubject,  subjectTextBox,
-			    Main.qproperty, propertyTextBox);
-	    MenuBar propertyMenuBar =
-		makeMenuBar(Main.qsubject,  subjectTextBox,
-			    Main.qproperty, propertyTextBox,
-			    Main.qvalue,    valueTextBox);
-	    MenuBar valueMenuBar    =
-		makeMenuBar(Main.qproperty, propertyTextBox,
-			    Main.qvalue,    valueTextBox,
-			    Main.qsubject,  subjectTextBox);
-
-	    if (TsubjectTextBox  == null) TsubjectTextBox  = subjectTextBox;
-	    if (TsubjectMenuBar  == null) TsubjectMenuBar  = subjectMenuBar;
-	    if (TpropertyTextBox == null) TpropertyTextBox = propertyTextBox;
-	    if (TpropertyMenuBar == null) TpropertyMenuBar = propertyMenuBar;
-	    if (TvalueTextBox    == null) TvalueTextBox    = valueTextBox;
-	    if (TvalueMenuBar    == null) TvalueMenuBar    = valueMenuBar;
-
-	    HorizontalPanel triplePanel = new HorizontalPanel();
-	    triplePanel.add(subjectMenuBar);
-	    triplePanel.add(subjectTextBox);
-	    triplePanel.add(propertyMenuBar);
-	    triplePanel.add(propertyTextBox);
-	    triplePanel.add(valueMenuBar);
-	    triplePanel.add(valueTextBox);
-
-	    verticalPanel.add(triplePanel);
-	}
+	verticalPanel.add(makeTriplePanel());
 
 	horizontalPanel.add(verticalPanel);
 
@@ -99,6 +55,54 @@ public class QueryPanel
     TextBox         getPropertyTextBox() { return TpropertyTextBox; }
     TextBox         getValueTextBox()    { return TvalueTextBox; }
     HorizontalPanel getPanel()           { return horizontalPanel; }
+
+    private HorizontalPanel makeTriplePanel()
+    {
+	TextBox subjectTextBox  = new TextBox();
+	TextBox propertyTextBox = new TextBox();
+	TextBox valueTextBox    = new TextBox();
+	org.gwtwidgets.client.util.WindowUtils wu =
+	    new org.gwtwidgets.client.util.WindowUtils();
+	org.gwtwidgets.client.util.Location location = wu.getLocation();
+	String start = location.getParameter(Main.url);
+	if (start == null) {
+	    subjectTextBox.setText(Main.qsubject);
+	} else {
+	    subjectTextBox.setText(start);
+	}
+	propertyTextBox.setText(Main.qproperty);
+	valueTextBox.setText(Main.qvalue);
+	MenuBar subjectMenuBar  = 
+	    makeMenuBar(Main.qvalue,    valueTextBox,
+			Main.qsubject,  subjectTextBox,
+			Main.qproperty, propertyTextBox);
+	MenuBar propertyMenuBar =
+	    makeMenuBar(Main.qsubject,  subjectTextBox,
+			Main.qproperty, propertyTextBox,
+			Main.qvalue,    valueTextBox);
+	MenuBar valueMenuBar    =
+	    makeMenuBar(Main.qproperty, propertyTextBox,
+			Main.qvalue,    valueTextBox,
+			    Main.qsubject,  subjectTextBox);
+	
+	if (TsubjectTextBox  == null) TsubjectTextBox  = subjectTextBox;
+	if (TsubjectMenuBar  == null) TsubjectMenuBar  = subjectMenuBar;
+	if (TpropertyTextBox == null) TpropertyTextBox = propertyTextBox;
+	if (TpropertyMenuBar == null) TpropertyMenuBar = propertyMenuBar;
+	if (TvalueTextBox    == null) TvalueTextBox    = valueTextBox;
+	if (TvalueMenuBar    == null) TvalueMenuBar    = valueMenuBar;
+	
+	HorizontalPanel triplePanel = new HorizontalPanel();
+
+	triplePanel.add(subjectMenuBar);
+	triplePanel.add(subjectTextBox);
+	triplePanel.add(propertyMenuBar);
+	triplePanel.add(propertyTextBox);
+	triplePanel.add(valueMenuBar);
+	triplePanel.add(valueTextBox);
+
+	return triplePanel;
+    }
 
     private MenuBar makeMenuBar(final String  leftText,
 				final TextBox leftTextBox,
