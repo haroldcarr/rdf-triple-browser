@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 07 (Thu) 20:07:37 by Harold Carr.
+// Last Modified : 2007 Jun 07 (Thu) 20:17:27 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -18,41 +18,15 @@ public class QueryPanel
 {
     private final HorizontalPanel horizontalPanel;
     private final VerticalPanel   verticalPanel;
-    private final TextBox         subjectTextBox;
-    private final TextBox         propertyTextBox;
-    private final TextBox         valueTextBox;
-    private final MenuBar         subjectMenuBar;
-    private final MenuBar         propertyMenuBar;
-    private final MenuBar         valueMenuBar;
+    private       TextBox         TsubjectTextBox;
+    private       TextBox         TpropertyTextBox;
+    private       TextBox         TvalueTextBox;
+    private       MenuBar         TsubjectMenuBar;
+    private       MenuBar         TpropertyMenuBar;
+    private       MenuBar         TvalueMenuBar;
 
     QueryPanel()
     {
-	subjectTextBox  = new TextBox();
-	propertyTextBox = new TextBox();
-	valueTextBox    = new TextBox();
-	org.gwtwidgets.client.util.WindowUtils wu =
-	    new org.gwtwidgets.client.util.WindowUtils();
-	org.gwtwidgets.client.util.Location location = wu.getLocation();
-	String start = location.getParameter(Main.url);
-	if (start == null) {
-	    subjectTextBox.setText(Main.qsubject);
-	} else {
-	    subjectTextBox.setText(start);
-	}
-	propertyTextBox.setText(Main.qproperty);
-	valueTextBox.setText(Main.qvalue);
-	subjectMenuBar  = 
-	    makeMenuBar(Main.qvalue,    valueTextBox,
-			Main.qsubject,  subjectTextBox,
-			Main.qproperty, propertyTextBox);
-	propertyMenuBar =
-	    makeMenuBar(Main.qsubject,  subjectTextBox,
-			Main.qproperty, propertyTextBox,
-			Main.qvalue,    valueTextBox);
-	valueMenuBar    =
-	    makeMenuBar(Main.qproperty, propertyTextBox,
-			Main.qvalue,    valueTextBox,
-			Main.qsubject,  subjectTextBox);
 
 	horizontalPanel = new HorizontalPanel();
 
@@ -61,14 +35,51 @@ public class QueryPanel
 
 	verticalPanel = new VerticalPanel();
 
-	HorizontalPanel triplePanel = new HorizontalPanel();
-	triplePanel.add(subjectMenuBar);
-	triplePanel.add(subjectTextBox);
-	triplePanel.add(propertyMenuBar);
-	triplePanel.add(propertyTextBox);
-	triplePanel.add(valueMenuBar);
-	triplePanel.add(valueTextBox);
-	verticalPanel.add(triplePanel);
+	for (int i = 0; i < 3; ++i) {
+	    TextBox subjectTextBox  = new TextBox();
+	    TextBox propertyTextBox = new TextBox();
+	    TextBox valueTextBox    = new TextBox();
+	    org.gwtwidgets.client.util.WindowUtils wu =
+		new org.gwtwidgets.client.util.WindowUtils();
+	    org.gwtwidgets.client.util.Location location = wu.getLocation();
+	    String start = location.getParameter(Main.url);
+	    if (start == null) {
+		subjectTextBox.setText(Main.qsubject);
+	    } else {
+		subjectTextBox.setText(start);
+	    }
+	    propertyTextBox.setText(Main.qproperty);
+	    valueTextBox.setText(Main.qvalue);
+	    MenuBar subjectMenuBar  = 
+		makeMenuBar(Main.qvalue,    valueTextBox,
+			    Main.qsubject,  subjectTextBox,
+			    Main.qproperty, propertyTextBox);
+	    MenuBar propertyMenuBar =
+		makeMenuBar(Main.qsubject,  subjectTextBox,
+			    Main.qproperty, propertyTextBox,
+			    Main.qvalue,    valueTextBox);
+	    MenuBar valueMenuBar    =
+		makeMenuBar(Main.qproperty, propertyTextBox,
+			    Main.qvalue,    valueTextBox,
+			    Main.qsubject,  subjectTextBox);
+
+	    if (TsubjectTextBox  == null) TsubjectTextBox  = subjectTextBox;
+	    if (TsubjectMenuBar  == null) TsubjectMenuBar  = subjectMenuBar;
+	    if (TpropertyTextBox == null) TpropertyTextBox = propertyTextBox;
+	    if (TpropertyMenuBar == null) TpropertyMenuBar = propertyMenuBar;
+	    if (TvalueTextBox    == null) TvalueTextBox    = valueTextBox;
+	    if (TvalueMenuBar    == null) TvalueMenuBar    = valueMenuBar;
+
+	    HorizontalPanel triplePanel = new HorizontalPanel();
+	    triplePanel.add(subjectMenuBar);
+	    triplePanel.add(subjectTextBox);
+	    triplePanel.add(propertyMenuBar);
+	    triplePanel.add(propertyTextBox);
+	    triplePanel.add(valueMenuBar);
+	    triplePanel.add(valueTextBox);
+
+	    verticalPanel.add(triplePanel);
+	}
 
 	horizontalPanel.add(verticalPanel);
 
@@ -76,17 +87,17 @@ public class QueryPanel
 	saveButton.addClickListener(new ClickListener() {
 	    public void onClick(Widget sender) {
 		Main.getServerCalls().assertFact(
-	            new QueryRequest(subjectTextBox.getText(),
-				     propertyTextBox.getText(),
-				     valueTextBox.getText(),
+	            new QueryRequest(TsubjectTextBox.getText(),
+				     TpropertyTextBox.getText(),
+				     TvalueTextBox.getText(),
 				     Main.qsubject+Main.qproperty+Main.qvalue));
 	    }});
 	horizontalPanel.add(saveButton);
     }
 
-    TextBox         getSubjectTextBox()  { return subjectTextBox; }
-    TextBox         getPropertyTextBox() { return propertyTextBox; }
-    TextBox         getValueTextBox()    { return valueTextBox; }
+    TextBox         getSubjectTextBox()  { return TsubjectTextBox; }
+    TextBox         getPropertyTextBox() { return TpropertyTextBox; }
+    TextBox         getValueTextBox()    { return TvalueTextBox; }
     HorizontalPanel getPanel()           { return horizontalPanel; }
 
     private MenuBar makeMenuBar(final String  leftText,
