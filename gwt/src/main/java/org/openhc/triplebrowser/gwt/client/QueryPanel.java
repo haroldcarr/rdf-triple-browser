@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 07 (Thu) 22:23:13 by Harold Carr.
+// Last Modified : 2007 Jun 07 (Thu) 22:40:01 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -43,6 +43,7 @@ public class QueryPanel
 	final RadioButton radioButton = new RadioButton("current-triple");
 	horizontalPanel.add(radioButton);
 
+
 	final Button leftButton;
 	if (!verticalPanel.iterator().hasNext()) {
 	    leftButton = new Button("+");
@@ -57,13 +58,27 @@ public class QueryPanel
 		    verticalPanel.remove(horizontalPanel);
 		}});
 	}
-
 	horizontalPanel.add(leftButton);	
 
 
-	TextBox subjectTextBox  = new TextBox();
-	TextBox propertyTextBox = new TextBox();
-	TextBox valueTextBox    = new TextBox();
+	final TextBox subjectTextBox  = new TextBox();
+	final TextBox propertyTextBox = new TextBox();
+	final TextBox valueTextBox    = new TextBox();
+
+	if (!verticalPanel.iterator().hasNext()) {
+	    radioButton.setEnabled(true);
+	    radioButton.setChecked(true);
+	    TsubjectTextBox  = subjectTextBox;
+	    TpropertyTextBox = propertyTextBox;
+	    TvalueTextBox    = valueTextBox;
+	}
+	radioButton.addClickListener(new ClickListener() {
+	    public void onClick(Widget sender) {
+		TsubjectTextBox  = subjectTextBox;
+		TpropertyTextBox = propertyTextBox;
+		TvalueTextBox    = valueTextBox;
+	    }});
+		
 	org.gwtwidgets.client.util.WindowUtils wu =
 	    new org.gwtwidgets.client.util.WindowUtils();
 	org.gwtwidgets.client.util.Location location = wu.getLocation();
@@ -87,13 +102,15 @@ public class QueryPanel
 	    makeMenuBar(Main.qproperty, propertyTextBox,
 			Main.qvalue,    valueTextBox,
 			    Main.qsubject,  subjectTextBox);
-	
+
+	/*
 	if (TsubjectTextBox  == null) TsubjectTextBox  = subjectTextBox;
 	if (TsubjectMenuBar  == null) TsubjectMenuBar  = subjectMenuBar;
 	if (TpropertyTextBox == null) TpropertyTextBox = propertyTextBox;
 	if (TpropertyMenuBar == null) TpropertyMenuBar = propertyMenuBar;
 	if (TvalueTextBox    == null) TvalueTextBox    = valueTextBox;
 	if (TvalueMenuBar    == null) TvalueMenuBar    = valueMenuBar;
+	*/
 	
 	horizontalPanel.add(subjectMenuBar);
 	horizontalPanel.add(subjectTextBox);
