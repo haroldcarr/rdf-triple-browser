@@ -1,9 +1,13 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 08 (Fri) 06:33:26 by Harold Carr.
+// Last Modified : 2007 Jun 08 (Fri) 22:29:52 by Harold Carr.
 //
 
 package com.differentity.client;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Frame;
@@ -69,7 +73,7 @@ public class MainPanel
 
 	// TOP
 
-	// ** RootPanel.get("slot0").add(DevTime.makeStatusWidgets());
+	RootPanel.get("slot0").add(DevTime.makeStatusWidgets());
 
 	final HorizontalPanel topPanel = new HorizontalPanel();
 	topPanel.setStyleName("topPanel");
@@ -105,32 +109,50 @@ public class MainPanel
 	//RootPanel.get("bottom").add(new Test().getWidget());
     }
 
-    public void doQuery(boolean keepHistory)
+    public void doQuery(final boolean keepHistory)
     {
-	String subject = 
-	    getSPVQueryValue(Main.qsubject,  queryPanel.getSubjectTextBox());
-	String property    = 
-	    getSPVQueryValue(Main.qproperty, queryPanel.getPropertyTextBox());
-	String value  = 
-	    getSPVQueryValue(Main.qvalue,    queryPanel.getValueTextBox());
-	doQuery(keepHistory,
-		subject, property, value, 
+	List triples = new ArrayList();
+	Iterator hpi = queryPanel.getPanel().iterator();
+	while (hpi.hasNext()) {
+	    HorizontalPanel triple = (HorizontalPanel) hpi.next();
+	    Iterator i = triple.iterator();
+	    i.next(); // skip RadioButton;
+	    i.next(); // skip Button;
+	    i.next(); // skip subject MenuBar
+	    final String subject  = 
+		getSPVQueryValue(Main.qsubject,  (TextBox) i.next());
+	    i.next(); // skip property MenuBar
+	    final String property = 
+		getSPVQueryValue(Main.qproperty, (TextBox) i.next());
+	    i.next(); // skip value MenuBar
+	    final String value    = 
+		getSPVQueryValue(Main.qvalue,    (TextBox) i.next());
+	    triples.add(new Triple(subject, property, value));
+	}
+
+	doQuery(keepHistory, triples,
 		Main.qsubject + Main.qproperty + Main.qvalue);
     }
 
     public void doQuery(final boolean keepHistory,
-			final String subject, final String property, 
+			final String subject, final String property,
 			final String value, final String setContentsOf)
     {
-	QueryRequest queryRequest = 
-	    new QueryRequest(subject, property, value, setContentsOf);
+	List triples = new ArrayList();
+	triples.add(new Triple(subject, property, value));
+	doQuery(keepHistory, triples, setContentsOf);
+    }
+
+    public void doQuery(final boolean keepHistory, final List triples,
+			final String setContentsOf)
+    {
+	QueryRequest queryRequest = new QueryRequest(triples, setContentsOf);
 
 	// "this" so async request can call handleQueryResponse.
 	Main.getServerCalls().doQuery(this, queryRequest);
 
 	Main.getBrowserHistory()
-	    .recordDoQuery(keepHistory, 
-			   subject, property, value, setContentsOf);
+	    .recordDoQuery(keepHistory, triples, setContentsOf);
     }
 
     public void handleQueryResponse(QueryResponse queryResponse)

@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2007 Jun 07 (Thu) 15:38:15 by Harold Carr.
+// Last Modified : 2007 Jun 08 (Fri) 21:39:35 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -25,6 +25,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.differentity.client.Main;
 import com.differentity.client.QueryRequest;
 import com.differentity.client.QueryResponse;
+import com.differentity.client.Triple;
 
 public class Jena
 {
@@ -76,36 +77,43 @@ public class Jena
 	subject.addProperty(property, value);
     }
 
-    public String makeQueryString(final String s, final String p, final String v)
+    public String makeQueryString(final QueryRequest queryRequest)
     {
-	final String subject  = formatInput(s);
-	final String property = formatInput(p);
-	final String value    = formatInput(v);
-	String selectVars = "";
-	if (subject.startsWith(Main.questionMarkSymbol)) {
-	    selectVars = selectVars + " " + subject;
-	}
-	if (property.startsWith(Main.questionMarkSymbol)) {
-	    selectVars = selectVars + " " + property;
-	}
-	if (value.startsWith(Main.questionMarkSymbol)) {
-	    selectVars = selectVars + " " + value;
+	StringBuffer selectVars = new StringBuffer();
+	StringBuffer query = new StringBuffer();
+	for (Iterator i = queryRequest.getTriples().iterator(); i.hasNext();){
+	    Triple triple = (Triple) i.next();
+	    final String subject  = formatInput(triple.getSubject());
+	    final String property = formatInput(triple.getProperty());
+	    final String value    = formatInput(triple.getValue());
+	    if (subject.startsWith(Main.questionMarkSymbol)) {
+		selectVars.append(" ").append(subject);
+	    }
+	    if (property.startsWith(Main.questionMarkSymbol)) {
+		selectVars.append(" ").append(property);
+	    }
+	    if (value.startsWith(Main.questionMarkSymbol)) {
+		selectVars.append(" ").append(value);
+	    }
+	    query.append(subject).append(" ")
+		 .append(property).append(" ")
+		 .append(value).append(" . ");
 	}
 
+	String selectVariables = selectVars.toString();
 	final String orderBy;
-	if (selectVars.equals("")) {
-	    selectVars = "?ddduuummmyyy";
+	if (selectVariables.equals("")) {
+	    selectVariables = "?ddduuummmyyy";
 	    orderBy = "";
 	} else {
-	    orderBy = " ORDER BY " + selectVars;
+	    orderBy = " ORDER BY " + selectVariables;
 	}
 
 	final String queryString =
-	    " SELECT " + selectVars +
+	    " SELECT " + selectVariables +
 	    " WHERE { " +
-	    subject  + " " +
-	    property + " " +
-	    value    + " . }" +
+	    query.toString() +
+	    " }" +
 	    orderBy;
 
 	return queryString;
@@ -128,10 +136,7 @@ public class Jena
     public QueryResponse doQuery(final QueryRequest queryRequest,
 				 final String servletContextRealPathOfSlash)
     {
-	final String queryString =
-	    makeQueryString(queryRequest.getSubject(),
-			    queryRequest.getProperty(),
-			    queryRequest.getValue());
+	final String queryString = makeQueryString(queryRequest);
 
 	return doQuery(queryString, queryRequest,
 		       servletContextRealPathOfSlash);
@@ -171,12 +176,13 @@ public class Jena
 	final List list = resultSet.getResultVars();
 	final Iterator i = list.iterator();
 	while (i.hasNext()) {
+	    // REVISIT: limits variables to "subject*"/"property*"/"value*"
 	    final String varName = (String) i.next();
-	    if (varName.equals(Main.subject)) {
+	    if (varName.startsWith(Main.subject)) {
 		isSubjectVar  = true;
-	    } else if (varName.equals(Main.property)) {
+	    } else if (varName.startsWith(Main.property)) {
 		isPropertyVar = true;
-	    } else if (varName.equals(Main.value)) {
+	    } else if (varName.startsWith(Main.value)) {
 		isValueVar    = true;
 	    }
 	}
@@ -190,14 +196,18 @@ public class Jena
 	// return what was given in the query.
 	//
 
-	if (!isSubjectVar) {
-	    subjectResponse.add(queryRequest.getSubject()); 
-	}
-	if (!isPropertyVar) {
-	    propertyResponse.add(queryRequest.getProperty());
-	}
-	if (!isValueVar) {
-	    valueResponse.add (queryRequest.getValue()); 
+	Iterator triples = queryRequest.getTriples().iterator();
+	while (triples.hasNext()) {
+	    Triple triple = (Triple) triples.next();
+	    if (!isSubjectVar) {
+		subjectResponse.add(triple.getSubject()); 
+	    }
+	    if (!isPropertyVar) {
+		propertyResponse.add(triple.getProperty());
+	    }
+	    if (!isValueVar) {
+		valueResponse.add(triple.getValue()); 
+	    }
 	}
 
 	//

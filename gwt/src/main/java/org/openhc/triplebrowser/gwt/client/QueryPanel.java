@@ -1,9 +1,12 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 08 (Fri) 06:39:30 by Harold Carr.
+// Last Modified : 2007 Jun 08 (Fri) 21:09:35 by Harold Carr.
 //
 
 package com.differentity.client;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
@@ -112,11 +115,14 @@ public class QueryPanel
 	    Button saveButton = new Button("s");
 	    saveButton.addClickListener(new ClickListener() {
 		public void onClick(Widget sender) {
+		    List triples = new ArrayList();
+		    triples.add(new Triple(selectedSubjectTextBox.getText(),
+					   selectedPropertyTextBox.getText(),
+					   selectedValueTextBox.getText()));
 		    Main.getServerCalls().assertFact(
-	                new QueryRequest(selectedSubjectTextBox.getText(),
-					 selectedPropertyTextBox.getText(),
-					 selectedValueTextBox.getText(),
-					 Main.qsubject+Main.qproperty+Main.qvalue));
+		        new QueryRequest(
+				   triples,
+			           Main.qsubject+Main.qproperty+Main.qvalue));
 		}});
 
 	    horizontalPanel.add(saveButton);

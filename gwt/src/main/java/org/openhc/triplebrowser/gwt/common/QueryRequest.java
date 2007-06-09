@@ -1,10 +1,11 @@
 //
 // Created       : 2006 Aug 12 (Sat) 14:56:41 by Harold Carr.
-// Last Modified : 2006 Sep 10 (Sun) 20:50:51 by Harold Carr.
+// Last Modified : 2007 Jun 08 (Fri) 21:15:29 by Harold Carr.
 //
 
 package com.differentity.client;
 
+import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class QueryRequest
@@ -12,26 +13,19 @@ public class QueryRequest
 {
     // GWT will not let me make these final.
 
-    private String subject;
-    private String property;
-    private String value;
+    private List   triples;
     private String setContentsOf;
 
     // GWT requires zero-arg constructor.
     public QueryRequest() {}
 
-    public QueryRequest(final String subject, final String property, 
-			final String value, final String setContentsOf)
+    public QueryRequest(final List triples, final String setContentsOf)
     {
-	this.subject       = subject;
-	this.property      = property;
-	this.value         = value;
+	this.triples       = triples;
 	this.setContentsOf = setContentsOf;
     }
 
-    public String getSubject()       { return subject; }
-    public String getProperty()      { return property; }
-    public String getValue()         { return value; }
+    public List   getTriples()       { return triples; }
     public String getSetContentsOf() { return setContentsOf; }
 }
 

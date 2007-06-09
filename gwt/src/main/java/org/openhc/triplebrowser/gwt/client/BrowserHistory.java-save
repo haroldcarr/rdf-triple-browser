@@ -1,13 +1,19 @@
 //
 // Created       : 2006 Jul 30 (Sun) 15:53:20 by Harold Carr.
-// Last Modified : 2006 Sep 21 (Thu) 16:36:17 by Harold Carr.
+// Last Modified : 2007 Jun 08 (Fri) 22:30:32 by Harold Carr.
 //
 
 package com.differentity.client;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.TextBox;
 
 public class BrowserHistory
     implements HistoryListener 
@@ -47,13 +53,29 @@ public class BrowserHistory
 	String[] token = 
 	    decode(historyToken).split(Main.historyFieldSeparator);
 
-	if (token[0].equals(Main.doQuery)) {
-	    QueryPanel queryPanel = Main.getMainPanel().getQueryPanel();
-	    queryPanel.getSubjectTextBox().setText(token[1]);
-	    queryPanel.getPropertyTextBox().setText(token[2]);
-	    queryPanel.getValueTextBox().setText(token[3]);
-	    Main.getMainPanel()
-		.doQuery(false, token[4], token[5], token[6], token[7]);
+	// REVISIT: history might be longer or shorter than current
+	// number of triples in query panel.
+	int i = 0;
+	List triples = new ArrayList();
+	if (token[i++].equals(Main.doQuery)) {
+	    for (Iterator hpi = Main.getMainPanel().getQueryPanel().getPanel().iterator();
+		 hpi.hasNext(); ) {
+		HorizontalPanel triple = (HorizontalPanel) hpi.next();
+		Iterator tbi = triple.iterator();
+		tbi.next(); // skip RadioButton
+		tbi.next(); // skip Button
+		tbi.next(); // skip subject MenuBar
+		final String subject = token[i++];
+		((TextBox)tbi.next()).setText(subject);
+		tbi.next(); // skip property MenuBar
+		final String property = token[i++];
+		((TextBox)tbi.next()).setText(property);
+		tbi.next(); // skip value MenuBar
+		final String value = token[i++];
+		((TextBox)tbi.next()).setText(value);
+		triples.add(new Triple(subject, property, value));
+	    }
+	    Main.getMainPanel().doQuery(false, triples, token[i]);
 	} else if (token[0].equals("")) {
 	    ;
 	} else {
@@ -63,8 +85,8 @@ public class BrowserHistory
 
     // MainPanel()
     public void recordDoQuery(final boolean keepHistory,
-			      final String subject, final String property, 
-			      final String value, final String setContentsOf)
+			      final List triples,
+			      final String setContentsOf)
     {
 	try {
 	    //System.out.println(".recordDoQuery->:");
@@ -72,23 +94,21 @@ public class BrowserHistory
 		return;
 	    }
 
-	    QueryPanel queryPanel = Main.getMainPanel().getQueryPanel();
+	    final QueryPanel queryPanel = Main.getMainPanel().getQueryPanel();
 
-	    newItem(Main.doQuery
-		    + Main.historyFieldSeparator
-		    + queryPanel.getSubjectTextBox().getText()
-		    + Main.historyFieldSeparator
-		    + queryPanel.getPropertyTextBox().getText()
-		    + Main.historyFieldSeparator
-		    + queryPanel.getValueTextBox().getText()
-		    + Main.historyFieldSeparator
-		    + subject
-		    + Main.historyFieldSeparator
-		    + property
-		    + Main.historyFieldSeparator
-		    + value
-		    + Main.historyFieldSeparator
-		    + setContentsOf);
+	    final StringBuffer stringBuffer = new StringBuffer(Main.doQuery);
+	    stringBuffer.append(Main.historyFieldSeparator);
+	    for (final Iterator i = triples.iterator(); i.hasNext(); ) {
+		final Triple triple = (Triple) i.next();
+		stringBuffer.append(triple.getSubject());
+		stringBuffer.append(Main.historyFieldSeparator);
+		stringBuffer.append(triple.getProperty());
+		stringBuffer.append(Main.historyFieldSeparator);
+		stringBuffer.append(triple.getValue());
+		stringBuffer.append(Main.historyFieldSeparator);
+	    }
+	    stringBuffer.append(setContentsOf);
+	    newItem(stringBuffer.toString());
 	} finally {
 	    //System.out.println(".recordDoQuery<-:");
 	}

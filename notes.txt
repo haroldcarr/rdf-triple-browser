@@ -1,7 +1,13 @@
 #
 # Created       : 2006 Jul 14 (Wed) 19:15:16 by Harold Carr.
-# Last Modified : 2007 May 21 (Mon) 19:32:48 by Harold Carr.
+# Last Modified : 2007 Jun 08 (Fri) 23:20:43 by Harold Carr.
 #
+
+------------------------------------------------------------------------------
+2007-06-08
+
+Compound queries working (but not completely tested - particularly
+with history).
 
 ------------------------------------------------------------------------------
 2006-10-06
