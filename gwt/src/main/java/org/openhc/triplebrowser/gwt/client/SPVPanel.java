@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 05 (Tue) 17:49:45 by Harold Carr.
+// Last Modified : 2007 Jun 09 (Sat) 07:51:41 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -126,7 +126,10 @@ public class SPVPanel
 		    // - = collapse to short URL and no source.
 		    if (spvItem.getPendingExpandCollapseState().equals(Main.expand)) {
 			spvItem.getLabel().setText(spvItem.getExpandedName());
-			spvItem.getVerticalPanel().add(new Frame(spvItem.getExpandedName()));
+			// REVISIT - factor out with SPVItem
+			final Frame frame=new Frame(spvItem.getExpandedName());
+			frame.setPixelSize(280, 100); // REVISIT
+			spvItem.getVerticalPanel().add(frame);
 			spvItem.setExpandCollapseState(Main.expand);
 			spvItem.getButton().setText(Main.minusSymbol);
 		    } else {

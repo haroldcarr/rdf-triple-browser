@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 16 (Sat) 08:19:23 by Harold Carr.
+// Last Modified : 2007 Jun 09 (Sat) 07:51:37 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -45,7 +45,9 @@ public class SPVItem
 	    label.setText(collapsedName);
 	} else {
 	    button.setText(Main.minusSymbol);
-	    verticalPanel.add(new Frame(expandedName));
+	    final Frame frame = new Frame(expandedName);
+	    frame.setPixelSize(280, 100); // REVISIT
+	    verticalPanel.add(frame);
 	}
     }
 
