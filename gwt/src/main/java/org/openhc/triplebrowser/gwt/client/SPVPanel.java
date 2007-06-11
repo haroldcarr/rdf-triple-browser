@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 09 (Sat) 07:51:41 by Harold Carr.
+// Last Modified : 2007 Jun 10 (Sun) 16:12:29 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -84,7 +84,7 @@ public class SPVPanel
 	    result.add(
 		       new SPVItem(spvCategory, 
 				   uri,
-				   substringAfterLastSlash(uri),
+				   substringAfterLastSlashOrFirstSharp(uri),
 				   // NOTE: during development change to
 				   // Main.expand to test full range.
 				   Main.collapse));
@@ -163,19 +163,20 @@ public class SPVPanel
 	return getPendingExpandCollapseState();
     }
 
-    private String substringAfterLastSlash(final String x)
+    private String substringAfterLastSlashOrFirstSharp(final String x)
     {
-	int indexOfLastSlash = 0;
+	int indexOfLastSlashOrFirstSharp = 0;
 	int i;
 	for (i = 0; i < x.length(); ++i) {
-	    if (x.charAt(i) == '/') {
-		indexOfLastSlash = i;
+	    if (x.charAt(i) == '/' || x.charAt(i) == '#') {
+		indexOfLastSlashOrFirstSharp = i;
 	    }
 	}
-	final String result = x.substring(indexOfLastSlash + 1);
+	final String result = x.substring(indexOfLastSlashOrFirstSharp + 1);
 	// If it ends in a slash then remove the ending slash and try again.
 	if (result.length() == 0) {
-	    return substringAfterLastSlash(x.substring(0, x.length()-1));
+	    return substringAfterLastSlashOrFirstSharp(
+                       x.substring(0, x.length()-1));
 	} else {
 	    return result;
 	}
