@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Oct 07 (Sat) 16:31:05 by Harold Carr.
+// Last Modified : 2007 Jun 10 (Sun) 16:03:28 by Harold Carr.
 //
 
 ------------------------------------------------------------------------------
@@ -17,6 +17,7 @@ In order:
 - tag cloud
 - style
 - figure out how to make spv panels expand.
+- 3 choices: full URI; up to last / or #; prefix (e.g., skos:definition)
 
 - SPVItem: enable "open in new window"
 - implement AND (recursively)
