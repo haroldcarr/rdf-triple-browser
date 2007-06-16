@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2007 Jun 09 (Sat) 07:12:57 by Harold Carr.
+// Last Modified : 2007 Jun 15 (Fri) 23:32:11 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -232,9 +232,9 @@ public class Jena
 	    }
 	}
 
-	java.util.Collections.sort(subjectResponse);
-	java.util.Collections.sort(propertyResponse);
-	java.util.Collections.sort(valueResponse);
+	sort(subjectResponse);
+	sort(propertyResponse);
+	sort(valueResponse);
 
 	final QueryResponse queryResponse = 
 	    new QueryResponse(subjectResponse, propertyResponse,
@@ -246,6 +246,63 @@ public class Jena
 
 	return queryResponse;
     }
+
+    private void sort(final List list)
+    {
+	// In alphabetic order - including URL.
+	java.util.Collections.sort(list);
+
+	// But do not start with numbers, put them last (if possible).
+
+	try {
+	    System.out.println("-------------------------");
+	    while ( xxx(list.get(0),
+			list.get(list.size()-1)) ) {
+		Object x = list.get(0);
+		list.remove(0);
+		list.add(x);
+	    }
+	} catch (Throwable t) {
+	    System.out.println(t);
+	}
+    }
+
+    private boolean xxx(Object x, Object y)
+    {
+	System.out.println(x + " " + y);
+	boolean xb = startsWithDigit((String)x);
+	boolean yb = startsWithDigit((String)y);
+	System.out.println(xb + " " + yb);
+	return xb && !yb;
+    }
+
+    private boolean startsWithDigit(String x)
+    {
+	// REVISIT - unicode
+	return 
+	   Character.isDigit(substringAfterLastSlashOrFirstSharp(x).charAt(0));
+    }
+
+    // REVISIT - factor into shared utility.
+    private String substringAfterLastSlashOrFirstSharp(final String x)
+    {
+	int indexOfLastSlashOrFirstSharp = 0;
+	int i;
+	for (i = 0; i < x.length(); ++i) {
+	    if (x.charAt(i) == '/' || x.charAt(i) == '#') {
+		indexOfLastSlashOrFirstSharp = i;
+	    }
+	}
+	final String result = x.substring(indexOfLastSlashOrFirstSharp + 1);
+	// If it ends in a slash then remove the ending slash and try again.
+	if (result.length() == 0) {
+	    return substringAfterLastSlashOrFirstSharp(
+                       x.substring(0, x.length()-1));
+	} else {
+	    return result;
+	}
+    }
+
 }
 
 // End of file.
