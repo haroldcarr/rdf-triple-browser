@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2007 Jun 08 (Fri) 21:44:36 by Harold Carr.
+// Last Modified : 2008 Jan 10 (Thu) 16:22:15 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -29,7 +29,7 @@ public class ServiceImpl
     private boolean initialized = false;
     private Jena jena;
 
-    private final String RDF_FILENAME = "/all.rdf";
+    private final String RDF_FILENAME = "/rdf.rdf";
 
     public String initialize() 
     {
