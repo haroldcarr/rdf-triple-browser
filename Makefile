@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2007 Jun 05 (Tue) 22:30:02 by Harold Carr.
+# Last Modified : 2008 Jan 10 (Thu) 16:24:58 by Harold Carr.
 #
 
 # tomcat order
@@ -8,6 +8,12 @@
 
 # gwt shell order
 # gm clean sc bgs gs
+
+###
+### local variables
+###
+
+RDF_FILE	= rdf.rdf
 
 ###
 ### variables used by tomcatRules
@@ -38,10 +44,18 @@ SERVER_FILES	= \
 
 bgs : FORCE
 	mkdir -p ./tomcat/webapps/ROOT
-	cp ./all.rdf ./tomcat/webapps/ROOT
+	cp ./($RDF_FILE) ./tomcat/webapps/ROOT
 
 war : FORCE
-	hcMakeGwtServiceWar -d `pwd` -w $(TOMCAT_WAR_NAME).war  -t all.rdf -l `hcJenaClasspath`
+	hcMakeGwtServiceWar -d `pwd` -w $(TOMCAT_WAR_NAME).war  -t $(RDF_FILE) -l `hcJenaClasspath`
+
+rdf-private : FORCE
+	rm -f $(RDF_FILE)
+	cp hc-private.rdf $(RDF_FILE)
+
+rdf-public : FORCE
+	rm -f $(RDF_FILE)
+	cp hc-public.rdf $(RDF_FILE)
 
 ####
 #### Misc.
