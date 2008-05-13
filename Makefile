@@ -1,7 +1,10 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2008 Jan 10 (Thu) 16:24:58 by Harold Carr.
+# Last Modified : 2008 Jan 11 (Fri) 18:55:08 by Harold Carr.
 #
+
+hcMakefiles=$(shell hcMakefiles)
+include $(hcMakefiles)/itexDefs.gmk
 
 # tomcat order
 # gm clean sc gc war tb deploy te undeploy
@@ -49,13 +52,13 @@ bgs : FORCE
 war : FORCE
 	hcMakeGwtServiceWar -d `pwd` -w $(TOMCAT_WAR_NAME).war  -t $(RDF_FILE) -l `hcJenaClasspath`
 
-rdf-private : FORCE
+rdf$(ITEX_FILENAME_SUFFIX_PRIVATE) : FORCE
 	rm -f $(RDF_FILE)
-	cp hc-private.rdf $(RDF_FILE)
+	cp hc$(ITEX_FILENAME_SUFFIX_PRIVATE).rdf $(RDF_FILE)
 
-rdf-public : FORCE
+rdf$(ITEX_FILENAME_SUFFIX_PUBLIC) : FORCE
 	rm -f $(RDF_FILE)
-	cp hc-public.rdf $(RDF_FILE)
+	cp hc$(ITEX_FILENAME_SUFFIX_PUBLIC).rdf $(RDF_FILE)
 
 ####
 #### Misc.
@@ -64,7 +67,6 @@ rdf-public : FORCE
 clean : FORCE
 	rm -rf .gwt-cache $(BINDIR) $(OUTDIR) $(TOMCATDIR) $(TOMCAT_WAR_NAME).war
 
-hcMakefiles=$(shell hcMakefiles)
 include $(hcMakefiles)/gwtDefs.gmk
 include $(hcMakefiles)/gwtRules.gmk
 include $(hcMakefiles)/tomcatDefs.gmk
