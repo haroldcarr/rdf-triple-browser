@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2007 Jun 15 (Fri) 23:32:11 by Harold Carr.
+// Last Modified : 2007 Jun 16 (Sat) 06:42:34 by Harold Carr.
 //
 
 package com.differentity.server;
@@ -255,12 +255,14 @@ public class Jena
 	// But do not start with numbers, put them last (if possible).
 
 	try {
-	    System.out.println("-------------------------");
-	    while ( xxx(list.get(0),
-			list.get(list.size()-1)) ) {
-		Object x = list.get(0);
-		list.remove(0);
-		list.add(x);
+	    if (xxx(list.get(0),
+		    list.get(list.size()-1)) ) {
+		System.out.println("-------------------------");
+		while (startsWithDigit((String) list.get(0))) {
+		    Object x = list.get(0);
+		    list.remove(0);
+		    list.add(x);
+		}
 	    }
 	} catch (Throwable t) {
 	    System.out.println(t);
