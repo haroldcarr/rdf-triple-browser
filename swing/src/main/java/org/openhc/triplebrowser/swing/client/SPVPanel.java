@@ -1,24 +1,32 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 15 (Thu) 12:40:36 by Harold Carr.
+// Last Modified : 2008 May 17 (Sat) 14:07:24 by Harold Carr.
 //
 
 package client;
 
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
+
+import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import client.Main;
 
@@ -46,12 +54,40 @@ public class SPVPanel
 	topButton = new JButton(getPendingExpandCollapseState());
 	topVerticalPanel.add(topButton);
 	// TODO: Would like a scroll or a cloud
-	verticalInsideScroll = new JList();
+	DefaultListSelectionModel m = new DefaultListSelectionModel( );
+        m.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        m.setLeadAnchorNotificationEnabled(false);
+	verticalInsideScroll = new JList(new DefaultListModel());
+	
+	verticalInsideScroll.setSelectionModel(m);
 
+	verticalInsideScroll.addListSelectionListener(
+	    new ListSelectionListener( ) {
+		public void valueChanged(ListSelectionEvent e) {
+		    if (e.getValueIsAdjusting() == false) {
+			if (verticalInsideScroll.getSelectedIndex() != -1) {
 
+			    // We only store strings now in the list
+			    // (not labels) and the string might be collapsed
+			    // so need to find full length match.
+			    final String choice =
+				((SPVItem)contents.get(verticalInsideScroll.getSelectedIndex())).getExpandedName();
+			    // Causes doQuery so no history necessary here.
+			    Main.getMainPanel().spvLinkClicked(spvCategory,
+							       choice);
+
+			    Main.getMainPanel().getFrameCurrentSelection()
+			        .setUrl(choice);
+			    System.out.println(verticalInsideScroll.getSelectedIndex());
+			}
+		    }
+		}
+	    });
 
 	scrollPanel = new JScrollPane(verticalInsideScroll);
 	scrollPanel.setName(Main.subjectPropertyValue);
+	scrollPanel.setMinimumSize(new Dimension(300, 100)); //*****
+
 	topVerticalPanel.add(scrollPanel);
 	// End layout.
 
@@ -88,10 +124,7 @@ public class SPVPanel
 	    result.add(
 		       new SPVItem(spvCategory, 
 				   uri,
-				   substringAfterLastSlashOrFirstSharp(uri),
-				   // NOTE: during development change to
-				   // Main.expand to test full range.
-				   Main.collapse));
+				   substringAfterLastSlashOrFirstSharp(uri)));
 	}
 	return result;
     }
@@ -101,46 +134,40 @@ public class SPVPanel
     public void setContents(final List x)
     {
 	contents = convertContents(x);
-	verticalInsideScroll.removeAll();
+	((DefaultListModel)verticalInsideScroll.getModel()).clear();
 	final Iterator i = contents.iterator();
+	int n = 0;
 	while (i.hasNext()) {
 	    final SPVItem spvItem = (SPVItem) i.next();
-	    verticalInsideScroll.add(spvItem.getLabel());
 
-	    if (expandCollapseState.equals(Main.expand)) {
-		spvItem.getLabel().setText(spvItem.getExpandedName());
-	    }
-
-	    spvItem.getLabel().addMouseListener(new MouseAdapter() {
-	        public void mouseClicked(MouseEvent e) {
-		    // Causes doQuery so no history necessary here.
-		    Main.getMainPanel().spvLinkClicked(
-		        spvCategory, spvItem.getExpandedName());
-
-		    //Main.getMainPanel().getFrameCurrentSelection()
-		    //    .setUrl(spvItem.getExpandedName());
-		}
-	    });
+	    ((DefaultListModel)verticalInsideScroll.getModel())
+		.add(n++, 
+		     (expandCollapseState.equals(Main.expand) ?
+		      spvItem.getExpandedName() :
+		      spvItem.getCollapsedName()));
 	}
     }
 
     String expandOrCollapse()
     {
 	String pendingExpandCollapseState = getPendingExpandCollapseState();
-	final Iterator i = Arrays.asList(verticalInsideScroll.getComponents()).iterator();
+	final Enumeration i = 
+	    ((DefaultListModel)verticalInsideScroll.getModel()).elements();
 	final Iterator j = contents.iterator();
-	while (i.hasNext()) {
+	int n = 0;
+	while (i.hasMoreElements()) {
 	    // TODO: redundant i.next - just need to make sure i and j
 	    // are same size.
-	    final Object object = i.next();
+	    final Object object = i.nextElement();
 	    final SPVItem spvItem = (SPVItem) j.next();
-	    if (spvItem.getCurrentExpandCollapseState().equals(Main.collapse)){
-		if (pendingExpandCollapseState.equals(Main.expand)) {
-		    spvItem.getLabel().setText(spvItem.getExpandedName());
-		} else {
-		    spvItem.getLabel().setText(spvItem.getCollapsedName());
-		}
+	    if (pendingExpandCollapseState.equals(Main.expand)) {
+		((DefaultListModel)verticalInsideScroll.getModel())
+		    .set(n, spvItem.getExpandedName());
+	    } else {
+		((DefaultListModel)verticalInsideScroll.getModel())
+		    .set(n, spvItem.getCollapsedName());
 	    }
+	    n++;
 	}
 	expandCollapseState = pendingExpandCollapseState;
 	return getPendingExpandCollapseState();

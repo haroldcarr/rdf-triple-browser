@@ -1,320 +1,113 @@
 //
-// Created       : 2008 May 14 (Wed) 13:09:35 by Harold Carr.
-// Last Modified : 2008 May 14 (Wed) 20:13:57 by Harold Carr.
+// Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
+// Last Modified : 2008 May 17 (Sat) 15:44:12 by Harold Carr.
 //
 
 package client;
 
-import javax.swing.AbstractListModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.WindowConstants;
+import java.util.Iterator;
 
-import java.awt.Dimension;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JPanel;
+import client.MainPanel;
+//import com.differentity.client.ServerCalls;
 
 public class Main 
-    extends
-	JFrame 
 {
+    public static final String serviceEntryPoint    = "/Service";
 
-    private final JRadioButton selectedQueryLineButton = new JRadioButton();
-    private final JButton addQueryLineButton = new JButton();
+    public static final String clear                = "clear";
+    public static final String asteriskSymbol       = "*";
+    public static final String blankSpace           = " ";
+    public static final String collapse             = "-";
+    public static final String copyright            = "copyright 2007";
+    public static final String doQuery              = "doQuery";
+    public static final String emptyString          = "emptyString";
+    public static final String expand               = "+";
+    public static final String expandOrCollapseSPVClick 
+	= "expandOrCollapseSPVClick";
+    public static final String expandOrCollapseSPVItemClick
+	= "expandOrCollapseSPVItemClick";
+    public static final String historyFieldSeparator = ":;:";
+    public static final String minusSymbol          = "-";
+     public static final String plusSymbol           = "+";
+    public static final String property             = "property";
+    public static final String questionMarkSymbol   = "?";
+    public static final String qsubject             = "?subject";
+    public static final String qproperty            = "?property";
+    public static final String qvalue               = "?value";
+    public static final String shiftLeft            = "<-";
+    public static final String shiftRight           = "->";
+    public static final String showAll              = "show all";
+    public static final String showMatch            = "show match";
+    public static final String subject              = "subject";
+    public static final String subjectPropertyValue = "subjectPropertyValue";
+    public static final String url                  = "url";
+    public static final String value                = "value";
 
-    private final JComboBox subjectComboBox = new JComboBox();
-    private final JTextField subjectTextField = new JTextField();
+    // TODO: these should be final.
+    private static       MainPanel      mainPanel;
+    private static       ServerCalls    serverCalls;
+            static       boolean        realBrowser = false;
 
-    private final JComboBox propertyComboBox = new JComboBox();
-    private final JTextField propertyTextField = new JTextField();
-
-    private final JComboBox valueComboBox = new JComboBox();
-    private final JTextField valueTextField = new JTextField();
-
-    private final JButton subjectExpandButton = new JButton();
-    private final JList subjectList = new JList();
-    private final JScrollPane subjectScrollPane = new JScrollPane(subjectList);
-
-    private final JButton propertyExpandButton = new JButton();
-    private final JList propertyList = new JList();
-    private final JScrollPane propertyScrollPane = new JScrollPane(propertyList);
-
-    private final JButton valueExpandButton = new JButton();
-    private final JList valueList = new JList();
-    private final JScrollPane valueScrollPane = new JScrollPane(valueList);
-
-    private final JTextArea webBrowser = new JTextArea();
-
-    private final java.util.Properties resourceMap = 
-	new java.util.Properties();
-
-    public Main()
+    public static void main(String[] av)
     {
-        initComponents();
+	if (av.length == 0) {
+	    realBrowser = true;
+	    chrriis.dj.nativeswing.NativeInterfaceHandler.init();
+	}
+	onModuleLoad();
+	makeMainPanel();
     }
 
-    @SuppressWarnings("unchecked")
-    private void initComponents() 
+    // This is the entry point method.
+    public static void onModuleLoad() 
     {
-	resourceMap.setProperty("selectedQueryLineButton", 
-				"selectedQueryLineButton");
-	resourceMap.setProperty("addQueryLineButton.text", "+");
-	resourceMap.setProperty("subjectTextField.text", "?subject");
-	resourceMap.setProperty("propertyTextField.text", "?property");
-	resourceMap.setProperty("valueTextField.text", "?value");
-
-	resourceMap.setProperty("subjectExpandButton.text", "+");
-	resourceMap.setProperty("propertyExpandButton.text", "+");
-	resourceMap.setProperty("valueExpandButton.text", "+");
-	resourceMap.setProperty("subjectExpandButton.font",
-				"subjectExpandButton.font");
-	resourceMap.setProperty("propertyExpandButton.font",
-				"propertyExpandButton.font");
-	resourceMap.setProperty("valueExpandButton.font",
-				"valueExpandButton.font");
-
-	resourceMap.setProperty("subjectList.font", "subjectList.font");
-	resourceMap.setProperty("propertyList.font", "propertyList.font");
-	resourceMap.setProperty("valueList.font", "valueList.font");
-
-
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setName("FUHZ.BIZ");
-
-	// Query line
-
-        selectedQueryLineButton.setText(
-            resourceMap.getProperty("selectedQueryLineButton.text"));
-        selectedQueryLineButton.setName("selectedQueryLineButton");
-
-        addQueryLineButton.setText(
-            resourceMap.getProperty("addQueryLineButton.text"));
-        addQueryLineButton.setName("addQueryLineButton");
-
-        subjectComboBox.setModel(
-            new DefaultComboBoxModel(new String[]
-                {
-		    "v",
-		    "clear", 
-		    "all",
-		    "-->",
-		    "<--"
-		}));
-        subjectComboBox.setName("subjectComboBox");
-        subjectExpandButton.setText(
-            resourceMap.getProperty("subjectExpandButton.text"));
-        //subjectExpandButton.setFont(resourceMap.getProperty("subjectExpandButton.font"));
-        subjectExpandButton.setName("subjectExpandButton");
-        subjectTextField.setText(
-            resourceMap.getProperty("subjectTextField.text"));
-        subjectTextField.setName("subjectTextField");
-
-
-        propertyComboBox.setModel(
-	    new DefaultComboBoxModel(new String[]
-		{
-		    "v",
-		    "clear", 
-		    "all",
-		    "-->",
-		    "<--"
-		}));
-        propertyComboBox.setName("propertyComboBox");
-        propertyTextField.setText(
-            resourceMap.getProperty("propertyTextField.text"));
-        propertyTextField.setName("propertyTextField");
-        //propertyExpandButton.setFont(resourceMap.getProperty("propertyExpandButton.font"));
-        propertyExpandButton.setText(
-            resourceMap.getProperty("propertyExpandButton.text"));
-        propertyExpandButton.setName("propertyExpandButton");
-
-
-        valueComboBox.setModel(
-            new DefaultComboBoxModel(new String[]
-		{
-		    "v",
-		    "clear", 
-		    "all",
-		    "-->",
-		    "<--"
-		}));
-        valueComboBox.setName("valueComboBox");
-        valueTextField.setText(
-            resourceMap.getProperty("valueTextField.text"));
-        valueTextField.setName("valueTextField");
-        //valueExpandButton.setFont(resourceMap.getProperty("valueExpandButton.font"));
-        valueExpandButton.setText(
-            resourceMap.getProperty("valueExpandButton.text"));
-        valueExpandButton.setName("valueExpandButton");
-
-	// DATA
-
-        subjectScrollPane.setName("subjectScrollPane");
-        //subjectList.setFont(resourceMap.getProperty("subjectList.font"));
-        subjectList.setModel(
-            new AbstractListModel() 
-	    { String[] strings =
-	     {
-		 "http://google.com/", 
-		 "http://openhc.org/",
-		 "http://haroldcarr.org/",
-		 "http://flaviacwood.org/",
-		 "http://cowdaddies.com/",
-		 "http://differntity.com/",
-		 "http://fuhz.biz/",
-		 "http://google.com/", 
-		 "http://openhc.org/",
-		 "http://haroldcarr.org/",
-		 "http://flaviacwood.org/",
-		 "http://cowdaddies.com/",
-		 "http://differntity.com/",
-		 "http://fuhz.biz/"
-	     };
-		public int getSize() { return strings.length; }
-		public Object getElementAt(int i) { return strings[i]; }
-	    });
-        subjectList.setName("subjectList");
-        subjectScrollPane.setViewportView(subjectList);
-	//subjectScrollPane.setPreferredSize(new Dimension(250, 80));
-	//subjectScrollPane.setMinimumSize(new Dimension(250, 80));
-	//subjectScrollPane.setAlignmentX(LEFT_ALIGNMENT);
-
-
-
-        propertyScrollPane.setName("propertyScrollPane");
-        //propertyList.setFont(resourceMap.getProperty("propertyList.font"));
-        propertyList.setModel(
-            new AbstractListModel() 
-	    { String[] strings =
-	      {
-		 "http://google.com/", 
-		 "http://openhc.org/",
-		 "http://haroldcarr.org/",
-		 "http://flaviacwood.org/",
-		 "http://cowdaddies.com/",
-		 "http://differntity.com/",
-		 "http://fuhz.biz/",
-		 "http://google.com/", 
-		 "http://openhc.org/",
-		 "http://haroldcarr.org/",
-		 "http://flaviacwood.org/",
-		 "http://cowdaddies.com/",
-		 "http://differntity.com/",
-		 "http://fuhz.biz/"
-	      };
-		public int getSize() { return strings.length; }
-		public Object getElementAt(int i) { return strings[i]; }
-	    });
-        propertyList.setName("propertyList");
-        propertyScrollPane.setViewportView(propertyList);
-
-        valueScrollPane.setName("valueScrollPane");
-        //valueList.setFont(resourceMap.getProperty("valueList.font"));
-        valueList.setModel(
-            new AbstractListModel() 
-	    { String[] strings = 
-	      {
-		 "http://google.com/", 
-		 "http://openhc.org/",
-		 "http://haroldcarr.org/",
-		 "http://flaviacwood.org/",
-		 "http://cowdaddies.com/",
-		 "http://differntity.com/",
-		 "http://fuhz.biz/",
-		 "http://google.com/", 
-		 "http://openhc.org/",
-		 "http://haroldcarr.org/",
-		 "http://flaviacwood.org/",
-		 "http://cowdaddies.com/",
-		 "http://differntity.com/",
-		 "http://fuhz.biz/"
-	      };
-		public int getSize() { return strings.length; }
-		public Object getElementAt(int i) { return strings[i]; }
-	    });
-        valueList.setName("valueList");
-        valueScrollPane.setViewportView(valueList);
-
-
-	// Browse current selection
-
-        webBrowser.setColumns(20);
-        webBrowser.setRows(5);
-        webBrowser.setName("webBrowser");
-
-
-	// Query Layout
-
-	JPanel queryPanel = new JPanel();
-	queryPanel.setLayout(new BoxLayout(queryPanel, BoxLayout.LINE_AXIS));
-	queryPanel.add(selectedQueryLineButton);
-	queryPanel.add(Box.createRigidArea(new Dimension(0,5)));
-	queryPanel.add(addQueryLineButton);
-	queryPanel.add(Box.createRigidArea(new Dimension(0,5)));
-	queryPanel.add(subjectComboBox);
-	queryPanel.add(subjectTextField);
-	queryPanel.add(Box.createRigidArea(new Dimension(0,5)));
-	queryPanel.add(propertyComboBox);
-	queryPanel.add(propertyTextField);
-	queryPanel.add(Box.createRigidArea(new Dimension(0,5)));
-	queryPanel.add(valueComboBox);
-	queryPanel.add(valueTextField);
-	queryPanel.add(Box.createRigidArea(new Dimension(0,5)));
-	queryPanel.setBorder(
-            javax.swing.BorderFactory.createEmptyBorder(10,10,10,10));
-
-	// Data list layout
-
-	JPanel dataPanel = new JPanel();
-	dataPanel.setLayout(new BoxLayout(dataPanel, BoxLayout.LINE_AXIS));
-	dataPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-
-	dataPanel.add(Box.createHorizontalGlue());
-
-	dataPanel.add(subjectExpandButton);
-	dataPanel.add(subjectScrollPane);
-	dataPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-
-	dataPanel.add(propertyExpandButton);
-	dataPanel.add(propertyScrollPane);
-	dataPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-
-	dataPanel.add(valueExpandButton);
-	dataPanel.add(valueScrollPane);
-	dataPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-
-
-
-	// Put everything together using the content pane's BorderLayout.
-	java.awt.Container contentPane = getContentPane();
-	contentPane.add(queryPanel, java.awt.BorderLayout.NORTH);
-	contentPane.add(dataPanel, java.awt.BorderLayout.CENTER);
-	contentPane.add(webBrowser, java.awt.BorderLayout.SOUTH); 
-
-
-
-        pack();
-
-
-
-
-
+	serverCalls = new ServerCalls();
+	// TODO: a race with next statement that sets up the HTML 
+	// used by initialize
+	serverCalls.initialize();
     }
 
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Main().setVisible(true);
-            }
-        });
+    // NOTE: After initial development - when the server is NOT
+    // started by the client, then this async callback will not be
+    // necessary.
+    public static void makeMainPanel()
+    {
+	mainPanel = new MainPanel();
+
+	// Need to set this up after MainPanel available in case
+	// a bookmark with history is invoked.
+	//browserHistory = new BrowserHistory();
+	// Need to create in two parts since initialize, if using
+	// a bookmark, may make a query - and that query will use
+	// browserHistory.  If in the constructor then it is not
+	// available because above assignment happens after construction.
+	//browserHistory.initialize();
+
+	// This doQuery could happen while MainPanel is begin setup.
+	// But need access to MainPanel from Main for history on the query.
+	// NOTE: Giving up on history - it's an Application, not a browser.
+	// NOTE: In Swing a race can happen here.  Put in main swing "run".
+	//getMainPanel().doQuery(true);
+    }	
+
+    // Utility
+    public static String getExpandCollapseState(
+	final String expandCollapseState,
+	final boolean pending)
+    {
+	if (expandCollapseState.equals(Main.expand)) {
+	    return (pending ? Main.collapse : Main.expand);
+	} else {
+	    return (pending ? Main.expand : Main.collapse);
+	}
     }
+
+    public static MainPanel      getMainPanel()      { return mainPanel; }
+    public static ServerCalls    getServerCalls()    { return serverCalls; }
+    /*
+    public static BrowserHistory getBrowserHistory() { return browserHistory; }
+    */
 }
+
+// End of file.
+
