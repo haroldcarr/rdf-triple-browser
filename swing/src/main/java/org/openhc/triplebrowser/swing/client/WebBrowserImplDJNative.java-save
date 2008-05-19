@@ -1,0 +1,44 @@
+/*
+ * Christopher Deckers (chrriis@nextencia.net)
+ * http://www.nextencia.net
+ * 
+ * See the file "readme.txt" for information on usage and redistribution of
+ * this file, and for a DISCLAIMER OF ALL WARRANTIES.
+ */
+package client;
+
+import java.awt.BorderLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+
+import chrriis.dj.nativeswing.ui.JWebBrowser;
+
+/**
+ * @author Christopher Deckers
+ */
+public class WebBrowserImplDJNative 
+    extends 
+	WebBrowser
+{
+
+    final JWebBrowser webBrowser;
+
+    public void setUrl(final String x)
+    {
+	webBrowser.setURL(x);
+    }
+
+  public WebBrowserImplDJNative() {
+    super(new BorderLayout(0, 0));
+    JPanel webBrowserPanel = new JPanel(new BorderLayout(0, 0));
+    webBrowserPanel.setBorder(BorderFactory.createEtchedBorder());
+    webBrowser = new JWebBrowser();
+    //webBrowser.setURL("http://www.google.com");
+    webBrowserPanel.add(webBrowser, BorderLayout.CENTER);
+    add(webBrowserPanel, BorderLayout.CENTER);
+  }
+  
+}
+
+// End of file.
