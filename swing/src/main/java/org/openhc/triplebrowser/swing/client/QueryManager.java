@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 18 (Sun) 18:14:10 by Harold Carr.
+// Last Modified : 2008 May 18 (Sun) 22:53:49 by Harold Carr.
 //
 
 package client;
@@ -31,31 +31,33 @@ public class MainPanel
     private final SPVPanel subjectPanel;
     private final SPVPanel propertyPanel;
     private final SPVPanel valuePanel;
-    private final JPanel subjectVerticalPanel;
-    private final JPanel propertyVerticalPanel;
-    private final JPanel valueVerticalPanel;
+    //private final JPanel subjectVerticalPanel;
+    //private final JPanel propertyVerticalPanel;
+    //private final JPanel valueVerticalPanel;
     private final JPanel spvHorizontalPanel;
-    private final java.awt.Container dockPanel;
+    //private final java.awt.Container dockPanel;
     //private final HTML copyright;
     private final QueryPanel queryPanel;
     private final WebBrowser frameCurrentSelection;
-    private final JFrame topPanel;
+    //private final JFrame topPanel;
 
     MainPanel() 
     {
 
 	//responseProgressLabel = new Label();
 
+	/*
 	topPanel = new JFrame();
         topPanel.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         topPanel.setName("FUHZ.BIZ");
+	*/
 
 	//
 	// QueryPanel created before SPV panels since needed.
 	//
 
-	queryPanel = new QueryPanel(topPanel);
-	queryPanel.getPanel().setBorder(BorderFactory.createEtchedBorder());
+	//queryPanel = new QueryPanel(topPanel);
+	queryPanel = new QueryPanel();
 
 	//
 	// Subject, Property, Value panels.
@@ -65,16 +67,25 @@ public class MainPanel
 	subjectPanel  = new SPVPanel(Main.subject);
 	propertyPanel = new SPVPanel(Main.property);
 	valuePanel    = new SPVPanel(Main.value);
-	subjectVerticalPanel  = subjectPanel.getPanel();
-	propertyVerticalPanel = propertyPanel.getPanel();
-	valueVerticalPanel    = valuePanel.getPanel();
+	//subjectVerticalPanel  = subjectPanel.getPanel();
+	//propertyVerticalPanel = propertyPanel.getPanel();
+	//valueVerticalPanel    = valuePanel.getPanel();
 	spvHorizontalPanel = new JPanel();
+	/*
 	spvHorizontalPanel.setLayout(new BoxLayout(spvHorizontalPanel,
 						   BoxLayout.LINE_AXIS));
 	spvHorizontalPanel.setBorder(BorderFactory.createEtchedBorder());
 	spvHorizontalPanel.add(subjectVerticalPanel);
 	spvHorizontalPanel.add(propertyVerticalPanel);
 	spvHorizontalPanel.add(valueVerticalPanel);
+	*/
+	Main.getSwingView().spvPanelLayout(spvHorizontalPanel,
+					   subjectPanel.getButton(),
+					   subjectPanel.getScrollPane(),
+					   propertyPanel.getButton(),
+					   propertyPanel.getScrollPane(),
+					   valuePanel.getButton(),
+					   valuePanel.getScrollPane());
 
 	//
 	// Main panel.
@@ -94,7 +105,7 @@ public class MainPanel
 	RootPanel.get("top").add(topPanel);
 	*/
 	// MIDDLE
-
+	/*
 	dockPanel = topPanel.getContentPane();
 
 
@@ -103,7 +114,7 @@ public class MainPanel
 	dockPanel.add(queryPanel.getPanel(), BorderLayout.NORTH);
 
 	dockPanel.add(spvHorizontalPanel, BorderLayout.CENTER);
-
+	*/
 
 
 
@@ -113,6 +124,16 @@ public class MainPanel
 	} else {
 	    frameCurrentSelection = WebBrowser.create("TEXTAREA");
 	}
+	JPanel browserPanel = new JPanel();
+	JTextField browser = new JTextField();
+	Main.getSwingView().browserLayout(browserPanel, browser);
+	Main.getSwingView().mainPanelLayout(
+	    Main.getSwingView().getSwingMainPanel(),
+	    queryPanel.getPanel(),
+	    spvHorizontalPanel,
+	    browserPanel);
+
+	/*
 	//frameCurrentSelection.setPixelSize(980, 300); // REVISIT
 	dockPanel.add(frameCurrentSelection, BorderLayout.SOUTH);
 
@@ -130,8 +151,10 @@ public class MainPanel
 		Main.getMainPanel().doQuery(true);
 	    }
 	});
+	*/
     }
 
+    /*
     public void doQuery(final boolean keepHistory)
     {
 	List triples = new ArrayList();
@@ -153,6 +176,29 @@ public class MainPanel
 		getSPVQueryValue(Main.qvalue,    (JTextField) i.next());
 	    triples.add(new Triple(subject, property, value));
 	}
+
+	doQuery(keepHistory, triples,
+	        Main.qsubject + Main.qproperty + Main.qvalue);
+    }
+    */
+
+    public void doQuery(final boolean keepHistory)
+    {
+	List triples = new ArrayList();
+	Iterator i = 
+	    Arrays.asList(queryPanel.getPanel().getComponents()).iterator();
+	    i.next(); // skip RadioButton;
+	    i.next(); // skip Button;
+	    i.next(); // skip subject MenuBar
+	    final String subject  = 
+		getSPVQueryValue(Main.qsubject,  (JTextField) i.next());
+	    i.next(); // skip property MenuBar
+	    final String property = 
+		getSPVQueryValue(Main.qproperty, (JTextField) i.next());
+	    i.next(); // skip value MenuBar
+	    final String value    = 
+		getSPVQueryValue(Main.qvalue,    (JTextField) i.next());
+	    triples.add(new Triple(subject, property, value));
 
 	doQuery(keepHistory, triples,
 	        Main.qsubject + Main.qproperty + Main.qvalue);

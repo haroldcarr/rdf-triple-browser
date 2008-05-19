@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 17 (Sat) 15:44:12 by Harold Carr.
+// Last Modified : 2008 May 18 (Sun) 21:55:48 by Harold Carr.
 //
 
 package client;
@@ -9,6 +9,8 @@ import java.util.Iterator;
 
 import client.MainPanel;
 //import com.differentity.client.ServerCalls;
+
+import swing.SwingView;
 
 public class Main 
 {
@@ -47,13 +49,26 @@ public class Main
     private static       MainPanel      mainPanel;
     private static       ServerCalls    serverCalls;
             static       boolean        realBrowser = false;
+    private static       SwingView      swingView;
 
     public static void main(String[] av)
     {
+    }
+
+    public Main(SwingView swingView)
+    {
+	this.swingView = swingView;
+	init();
+    }
+
+    private void init()
+    {
+	/*
 	if (av.length == 0) {
 	    realBrowser = true;
 	    chrriis.dj.nativeswing.NativeInterfaceHandler.init();
 	}
+	*/
 	onModuleLoad();
 	makeMainPanel();
     }
@@ -107,6 +122,7 @@ public class Main
     /*
     public static BrowserHistory getBrowserHistory() { return browserHistory; }
     */
+    public static SwingView      getSwingView()      { return swingView; }
 }
 
 // End of file.

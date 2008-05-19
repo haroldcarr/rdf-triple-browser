@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 16 (Fri) 15:19:02 by Harold Carr.
+// Last Modified : 2008 May 18 (Sun) 22:45:43 by Harold Carr.
 //
 
 package client;
@@ -26,31 +26,40 @@ public class QueryPanel
     private       JTextField  selectedSubjectTextField;
     private       JTextField  selectedPropertyTextField;
     private       JTextField  selectedValueTextField;
-    private final java.awt.Window window;
+    //private final java.awt.Window window;
 
-    QueryPanel(final java.awt.Window window)
+    private final JPanel horizontalPanel; // *****
+
+    //QueryPanel(final java.awt.Window window)
+    QueryPanel()
     {
-	this.window   = window; // so we can pack
+	// BEGIN NOT USED FOR A MOMENT.
+	//this.window   = window; // so we can pack
 	verticalPanel = new JPanel();
 	verticalPanel.setLayout(new BoxLayout(verticalPanel, 
 					      BoxLayout.PAGE_AXIS));
 	verticalPanel.setName("queryPanel");
-	verticalPanel.add(makeTriplePanel());	
+	//verticalPanel.add(makeTriplePanel());	
+	// END NOT USED FOR A MOMENT.
+
+	horizontalPanel = makeTriplePanel();
     }
 
     JTextField getSubjectTextField()  { return selectedSubjectTextField; }
     JTextField getPropertyTextField() { return selectedPropertyTextField; }
     JTextField getValueTextField()    { return selectedValueTextField; }
-    JPanel     getPanel()             { return verticalPanel; }
+    //JPanel     getPanel()             { return verticalPanel; }
+    JPanel     getPanel()             { return horizontalPanel; }
 
     private JPanel makeTriplePanel()
     {
 	final JPanel horizontalPanel = new JPanel();
+	/*
 	horizontalPanel.setLayout(new BoxLayout(horizontalPanel, 
 						BoxLayout.LINE_AXIS));
-
+	*/
 	final JRadioButton radioButton = new JRadioButton();
-	horizontalPanel.add(radioButton);
+	//horizontalPanel.add(radioButton);
 
 
 	final JButton leftButton;
@@ -59,17 +68,17 @@ public class QueryPanel
 	    leftButton.addMouseListener(new MouseAdapter() {
 		public void mouseClicked(MouseEvent e) {
 		    verticalPanel.add(makeTriplePanel());
-		    window.pack();
+		    //window.pack();
 		}});
 	} else {
 	    leftButton = new JButton("-");
 	    leftButton.addMouseListener(new MouseAdapter() {
 		public void mouseClicked(MouseEvent e) {
 		    verticalPanel.remove(horizontalPanel);
-		    window.pack();
+		    //window.pack();
 		}});
 	}
-	horizontalPanel.add(leftButton);	
+	//horizontalPanel.add(leftButton);	
 
 
 	final JTextField subjectTextField  = new JTextField();
@@ -106,12 +115,28 @@ public class QueryPanel
 			 Main.qvalue,    valueTextField,
 			 Main.qsubject,  subjectTextField);
 
+	/*
 	horizontalPanel.add(subjectJMenuBar);
 	horizontalPanel.add(subjectTextField);
 	horizontalPanel.add(propertyJMenuBar);
 	horizontalPanel.add(propertyTextField);
 	horizontalPanel.add(valueJMenuBar);
 	horizontalPanel.add(valueTextField);
+	*/
+
+	System.out.println(            horizontalPanel.toString()+
+	    leftButton.toString()+ radioButton.toString()+
+	    subjectJMenuBar.toString()+ subjectTextField.toString()+
+	    propertyJMenuBar.toString()+ propertyTextField.toString()+
+	    valueJMenuBar.toString()+ valueTextField.toString());
+
+
+	Main.getSwingView().queryPanelLayout(
+            horizontalPanel,
+	    leftButton, radioButton,
+	    subjectJMenuBar, subjectTextField,
+	    propertyJMenuBar, propertyTextField,
+	    valueJMenuBar, valueTextField);
 
 	return horizontalPanel;
     }

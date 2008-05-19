@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 17 (Sat) 14:07:24 by Harold Carr.
+// Last Modified : 2008 May 18 (Sun) 22:30:09 by Harold Carr.
 //
 
 package client;
@@ -10,8 +10,6 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
-
-import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -37,7 +35,7 @@ public class SPVPanel
     private final String      spvCategory;
     private       List        contents;
     private final JList       verticalInsideScroll;
-    private final JPanel      topVerticalPanel;
+    //private final JPanel      topVerticalPanel;
     private final JButton     topButton;
     private final JScrollPane scrollPanel;
 
@@ -47,12 +45,16 @@ public class SPVPanel
 
 	this.spvCategory = spvCategory;
 
+	/*
 	// Begin layout.
 	topVerticalPanel = new JPanel();
 	topVerticalPanel.setLayout(new BoxLayout(topVerticalPanel, 
 						 BoxLayout.PAGE_AXIS));
+	*/
 	topButton = new JButton(getPendingExpandCollapseState());
+	/*
 	topVerticalPanel.add(topButton);
+	*/
 	// TODO: Would like a scroll or a cloud
 	DefaultListSelectionModel m = new DefaultListSelectionModel( );
         m.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -86,9 +88,10 @@ public class SPVPanel
 
 	scrollPanel = new JScrollPane(verticalInsideScroll);
 	scrollPanel.setName(Main.subjectPropertyValue);
-	scrollPanel.setMinimumSize(new Dimension(300, 100)); //*****
 
+	/*
 	topVerticalPanel.add(scrollPanel);
+	*/
 	// End layout.
 
 	topButton.addMouseListener(new MouseAdapter() {
@@ -104,7 +107,9 @@ public class SPVPanel
 	topButton.setText(newState);
     }
 
-    public JPanel getPanel() { return topVerticalPanel; }
+    //public JPanel getPanel() { return topVerticalPanel; }
+    public JButton getButton() { return topButton; }
+    public JScrollPane getScrollPane() { return scrollPanel; }
 
     private String getCurrentExpandCollapseState()
     {

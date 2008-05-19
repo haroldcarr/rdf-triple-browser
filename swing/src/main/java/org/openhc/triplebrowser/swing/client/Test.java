@@ -1,6 +1,6 @@
 //
 // Created       : 2008 May 14 (Wed) 13:09:35 by Harold Carr.
-// Last Modified : 2008 May 15 (Thu) 17:47:14 by Harold Carr.
+// Last Modified : 2008 May 18 (Sun) 22:29:41 by Harold Carr.
 //
 
 package client;
@@ -291,8 +291,10 @@ public class Test
 	// Put everything together using the content pane's BorderLayout.
 	java.awt.Container contentPane = getContentPane();
 	//contentPane.add(queryPanel, java.awt.BorderLayout.NORTH);
+	/*
 	contentPane.add(new QueryPanel(this).getPanel(),
 			java.awt.BorderLayout.NORTH);
+	*/
 	contentPane.add(dataPanel, java.awt.BorderLayout.CENTER);
 	contentPane.add(webBrowser, java.awt.BorderLayout.SOUTH); 
 
