@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 18 (Sun) 22:45:43 by Harold Carr.
+// Last Modified : 2008 May 19 (Mon) 10:37:25 by Harold Carr.
 //
 
 package client;
@@ -84,6 +84,16 @@ public class QueryPanel
 	final JTextField subjectTextField  = new JTextField();
 	final JTextField propertyTextField = new JTextField();
 	final JTextField valueTextField    = new JTextField();
+	subjectTextField.setName(Main.qsubject);
+	propertyTextField.setName(Main.qproperty);
+	valueTextField.setName(Main.qvalue);
+
+	// XXXXX
+	    selectedSubjectTextField  = subjectTextField;
+	    selectedPropertyTextField = propertyTextField;
+	    selectedValueTextField    = valueTextField;
+	// XXXXX
+
 
 	if (verticalPanel.getComponentCount() == 0) {
 	    radioButton.setEnabled(true);
