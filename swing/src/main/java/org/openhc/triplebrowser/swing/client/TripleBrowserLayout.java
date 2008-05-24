@@ -195,85 +195,85 @@ public class SwingView
 	    GroupLayout.VERTICAL);
     }
 
-    public void xxx1(final JPanel jPanel3, 
-		     final JPanel jTextField4)
+    public void xxx1(final JPanel queryPanel, 
+		     final JPanel jPanel1)
     {
-        GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(GroupLayout.LEADING)
-	    .add(jPanel3Layout.createSequentialGroup()
-		 .add(jPanel3Layout.createParallelGroup(GroupLayout.LEADING)
-		      .add(jTextField4, GroupLayout.DEFAULT_SIZE,
+        GroupLayout queryPanelLayout = new GroupLayout(queryPanel);
+        queryPanel.setLayout(queryPanelLayout);
+        queryPanelLayout.setHorizontalGroup(
+            queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
+	    .add(queryPanelLayout.createSequentialGroup()
+		 .add(queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
+		      .add(jPanel1, GroupLayout.DEFAULT_SIZE,
 			   601, Short.MAX_VALUE)
 		      )
 		 )
 	    );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(GroupLayout.LEADING)
-            .add(jPanel3Layout.createSequentialGroup()
-		 .add(jTextField4, GroupLayout.DEFAULT_SIZE,
+        queryPanelLayout.setVerticalGroup(
+            queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
+            .add(queryPanelLayout.createSequentialGroup()
+		 .add(jPanel1, GroupLayout.DEFAULT_SIZE,
 		      25, Short.MAX_VALUE)
 		 )
 	    );
     }
 
-    public void xxx2(final JPanel jPanel3, 
-		     final JPanel jTextField4,
-		     final JPanel x2)
+    public void xxx2(final JPanel queryPanel, 
+		     final JPanel jPanel1,
+		     final JPanel jPanel2)
     {
-        GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(GroupLayout.LEADING)
-	    .add(jPanel3Layout.createSequentialGroup()
-		 .add(jPanel3Layout.createParallelGroup(GroupLayout.LEADING)
-		      .add(jTextField4, GroupLayout.DEFAULT_SIZE,
+        GroupLayout queryPanelLayout = new GroupLayout(queryPanel);
+        queryPanel.setLayout(queryPanelLayout);
+        queryPanelLayout.setHorizontalGroup(
+            queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
+	    .add(queryPanelLayout.createSequentialGroup()
+		 .add(queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
+		      .add(jPanel1, GroupLayout.DEFAULT_SIZE,
 			   601, Short.MAX_VALUE)
-		      .add(x2, GroupLayout.DEFAULT_SIZE, 
+		      .add(jPanel2, GroupLayout.DEFAULT_SIZE, 
 			   601, Short.MAX_VALUE)
 		      )
 		 )
 	    );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(GroupLayout.LEADING)
-            .add(jPanel3Layout.createSequentialGroup()
-		 .add(jTextField4, GroupLayout.DEFAULT_SIZE,
+        queryPanelLayout.setVerticalGroup(
+            queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
+            .add(queryPanelLayout.createSequentialGroup()
+		 .add(jPanel1, GroupLayout.DEFAULT_SIZE,
 		      25, Short.MAX_VALUE)
-		 .add(x2, GroupLayout.DEFAULT_SIZE,
+		 .add(jPanel2, GroupLayout.DEFAULT_SIZE,
 		      25, Short.MAX_VALUE)
 		 )
 	    );
     }
 
-    public void xxx3(final JPanel jPanel3,
-		     final JPanel jTextField4,
-		     final JPanel x2,
-		     final JPanel x3)
+    public void xxx3(final JPanel queryPanel,
+		     final JPanel jPanel1,
+		     final JPanel jPanel2,
+		     final JPanel jPanel3)
     {
-        GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(GroupLayout.LEADING)
-	    .add(jPanel3Layout.createSequentialGroup()
-		 .add(jPanel3Layout.createParallelGroup(GroupLayout.LEADING)
-		      .add(jTextField4, GroupLayout.DEFAULT_SIZE,
+        GroupLayout queryPanelLayout = new GroupLayout(queryPanel);
+        queryPanel.setLayout(queryPanelLayout);
+        queryPanelLayout.setHorizontalGroup(
+            queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
+	    .add(queryPanelLayout.createSequentialGroup()
+		 .add(queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
+		      .add(jPanel1, GroupLayout.DEFAULT_SIZE,
 			   601, Short.MAX_VALUE)
-		      .add(x2, GroupLayout.DEFAULT_SIZE,
+		      .add(jPanel2, GroupLayout.DEFAULT_SIZE,
 			   601, Short.MAX_VALUE)
-		      .add(x3, GroupLayout.DEFAULT_SIZE,
+		      .add(jPanel3, GroupLayout.DEFAULT_SIZE,
 			   601, Short.MAX_VALUE)
 		      )
 		 )
 	    );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(GroupLayout.LEADING)
-            .add(jPanel3Layout.createSequentialGroup()
-		 .add(jTextField4, GroupLayout.DEFAULT_SIZE,
+        queryPanelLayout.setVerticalGroup(
+            queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
+            .add(queryPanelLayout.createSequentialGroup()
+		 .add(jPanel1, GroupLayout.DEFAULT_SIZE,
 		      25, Short.MAX_VALUE)
-		 .add(x2, GroupLayout.DEFAULT_SIZE, 
+		 .add(jPanel2, GroupLayout.DEFAULT_SIZE, 
 		      25, Short.MAX_VALUE)
-		 .add(x3, GroupLayout.DEFAULT_SIZE, 
+		 .add(jPanel3, GroupLayout.DEFAULT_SIZE, 
 		      25, Short.MAX_VALUE)
 		 )
 	    );
@@ -283,57 +283,55 @@ public class SwingView
     //
     // spvPanelLayout
     //
-    public void spvPanelLayout(final JPanel      jPanel2,
-			       final JButton     jButton2,
+    public void spvPanelLayout(final JPanel      spvPanel,
+			       final JButton     jButton1,
 			       final JScrollPane jScrollPane1,
-			       final JButton     jButton3,
+			       final JButton     jButton2,
 			       final JScrollPane jScrollPane2,
-			       final JButton     jButton4,
+			       final JButton     jButton3,
 			       final JScrollPane jScrollPane3)
     {
-        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(GroupLayout.LEADING)
-            .add(jPanel2Layout.createSequentialGroup()
-                .add(jPanel2Layout.createParallelGroup(GroupLayout.LEADING)
-                    .add(jScrollPane1, GroupLayout.DEFAULT_SIZE,
-			 196, Short.MAX_VALUE)
-                    .add(jButton2, GroupLayout.PREFERRED_SIZE,
-			 40, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(LayoutStyle.RELATED)
-                .add(jPanel2Layout.createParallelGroup(GroupLayout.LEADING)
-		     .add(jScrollPane2, GroupLayout.DEFAULT_SIZE,
-			  196, Short.MAX_VALUE)
-		     .add(jButton3, GroupLayout.PREFERRED_SIZE,
-			  40, GroupLayout.PREFERRED_SIZE))
+        GroupLayout spvPanelLayout = new GroupLayout(spvPanel);
+        spvPanel.setLayout(spvPanelLayout);
+        spvPanelLayout.setHorizontalGroup(
+            spvPanelLayout.createParallelGroup(GroupLayout.LEADING)
+            .add(spvPanelLayout.createSequentialGroup()
+		 .add(spvPanelLayout.createParallelGroup(GroupLayout.LEADING)
+		      .add(jScrollPane1, GroupLayout.DEFAULT_SIZE,
+			   196, Short.MAX_VALUE)
+		      .add(jButton1, GroupLayout.PREFERRED_SIZE,
+			   40, GroupLayout.PREFERRED_SIZE))
 		 .addPreferredGap(LayoutStyle.RELATED)
-		 .add(jPanel2Layout.createParallelGroup(GroupLayout.LEADING)
-		      .add(jPanel2Layout.createSequentialGroup()
-			   .add(jButton4, GroupLayout.PREFERRED_SIZE,
-				40, GroupLayout.PREFERRED_SIZE)
-			   .add(148, 148, 148))
+		 .add(spvPanelLayout.createParallelGroup(GroupLayout.LEADING)
+		      .add(jScrollPane2, GroupLayout.DEFAULT_SIZE,
+			   196, Short.MAX_VALUE)
+		      .add(jButton2, GroupLayout.PREFERRED_SIZE,
+			   40, GroupLayout.PREFERRED_SIZE))
+		 .addPreferredGap(LayoutStyle.RELATED)
+		 .add(spvPanelLayout.createParallelGroup(GroupLayout.LEADING)
 		      .add(jScrollPane3, GroupLayout.DEFAULT_SIZE,
-			   197, Short.MAX_VALUE)
+			   196, Short.MAX_VALUE)
+		      .add(jButton3, GroupLayout.PREFERRED_SIZE,
+			   40, GroupLayout.PREFERRED_SIZE)
 		      )
 		 )
 	    );
 
-        jPanel2Layout.linkSize(
+        spvPanelLayout.linkSize(
             new Component[] {
-		jButton2, jButton3, jButton4
+		jButton1, jButton2, jButton3
 	    },
 	    GroupLayout.HORIZONTAL);
 
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(GroupLayout.LEADING)
-            .add(GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
-		 .add(jPanel2Layout.createParallelGroup(GroupLayout.BASELINE)
+        spvPanelLayout.setVerticalGroup(
+            spvPanelLayout.createParallelGroup(GroupLayout.LEADING)
+            .add(GroupLayout.TRAILING, spvPanelLayout.createSequentialGroup()
+		 .add(spvPanelLayout.createParallelGroup(GroupLayout.BASELINE)
+		      .add(jButton1)
 		      .add(jButton2)
-		      .add(jButton3)
-		      .add(jButton4))
+		      .add(jButton3))
 		 .addPreferredGap(LayoutStyle.RELATED)
-		 .add(jPanel2Layout.createParallelGroup(GroupLayout.LEADING)
+		 .add(spvPanelLayout.createParallelGroup(GroupLayout.LEADING)
 		      .add(jScrollPane2, GroupLayout.DEFAULT_SIZE,
 			   102, Short.MAX_VALUE)
 		      .add(jScrollPane1, GroupLayout.DEFAULT_SIZE,
@@ -344,32 +342,11 @@ public class SwingView
 		 )
 	    );
 
-        jPanel2Layout.linkSize(
+        spvPanelLayout.linkSize(
             new Component[] {
-		jButton2, jButton3, jButton4
+		jButton1, jButton2, jButton3
 	    },
 	    GroupLayout.VERTICAL);
-    }
-
-    ////////////////////////////////////////////////////
-    //
-    // browserLayout
-    //
-    public void browserLayout(final JPanel jPanel3, 
-			      final JTextField jTextField4)
-    {
-        GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(GroupLayout.LEADING)
-            .add(jTextField4, GroupLayout.DEFAULT_SIZE,
-		 601, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(GroupLayout.LEADING)
-            .add(jTextField4, GroupLayout.DEFAULT_SIZE,
-		 156, Short.MAX_VALUE)
-	    );
     }
 
     ////////////////////////////////////////////////////
@@ -383,40 +360,40 @@ public class SwingView
     {
 	final JPanel topPanel = new JPanel();
 	mainTopPanelLayout(topPanel, jPanel1, jPanel2);
-        JSplitPane jSplitPane1 = new JSplitPane();
-        jSplitPane1.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        jSplitPane1.setTopComponent(topPanel);
-	jSplitPane1.setBottomComponent(jPanel3);
+        JSplitPane splitPanel = new JSplitPane();
+        splitPanel.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        splitPanel.setTopComponent(topPanel);
+	splitPanel.setBottomComponent(jPanel3);
 
         GroupLayout mainPanelLayout = new GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(GroupLayout.LEADING)
             .add(mainPanelLayout.createSequentialGroup()
-		 .add(jSplitPane1, 0, 
+		 .add(splitPanel, 0, 
 		      GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 		 )
 	    );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(GroupLayout.LEADING)
             .add(mainPanelLayout.createSequentialGroup()
-		 .add(jSplitPane1, 0, 
+		 .add(splitPanel, 0, 
 		      GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 		 )
 	    );
     }
 
-    public void mainTopPanelLayout(final JPanel mainPanel, 
+    public void mainTopPanelLayout(final JPanel topPanel, 
 				   final JPanel jPanel1, 
 				   final JPanel jPanel2)
     {
-        GroupLayout mainPanelLayout = new GroupLayout(mainPanel);
-        mainPanel.setLayout(mainPanelLayout);
-        mainPanelLayout.setHorizontalGroup(
-            mainPanelLayout.createParallelGroup(GroupLayout.LEADING)
-            .add(mainPanelLayout.createSequentialGroup()
+        GroupLayout topPanelLayout = new GroupLayout(topPanel);
+        topPanel.setLayout(topPanelLayout);
+        topPanelLayout.setHorizontalGroup(
+            topPanelLayout.createParallelGroup(GroupLayout.LEADING)
+            .add(topPanelLayout.createSequentialGroup()
 		 //.addContainerGap()
-		 .add(mainPanelLayout.createParallelGroup(GroupLayout.LEADING)
+		 .add(topPanelLayout.createParallelGroup(GroupLayout.LEADING)
 		      .add(GroupLayout.TRAILING, jPanel2, 
 			   GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
 			   Short.MAX_VALUE)
@@ -427,9 +404,9 @@ public class SwingView
 		 //.addContainerGap()
 		 )
 	    );
-        mainPanelLayout.setVerticalGroup(
-            mainPanelLayout.createParallelGroup(GroupLayout.LEADING)
-            .add(mainPanelLayout.createSequentialGroup()
+        topPanelLayout.setVerticalGroup(
+            topPanelLayout.createParallelGroup(GroupLayout.LEADING)
+            .add(topPanelLayout.createSequentialGroup()
 		 .add(jPanel1, GroupLayout.PREFERRED_SIZE,
 		      GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 		 .addPreferredGap(LayoutStyle.RELATED)
