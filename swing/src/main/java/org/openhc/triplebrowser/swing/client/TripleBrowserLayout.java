@@ -195,87 +195,44 @@ public class SwingView
 	    GroupLayout.VERTICAL);
     }
 
-    public void xxx1(final JPanel queryPanel, 
-		     final JPanel jPanel1)
+    public void addTriplePanel(final JPanel queryPanel, 
+			       final JPanel jPanel1)
     {
         GroupLayout queryPanelLayout = new GroupLayout(queryPanel);
         queryPanel.setLayout(queryPanelLayout);
-        queryPanelLayout.setHorizontalGroup(
-            queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
-	    .add(queryPanelLayout.createSequentialGroup()
-		 .add(queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
-		      .add(jPanel1, GroupLayout.DEFAULT_SIZE,
-			   601, Short.MAX_VALUE)
-		      )
-		 )
-	    );
-        queryPanelLayout.setVerticalGroup(
-            queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
-            .add(queryPanelLayout.createSequentialGroup()
-		 .add(jPanel1, GroupLayout.DEFAULT_SIZE,
-		      25, Short.MAX_VALUE)
-		 )
-	    );
-    }
 
-    public void xxx2(final JPanel queryPanel, 
-		     final JPanel jPanel1,
-		     final JPanel jPanel2)
-    {
-        GroupLayout queryPanelLayout = new GroupLayout(queryPanel);
-        queryPanel.setLayout(queryPanelLayout);
-        queryPanelLayout.setHorizontalGroup(
-            queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
-	    .add(queryPanelLayout.createSequentialGroup()
-		 .add(queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
-		      .add(jPanel1, GroupLayout.DEFAULT_SIZE,
-			   601, Short.MAX_VALUE)
-		      .add(jPanel2, GroupLayout.DEFAULT_SIZE, 
-			   601, Short.MAX_VALUE)
-		      )
-		 )
-	    );
-        queryPanelLayout.setVerticalGroup(
-            queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
-            .add(queryPanelLayout.createSequentialGroup()
-		 .add(jPanel1, GroupLayout.DEFAULT_SIZE,
-		      25, Short.MAX_VALUE)
-		 .add(jPanel2, GroupLayout.DEFAULT_SIZE,
-		      25, Short.MAX_VALUE)
-		 )
-	    );
-    }
+	GroupLayout.ParallelGroup parallelGroup =
+	    queryPanelLayout.createParallelGroup(GroupLayout.LEADING);
 
-    public void xxx3(final JPanel queryPanel,
-		     final JPanel jPanel1,
-		     final JPanel jPanel2,
-		     final JPanel jPanel3)
-    {
-        GroupLayout queryPanelLayout = new GroupLayout(queryPanel);
-        queryPanel.setLayout(queryPanelLayout);
+	GroupLayout.SequentialGroup sequentialGroup =
+	    queryPanelLayout.createSequentialGroup();
+
+	Component[] component = queryPanel.getComponents();
+	System.out.println("---------------------------------");
+	for (int i = 0; i < component.length; i++) {
+	    System.out.println("Adding: " + component[i].getName());
+	    parallelGroup.add(component[i], GroupLayout.DEFAULT_SIZE,
+			      601, Short.MAX_VALUE);
+	    sequentialGroup.add(component[i], GroupLayout.DEFAULT_SIZE,
+				25, Short.MAX_VALUE);
+	}
+	if (jPanel1 != null) {
+	    System.out.println("Adding: " + jPanel1.getName());
+	    parallelGroup.add(jPanel1, GroupLayout.DEFAULT_SIZE,
+			      601, Short.MAX_VALUE);
+	    sequentialGroup.add(jPanel1, GroupLayout.DEFAULT_SIZE,
+				25, Short.MAX_VALUE);
+	}
+
         queryPanelLayout.setHorizontalGroup(
             queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
 	    .add(queryPanelLayout.createSequentialGroup()
-		 .add(queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
-		      .add(jPanel1, GroupLayout.DEFAULT_SIZE,
-			   601, Short.MAX_VALUE)
-		      .add(jPanel2, GroupLayout.DEFAULT_SIZE,
-			   601, Short.MAX_VALUE)
-		      .add(jPanel3, GroupLayout.DEFAULT_SIZE,
-			   601, Short.MAX_VALUE)
-		      )
+		 .add(parallelGroup)
 		 )
 	    );
         queryPanelLayout.setVerticalGroup(
             queryPanelLayout.createParallelGroup(GroupLayout.LEADING)
-            .add(queryPanelLayout.createSequentialGroup()
-		 .add(jPanel1, GroupLayout.DEFAULT_SIZE,
-		      25, Short.MAX_VALUE)
-		 .add(jPanel2, GroupLayout.DEFAULT_SIZE, 
-		      25, Short.MAX_VALUE)
-		 .add(jPanel3, GroupLayout.DEFAULT_SIZE, 
-		      25, Short.MAX_VALUE)
-		 )
+            .add(sequentialGroup)
 	    );
     }
 
