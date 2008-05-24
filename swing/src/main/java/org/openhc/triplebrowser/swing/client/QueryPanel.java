@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 15:22:07 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 15:26:29 by Harold Carr.
 //
 
 package client;
@@ -50,7 +50,7 @@ public class QueryPanel
 
     private void addToVerticalPanel(JPanel triplePanel)
     {
-	Main.getSwingView().xxx1(queryPanel, triplePanel);
+	Main.getSwingView().addTriplePanel(queryPanel, triplePanel);
     }
 
     public void removeFromVerticalPanel(JPanel triplePanel)
