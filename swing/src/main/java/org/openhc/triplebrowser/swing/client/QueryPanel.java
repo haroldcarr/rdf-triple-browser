@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 11:07:01 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 15:22:07 by Harold Carr.
 //
 
 package client;
@@ -37,6 +37,8 @@ public class QueryPanel
     private       JTextField  selectedPropertyTextField;
     private       JTextField  selectedValueTextField;
 
+    private       int         triplePanelID = 0;
+
     QueryPanel()
     {
 	buttonGroup = new ButtonGroup();
@@ -48,67 +50,19 @@ public class QueryPanel
 
     private void addToVerticalPanel(JPanel triplePanel)
     {
-	System.out.println("---------------------------");
-	Component[] components = queryPanel.getComponents();
-	System.out.println("addToVerticalPanel: Number of components before: " + components.length);
-	switch (components.length) {
-	case 0 :
-	    Main.getSwingView().xxx1(queryPanel, 
-				     triplePanel);
-	    break;
-	case 1 :
-	    Main.getSwingView().xxx2(queryPanel, 
-				     (JPanel) components[0],
-				     triplePanel);
-	    break;
-	case 2 :
-	    Main.getSwingView().xxx3(queryPanel, 
-				     (JPanel) components[0],
-				     (JPanel) components[1],
-				     triplePanel);
-	    break;
-	default :
-	    System.out.println("CAN'T ADD MORE: " + components.length);
-	    break;
-	}
-	System.out.println("addToVerticalPanel: Number of components after: " + components.length);
-
+	Main.getSwingView().xxx1(queryPanel, triplePanel);
     }
 
     public void removeFromVerticalPanel(JPanel triplePanel)
     {
 	Component[] components = queryPanel.getComponents();
-	System.out.println("---------------------------");
-	System.out.println("removeFromVerticalPanel: Number of components before: " + components.length);
-	switch (components.length) {
-	case 2 :
-	    if (triplePanel == components[1]) {
-		queryPanel.remove(components[1]);
-		Main.getSwingView().xxx1(queryPanel, 
-					 (JPanel) components[0]);
+	for (int i = 0; i < components.length; i++) {
+	    if (triplePanel == components[i]) {
+		queryPanel.remove(components[i]);
+		break;
 	    }
-	    break;
-	case 3 :
-	    if (triplePanel == components[1]) {
-		queryPanel.remove(components[1]);
-		Main.getSwingView().xxx2(queryPanel, 
-					 (JPanel) components[0],
-					 (JPanel) components[2]);
-
-	    } else if (triplePanel == components[2]) {
-		queryPanel.remove(components[2]);
-		Main.getSwingView().xxx2(queryPanel, 
-					 (JPanel) components[0],
-					 (JPanel) components[1]);
-
-	    }
-	    break;
-	case 4 :
-	    System.out.println("CAN'T REMOVE: " + components.length);
-	    break;
-	default: 
 	}
-	System.out.println("removeFromVerticalPanel: Number of components after: " + components.length);
+	addToVerticalPanel(null);
     }
 
     JTextField getSubjectTextField()  { return selectedSubjectTextField; }
@@ -129,6 +83,8 @@ public class QueryPanel
 	final JTextField   propertyTextField = new JTextField();
 	final JMenuBar     valueJMenuBar;
 	final JTextField   valueTextField    = new JTextField();
+
+	triplePanel.setName("triplePanel-" + ++triplePanelID);
 
 	buttonGroup.add(radioButton); // Only one can be selected.
 
