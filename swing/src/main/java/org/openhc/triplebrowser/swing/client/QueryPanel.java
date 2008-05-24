@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 19 (Mon) 15:58:19 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 11:07:01 by Harold Carr.
 //
 
 package client;
@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -23,47 +24,48 @@ import javax.swing.JTextField;
 
 public class QueryPanel
 {
-    private final JPanel      verticalPanel;
+    private final JPanel      queryPanel;
+    private final ButtonGroup buttonGroup;
+
+    // These should be final
+    private       JRadioButton baseRadioButton;
+    private       JTextField   baseSubjectTextField;
+    private       JTextField   baseProperyTextField;
+    private       JTextField   baseValueTextField;
+
     private       JTextField  selectedSubjectTextField;
     private       JTextField  selectedPropertyTextField;
     private       JTextField  selectedValueTextField;
-    //private final java.awt.Window window;
 
-    //QueryPanel(final java.awt.Window window)
     QueryPanel()
     {
-	// BEGIN NOT USED FOR A MOMENT.
-	//this.window   = window; // so we can pack
-	verticalPanel = new JPanel();
-	verticalPanel.setLayout(new BoxLayout(verticalPanel, 
+	buttonGroup = new ButtonGroup();
+	queryPanel = new JPanel();
+	queryPanel.setLayout(new BoxLayout(queryPanel, 
 					      BoxLayout.PAGE_AXIS));
-	//verticalPanel.setName("queryPanel");
-	//verticalPanel.add(makeTriplePanel());	
-	// END NOT USED FOR A MOMENT.
-
 	addToVerticalPanel(makeTriplePanel());
     }
 
-    private void addToVerticalPanel(JPanel horizontalPanel)
+    private void addToVerticalPanel(JPanel triplePanel)
     {
 	System.out.println("---------------------------");
-	Component[] components = verticalPanel.getComponents();
+	Component[] components = queryPanel.getComponents();
 	System.out.println("addToVerticalPanel: Number of components before: " + components.length);
 	switch (components.length) {
 	case 0 :
-	    Main.getSwingView().xxx1(verticalPanel, 
-				     horizontalPanel);
+	    Main.getSwingView().xxx1(queryPanel, 
+				     triplePanel);
 	    break;
 	case 1 :
-	    Main.getSwingView().xxx2(verticalPanel, 
+	    Main.getSwingView().xxx2(queryPanel, 
 				     (JPanel) components[0],
-				     horizontalPanel);
+				     triplePanel);
 	    break;
 	case 2 :
-	    Main.getSwingView().xxx3(verticalPanel, 
+	    Main.getSwingView().xxx3(queryPanel, 
 				     (JPanel) components[0],
 				     (JPanel) components[1],
-				     horizontalPanel);
+				     triplePanel);
 	    break;
 	default :
 	    System.out.println("CAN'T ADD MORE: " + components.length);
@@ -73,26 +75,29 @@ public class QueryPanel
 
     }
 
-    public void removeFromVerticalPanel(JPanel horizontalPanel)
+    public void removeFromVerticalPanel(JPanel triplePanel)
     {
-	Component[] components = verticalPanel.getComponents();
+	Component[] components = queryPanel.getComponents();
 	System.out.println("---------------------------");
 	System.out.println("removeFromVerticalPanel: Number of components before: " + components.length);
 	switch (components.length) {
 	case 2 :
-	    if (horizontalPanel == components[1]) {
-		Main.getSwingView().xxx1(verticalPanel, 
+	    if (triplePanel == components[1]) {
+		queryPanel.remove(components[1]);
+		Main.getSwingView().xxx1(queryPanel, 
 					 (JPanel) components[0]);
 	    }
 	    break;
 	case 3 :
-	    if (horizontalPanel == components[1]) {
-		Main.getSwingView().xxx2(verticalPanel, 
+	    if (triplePanel == components[1]) {
+		queryPanel.remove(components[1]);
+		Main.getSwingView().xxx2(queryPanel, 
 					 (JPanel) components[0],
 					 (JPanel) components[2]);
 
-	    } else if (horizontalPanel == components[2]) {
-		Main.getSwingView().xxx2(verticalPanel, 
+	    } else if (triplePanel == components[2]) {
+		queryPanel.remove(components[2]);
+		Main.getSwingView().xxx2(queryPanel, 
 					 (JPanel) components[0],
 					 (JPanel) components[1]);
 
@@ -109,57 +114,57 @@ public class QueryPanel
     JTextField getSubjectTextField()  { return selectedSubjectTextField; }
     JTextField getPropertyTextField() { return selectedPropertyTextField; }
     JTextField getValueTextField()    { return selectedValueTextField; }
-    JPanel     getPanel()             { return verticalPanel; }
-    //JPanel     getPanel()             { return horizontalPanel; }
+    JPanel     getPanel()             { return queryPanel; }
+
+    //////////////////////////////////////////////////
 
     private JPanel makeTriplePanel()
     {
-	final JPanel horizontalPanel = new JPanel();
-	/*
-	horizontalPanel.setLayout(new BoxLayout(horizontalPanel, 
-						BoxLayout.LINE_AXIS));
-	*/
-	final JRadioButton radioButton = new JRadioButton();
-	//horizontalPanel.add(radioButton);
+	final JPanel       triplePanel   = new JPanel();
+	final JButton      leftButton;
+	final JRadioButton radioButton       = new JRadioButton();
+	final JMenuBar     subjectJMenuBar;
+	final JTextField   subjectTextField  = new JTextField();
+	final JMenuBar     propertyJMenuBar;
+	final JTextField   propertyTextField = new JTextField();
+	final JMenuBar     valueJMenuBar;
+	final JTextField   valueTextField    = new JTextField();
 
+	buttonGroup.add(radioButton); // Only one can be selected.
 
-	final JButton leftButton;
-	if (verticalPanel.getComponentCount() == 0) {
+	// The latest created is always selected.
+	radioButton.setEnabled(true);
+	radioButton.setSelected(true);
+	selectedSubjectTextField  = subjectTextField;
+	selectedPropertyTextField = propertyTextField;
+	selectedValueTextField    = valueTextField;
+
+	if (queryPanel.getComponentCount() == 0) {
 	    leftButton = new JButton("+");
+	    leftButton.setText("+");
 	    leftButton.addMouseListener(new MouseAdapter() {
 		public void mouseClicked(MouseEvent e) {
 		    addToVerticalPanel(makeTriplePanel());
 		    //window.pack();
 		}});
+	    baseRadioButton      = radioButton;
+	    baseSubjectTextField = subjectTextField;
+	    baseProperyTextField = propertyTextField;
+	    baseValueTextField   = valueTextField;
 	} else {
 	    leftButton = new JButton("-");
+	    leftButton.setText("-");
 	    leftButton.addMouseListener(new MouseAdapter() {
 		public void mouseClicked(MouseEvent e) {
-		    removeFromVerticalPanel(horizontalPanel);
-		    //window.pack();
+		    removeFromVerticalPanel(triplePanel);
+		    buttonGroup.remove(radioButton);
+		    baseRadioButton.setSelected(true);
+		    selectedSubjectTextField  = baseSubjectTextField;
+		    selectedPropertyTextField = baseProperyTextField;
+		    selectedValueTextField    = baseValueTextField;
 		}});
 	}
-	//horizontalPanel.add(leftButton);	
 
-
-	final JTextField subjectTextField  = new JTextField();
-	final JTextField propertyTextField = new JTextField();
-	final JTextField valueTextField    = new JTextField();
-
-	// XXXXX
-	    selectedSubjectTextField  = subjectTextField;
-	    selectedPropertyTextField = propertyTextField;
-	    selectedValueTextField    = valueTextField;
-	// XXXXX
-
-
-	if (verticalPanel.getComponentCount() == 0) {
-	    radioButton.setEnabled(true);
-	    radioButton.setSelected(true);
-	    selectedSubjectTextField  = subjectTextField;
-	    selectedPropertyTextField = propertyTextField;
-	    selectedValueTextField    = valueTextField;
-	}
 	radioButton.addMouseListener(new MouseAdapter() {
 	    public void mouseClicked(MouseEvent e) {
 		selectedSubjectTextField  = subjectTextField;
@@ -170,36 +175,27 @@ public class QueryPanel
 	subjectTextField.setText(Main.qsubject);
 	propertyTextField.setText(Main.qproperty);
 	valueTextField.setText(Main.qvalue);
-	final JMenuBar subjectJMenuBar  = 
+	subjectJMenuBar  = 
 	    makeJMenuBar(Main.qvalue,    valueTextField,
 			 Main.qsubject,  subjectTextField,
 			 Main.qproperty, propertyTextField);
-	final JMenuBar propertyJMenuBar =
+	propertyJMenuBar =
 	    makeJMenuBar(Main.qsubject,  subjectTextField,
 			 Main.qproperty, propertyTextField,
 			 Main.qvalue,    valueTextField);
-	final JMenuBar valueJMenuBar    =
+	valueJMenuBar    =
 	    makeJMenuBar(Main.qproperty, propertyTextField,
 			 Main.qvalue,    valueTextField,
 			 Main.qsubject,  subjectTextField);
 
-	/*
-	horizontalPanel.add(subjectJMenuBar);
-	horizontalPanel.add(subjectTextField);
-	horizontalPanel.add(propertyJMenuBar);
-	horizontalPanel.add(propertyTextField);
-	horizontalPanel.add(valueJMenuBar);
-	horizontalPanel.add(valueTextField);
-	*/
-
 	Main.getSwingView().queryPanelLayout(
-            horizontalPanel,
+            triplePanel,
 	    leftButton, radioButton,
 	    subjectJMenuBar, subjectTextField,
 	    propertyJMenuBar, propertyTextField,
 	    valueJMenuBar, valueTextField);
 
-	return horizontalPanel;
+	return triplePanel;
     }
 
     private JMenuBar makeJMenuBar(final String     leftText,
@@ -247,9 +243,6 @@ public class QueryPanel
 	final JMenu menu = new JMenu();
 	menu.setText("v");
 	menuBar.add(menu);
-
-
-	
 
 	JMenuItem menuItem;
 

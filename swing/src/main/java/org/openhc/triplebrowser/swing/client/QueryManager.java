@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 19 (Mon) 16:09:34 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 08:55:35 by Harold Carr.
 //
 
 package client;
@@ -27,130 +27,39 @@ import client.Main;
 
 public class MainPanel
 {
-    //private final Label responseProgressLabel;
-    private final SPVPanel subjectPanel;
-    private final SPVPanel propertyPanel;
-    private final SPVPanel valuePanel;
-    //private final JPanel subjectVerticalPanel;
-    //private final JPanel propertyVerticalPanel;
-    //private final JPanel valueVerticalPanel;
-    private final JPanel spvHorizontalPanel;
-    //private final java.awt.Container dockPanel;
-    //private final HTML copyright;
     private final QueryPanel queryPanel;
-    private final WebBrowser frameCurrentSelection;
-    //private final JFrame topPanel;
+    private final SPVPanel spvPanel;
+    private final WebBrowser browserPanel;
 
     MainPanel() 
     {
-
-	//responseProgressLabel = new Label();
-
-	/*
-	topPanel = new JFrame();
-        topPanel.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        topPanel.setName("FUHZ.BIZ");
-	*/
-
 	//
 	// QueryPanel created before SPV panels since needed.
 	//
 
-	//queryPanel = new QueryPanel(topPanel);
 	queryPanel = new QueryPanel();
 
 	//
-	// Subject, Property, Value panels.
-	// Create now to get contents from server.
+	// SPVPanel
 	//
 
-	subjectPanel  = new SPVPanel(Main.subject);
-	propertyPanel = new SPVPanel(Main.property);
-	valuePanel    = new SPVPanel(Main.value);
-	//subjectVerticalPanel  = subjectPanel.getPanel();
-	//propertyVerticalPanel = propertyPanel.getPanel();
-	//valueVerticalPanel    = valuePanel.getPanel();
-	spvHorizontalPanel = new JPanel();
-	/*
-	spvHorizontalPanel.setLayout(new BoxLayout(spvHorizontalPanel,
-						   BoxLayout.LINE_AXIS));
-	spvHorizontalPanel.setBorder(BorderFactory.createEtchedBorder());
-	spvHorizontalPanel.add(subjectVerticalPanel);
-	spvHorizontalPanel.add(propertyVerticalPanel);
-	spvHorizontalPanel.add(valueVerticalPanel);
-	*/
-	Main.getSwingView().spvPanelLayout(spvHorizontalPanel,
-					   subjectPanel.getButton(),
-					   subjectPanel.getScrollPane(),
-					   propertyPanel.getButton(),
-					   propertyPanel.getScrollPane(),
-					   valuePanel.getButton(),
-					   valuePanel.getScrollPane());
+	spvPanel = new SPVPanel();
 
 	//
 	// Main panel.
 	//    
 
-	// TOP
-
-	/*
-	RootPanel.get("slot0").add(DevTime.makeStatusWidgets());
-	*/
-	/*
-	final HorizontalPanel topPanel = new HorizontalPanel();
-	topPanel.setStyleName("topPanel");
-	topPanel.setHorizontalAlignment(DockPanel.ALIGN_LEFT);
-	topPanel.add(new HTML("a.nalogo.us / haroldcarr"));
-	topPanel.add(responseProgressLabel);
-	RootPanel.get("top").add(topPanel);
-	*/
-	// MIDDLE
-	/*
-	dockPanel = topPanel.getContentPane();
-
-
-
-
-	dockPanel.add(queryPanel.getPanel(), BorderLayout.NORTH);
-
-	dockPanel.add(spvHorizontalPanel, BorderLayout.CENTER);
-	*/
-
-
-
-	//JPanel browserPanel = new JPanel();
 	if (Main.realBrowser) {
-	    frameCurrentSelection = WebBrowser.create("DJNATIVESWING");
+	    browserPanel = WebBrowser.create("DJNATIVESWING");
 	} else {
-	    frameCurrentSelection = WebBrowser.create("TEXTAREA");
+	    browserPanel = WebBrowser.create("TEXTAREA");
 	}
-	//Main.getSwingView().browserLayout(browserPanel, frameCurrentSelection);
 
 	Main.getSwingView().mainPanelLayout(
 	    Main.getSwingView().getSwingMainPanel(),
 	    queryPanel.getPanel(),
-	    spvHorizontalPanel,
-	    /*browserPanel*/ frameCurrentSelection);
-
-	/*
-	//frameCurrentSelection.setPixelSize(980, 300); // REVISIT
-	dockPanel.add(frameCurrentSelection, BorderLayout.SOUTH);
-
-	// Host HTML has elements with IDs are "slot1", "slot2".
-	// Better: Search for all elements with a particular CSS class 
-	// and replace them with widgets.
-
-	// XXX - test
-	//RootPanel.get("bottom").add(new Test().getWidget());
-
-	java.awt.EventQueue.invokeLater(new Runnable() {
-	    public void run() {
-		topPanel.pack();
-		topPanel.setVisible(true);
-		Main.getMainPanel().doQuery(true);
-	    }
-	});
-	*/
+	    spvPanel.getPanel(),
+	    browserPanel);
     }
 
     public void doQuery(final boolean keepHistory)
@@ -178,29 +87,7 @@ public class MainPanel
 	doQuery(keepHistory, triples,
 	        Main.qsubject + Main.qproperty + Main.qvalue);
     }
-    /*
-    public void doQuery(final boolean keepHistory)
-    {
-	List triples = new ArrayList();
-	Iterator i = 
-	    Arrays.asList(queryPanel.getPanel().getComponents()).iterator();
-	    i.next(); // skip RadioButton;
-	    i.next(); // skip Button;
-	    i.next(); // skip subject MenuBar
-	    final String subject  = 
-		getSPVQueryValue(Main.qsubject,  (JTextField) i.next());
-	    i.next(); // skip property MenuBar
-	    final String property = 
-		getSPVQueryValue(Main.qproperty, (JTextField) i.next());
-	    i.next(); // skip value MenuBar
-	    final String value    = 
-		getSPVQueryValue(Main.qvalue,    (JTextField) i.next());
-	    triples.add(new Triple(subject, property, value));
 
-	doQuery(keepHistory, triples,
-	        Main.qsubject + Main.qproperty + Main.qvalue);
-    }
-    */
     public void doQuery(final boolean keepHistory,
 			final String subject, final String property,
 			final String value, final String setContentsOf)
@@ -227,13 +114,16 @@ public class MainPanel
     {
 	String setContentsOf = queryResponse.getSetContentsOf();
 	if (setContentsOf.indexOf(Main.qsubject)  != -1) {
-	    subjectPanel .setContents(queryResponse.getSubject());
+	    getSPVPanel().getSubjectPanel()
+		.setContents(queryResponse.getSubject());
 	}
 	if (setContentsOf.indexOf(Main.qproperty) != -1) {
-	    propertyPanel.setContents(queryResponse.getProperty());
+	    getSPVPanel().getPropertyPanel()
+		.setContents(queryResponse.getProperty());
 	}
 	if (setContentsOf.indexOf(Main.qvalue)    != -1) {
-	    valuePanel   .setContents(queryResponse.getValue());
+	    getSPVPanel().getValuePanel()
+		.setContents(queryResponse.getValue());
 	}
 	//topPanel.pack(); // ***** REVISIT
 	//DevTime.getQueryStatusHTML().setHTML(queryResponse.getStatus());
@@ -272,14 +162,9 @@ public class MainPanel
 	return def;
     }
 
-    //public Label      getResponseProgressLabel()
-    //    { return responseProgressLabel; }
-    public QueryPanel getQueryPanel()    { return queryPanel; }
-    public SPVPanel   getSubjectPanel()  { return subjectPanel; }
-    public SPVPanel   getPropertyPanel() { return propertyPanel; }
-    public SPVPanel   getValuePanel()    { return valuePanel; }
-    public WebBrowser getFrameCurrentSelection() 
-                                         { return frameCurrentSelection; }
+    public QueryPanel getQueryPanel()            { return queryPanel; }
+    public SPVPanel   getSPVPanel()              { return spvPanel; }
+    public WebBrowser getFrameCurrentSelection() { return browserPanel; }
 }
 
 // End of file.

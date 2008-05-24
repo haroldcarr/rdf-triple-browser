@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 19 (Mon) 15:23:05 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 08:47:50 by Harold Carr.
 //
 
 package client;
@@ -30,6 +30,41 @@ import client.Main;
 
 public class SPVPanel
 {
+    private final SPVList subjectPanel;
+    private final SPVList propertyPanel;
+    private final SPVList valuePanel;
+    private final JPanel spvHorizontalPanel;
+
+    public SPVPanel()
+    {
+	//
+	// Subject, Property, Value panels.
+	// Create now to get contents from server.
+	//
+
+	subjectPanel  = new SPVList(Main.subject);
+	propertyPanel = new SPVList(Main.property);
+	valuePanel    = new SPVList(Main.value);
+	spvHorizontalPanel = new JPanel();
+	Main.getSwingView().spvPanelLayout(spvHorizontalPanel,
+					   subjectPanel.getButton(),
+					   subjectPanel.getScrollPane(),
+					   propertyPanel.getButton(),
+					   propertyPanel.getScrollPane(),
+					   valuePanel.getButton(),
+					   valuePanel.getScrollPane());
+    }
+
+    public JPanel  getPanel()         { return spvHorizontalPanel; }
+    public SPVList getSubjectPanel()  { return subjectPanel; }
+    public SPVList getPropertyPanel() { return propertyPanel; }
+    public SPVList getValuePanel()    { return valuePanel; }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+class SPVList
+{
     String expandCollapseState;
 
     private final String      spvCategory;
@@ -39,7 +74,7 @@ public class SPVPanel
     private final JButton     topButton;
     private final JScrollPane scrollPanel;
 
-    public SPVPanel(final String spvCategory)
+    public SPVList(final String spvCategory)
     {
 	this.expandCollapseState = Main.collapse;
 
@@ -196,6 +231,28 @@ public class SPVPanel
 	    return result;
 	}
     }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+class SPVItem
+{
+    private final String spvCategory;
+    private final String expandedName;
+    private final String collapsedName;
+    
+    SPVItem(final String spvCategory, 
+	    final String expandedName, 
+	    final String collapsedName)
+    {
+	this.spvCategory = spvCategory;
+	this.expandedName = expandedName;
+	this.collapsedName = collapsedName;
+    }
+
+    String getSPVCategory()              { return spvCategory; }
+    String getExpandedName()             { return expandedName; }
+    String getCollapsedName()            { return collapsedName; }
 }
 
 // End of file.
