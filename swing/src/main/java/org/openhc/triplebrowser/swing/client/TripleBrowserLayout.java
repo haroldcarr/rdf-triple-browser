@@ -132,25 +132,25 @@ public class SwingView
             jPanel1Layout.createParallelGroup(GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
 		 .add(jButton1, GroupLayout.PREFERRED_SIZE,
-		      21, GroupLayout.PREFERRED_SIZE)
+		      40, GroupLayout.PREFERRED_SIZE)
 		 .addPreferredGap(LayoutStyle.RELATED)
 		 .add(jRadioButton1, GroupLayout.PREFERRED_SIZE,
 		      21, GroupLayout.PREFERRED_SIZE)
 		 .addPreferredGap(LayoutStyle.RELATED)
 		 .add(jComboBox1, GroupLayout.PREFERRED_SIZE,
-		      27, GroupLayout.PREFERRED_SIZE)
+		      17, GroupLayout.PREFERRED_SIZE)
 		 .addPreferredGap(LayoutStyle.RELATED)
 		 .add(jTextField1, GroupLayout.DEFAULT_SIZE,
 		      148, Short.MAX_VALUE)
 		 .addPreferredGap(LayoutStyle.RELATED)
 		 .add(jComboBox2, GroupLayout.PREFERRED_SIZE,
-		      27, GroupLayout.PREFERRED_SIZE)
+		      17, GroupLayout.PREFERRED_SIZE)
 		 .addPreferredGap(LayoutStyle.RELATED)
 		 .add(jTextField2, GroupLayout.DEFAULT_SIZE,
 		      148, Short.MAX_VALUE)
 		 .addPreferredGap(LayoutStyle.RELATED)
 		 .add(jComboBox3, GroupLayout.PREFERRED_SIZE,
-		      27, GroupLayout.PREFERRED_SIZE)
+		      17, GroupLayout.PREFERRED_SIZE)
 		 .addPreferredGap(LayoutStyle.RELATED)
 		 .add(jTextField3, GroupLayout.DEFAULT_SIZE,
 		      148, Short.MAX_VALUE)
@@ -300,18 +300,18 @@ public class SwingView
                     .add(jScrollPane1, GroupLayout.DEFAULT_SIZE,
 			 196, Short.MAX_VALUE)
                     .add(jButton2, GroupLayout.PREFERRED_SIZE,
-			 21, GroupLayout.PREFERRED_SIZE))
+			 40, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(LayoutStyle.RELATED)
                 .add(jPanel2Layout.createParallelGroup(GroupLayout.LEADING)
 		     .add(jScrollPane2, GroupLayout.DEFAULT_SIZE,
 			  196, Short.MAX_VALUE)
 		     .add(jButton3, GroupLayout.PREFERRED_SIZE,
-			  21, GroupLayout.PREFERRED_SIZE))
+			  40, GroupLayout.PREFERRED_SIZE))
 		 .addPreferredGap(LayoutStyle.RELATED)
 		 .add(jPanel2Layout.createParallelGroup(GroupLayout.LEADING)
 		      .add(jPanel2Layout.createSequentialGroup()
 			   .add(jButton4, GroupLayout.PREFERRED_SIZE,
-				21, GroupLayout.PREFERRED_SIZE)
+				40, GroupLayout.PREFERRED_SIZE)
 			   .add(148, 148, 148))
 		      .add(jScrollPane3, GroupLayout.DEFAULT_SIZE,
 			   197, Short.MAX_VALUE)
