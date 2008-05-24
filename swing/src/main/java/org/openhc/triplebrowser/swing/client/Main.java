@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 18 (Sun) 21:55:48 by Harold Carr.
+// Last Modified : 2008 May 19 (Mon) 16:02:28 by Harold Carr.
 //
 
 package client;
@@ -63,12 +63,10 @@ public class Main
 
     private void init()
     {
-	/*
-	if (av.length == 0) {
+	if (/*av.length == 0*/ true) {
 	    realBrowser = true;
 	    chrriis.dj.nativeswing.NativeInterfaceHandler.init();
 	}
-	*/
 	onModuleLoad();
 	makeMainPanel();
     }

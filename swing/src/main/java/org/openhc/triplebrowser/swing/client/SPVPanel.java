@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 18 (Sun) 22:30:09 by Harold Carr.
+// Last Modified : 2008 May 19 (Mon) 15:23:05 by Harold Carr.
 //
 
 package client;
@@ -51,7 +51,8 @@ public class SPVPanel
 	topVerticalPanel.setLayout(new BoxLayout(topVerticalPanel, 
 						 BoxLayout.PAGE_AXIS));
 	*/
-	topButton = new JButton(getPendingExpandCollapseState());
+	topButton = new JButton();
+	topButton.setText(getPendingExpandCollapseState());
 	/*
 	topVerticalPanel.add(topButton);
 	*/
@@ -80,7 +81,6 @@ public class SPVPanel
 
 			    Main.getMainPanel().getFrameCurrentSelection()
 			        .setUrl(choice);
-			    System.out.println(verticalInsideScroll.getSelectedIndex());
 			}
 		    }
 		}

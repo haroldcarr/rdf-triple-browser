@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 18 (Sun) 22:53:49 by Harold Carr.
+// Last Modified : 2008 May 19 (Mon) 16:09:34 by Harold Carr.
 //
 
 package client;
@@ -118,20 +118,19 @@ public class MainPanel
 
 
 
-
+	//JPanel browserPanel = new JPanel();
 	if (Main.realBrowser) {
 	    frameCurrentSelection = WebBrowser.create("DJNATIVESWING");
 	} else {
 	    frameCurrentSelection = WebBrowser.create("TEXTAREA");
 	}
-	JPanel browserPanel = new JPanel();
-	JTextField browser = new JTextField();
-	Main.getSwingView().browserLayout(browserPanel, browser);
+	//Main.getSwingView().browserLayout(browserPanel, frameCurrentSelection);
+
 	Main.getSwingView().mainPanelLayout(
 	    Main.getSwingView().getSwingMainPanel(),
 	    queryPanel.getPanel(),
 	    spvHorizontalPanel,
-	    browserPanel);
+	    /*browserPanel*/ frameCurrentSelection);
 
 	/*
 	//frameCurrentSelection.setPixelSize(980, 300); // REVISIT
@@ -154,7 +153,6 @@ public class MainPanel
 	*/
     }
 
-    /*
     public void doQuery(final boolean keepHistory)
     {
 	List triples = new ArrayList();
@@ -180,8 +178,7 @@ public class MainPanel
 	doQuery(keepHistory, triples,
 	        Main.qsubject + Main.qproperty + Main.qvalue);
     }
-    */
-
+    /*
     public void doQuery(final boolean keepHistory)
     {
 	List triples = new ArrayList();
@@ -203,7 +200,7 @@ public class MainPanel
 	doQuery(keepHistory, triples,
 	        Main.qsubject + Main.qproperty + Main.qvalue);
     }
-
+    */
     public void doQuery(final boolean keepHistory,
 			final String subject, final String property,
 			final String value, final String setContentsOf)
