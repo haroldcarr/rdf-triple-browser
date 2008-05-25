@@ -2,7 +2,7 @@
  * SwingApp.java
  */
 
-package swing;
+package org.openhc.trowser.swing.swing;
 
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
@@ -10,8 +10,10 @@ import org.jdesktop.application.SingleFrameApplication;
 /**
  * The main class of the application.
  */
-public class SwingApp extends SingleFrameApplication {
-
+public class SwingApp 
+    extends 
+	SingleFrameApplication 
+{
     /**
      * At startup create and show the main frame of the application.
      */

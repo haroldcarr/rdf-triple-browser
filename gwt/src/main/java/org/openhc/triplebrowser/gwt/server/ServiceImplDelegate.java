@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2008 May 15 (Thu) 18:24:53 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 21:33:04 by Harold Carr.
 //
 
-package client;
+package org.openhc.trowser.swing.client;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -12,19 +12,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import client.Main;
-import client.QueryRequest;
-import client.QueryResponse;
-import client.Triple;
+import org.openhc.trowser.swing.client.Main;
+import org.openhc.trowser.swing.client.QueryRequest;
+import org.openhc.trowser.swing.client.QueryResponse;
+import org.openhc.trowser.swing.client.Triple;
 
-import client.Jena;
+import org.openhc.trowser.swing.client.Jena;
 
 public class ServiceImpl
 {
     private boolean initialized = false;
     private Jena jena;
 
-    private final String RDF_FILENAME = "../rdf.rdf";
+    private final String RDF_FILENAME = "rdf.rdf";
 
     public String initialize() 
     {

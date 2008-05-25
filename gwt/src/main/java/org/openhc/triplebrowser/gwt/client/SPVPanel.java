@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 12 (Mon) 21:10:33 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 20:43:57 by Harold Carr.
 //
 
-package com.differentity.client;
+package org.openhc.trowser.gwt.client;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.differentity.client.Main;
+import org.openhc.trowser.gwt.client.Main;
 
 public class SPVPanel
 {

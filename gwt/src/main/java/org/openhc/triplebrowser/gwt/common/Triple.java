@@ -1,9 +1,9 @@
 //
 // Created       : 2007 Jun 07 (Thu) 19:37:21 by Harold Carr.
-// Last Modified : 2007 Jun 07 (Thu) 19:48:57 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 20:44:21 by Harold Carr.
 //
 
-package com.differentity.client;
+package org.openhc.trowser.gwt.client;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 

@@ -1,16 +1,16 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 19:40:17 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 21:15:02 by Harold Carr.
 //
 
-package client;
+package org.openhc.trowser.swing.client;
 
 import java.util.Iterator;
 
-import client.MainPanel;
-import client.ServerCalls;
+import org.openhc.trowser.swing.client.MainPanel;
+import org.openhc.trowser.swing.client.ServerCalls;
 
-import swing.SwingView;
+import org.openhc.trowser.swing.swing.SwingView;
 
 public class Main 
 {

@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 15 (Fri) 19:48:05 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 20:43:16 by Harold Carr.
 //
 
-package com.differentity.client;
+package org.openhc.trowser.gwt.client;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,10 +19,10 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.Window; // *****
 
-import com.differentity.client.BrowserHistory;
-import com.differentity.client.Main;
-import com.differentity.client.QueryRequest;
-import com.differentity.client.Test; // *****
+import org.openhc.trowser.gwt.client.BrowserHistory;
+import org.openhc.trowser.gwt.client.Main;
+import org.openhc.trowser.gwt.client.QueryRequest;
+import org.openhc.trowser.gwt.client.Test; // *****
 
 
 public class MainPanel

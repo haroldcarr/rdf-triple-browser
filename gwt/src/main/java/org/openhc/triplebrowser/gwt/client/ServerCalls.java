@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2006 Sep 23 (Sat) 15:13:03 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 20:44:01 by Harold Carr.
 //
 
-package com.differentity.client;
+package org.openhc.trowser.gwt.client;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,10 +15,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Label;
 
-import com.differentity.client.Main;
-import com.differentity.client.SPVPanel;
-import com.differentity.client.Service;
-import com.differentity.client.ServiceAsync;
+import org.openhc.trowser.gwt.client.Main;
+import org.openhc.trowser.gwt.client.SPVPanel;
+import org.openhc.trowser.gwt.client.Service;
+import org.openhc.trowser.gwt.client.ServiceAsync;
 
 public class ServerCalls
 {

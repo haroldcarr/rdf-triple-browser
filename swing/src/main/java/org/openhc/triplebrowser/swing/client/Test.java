@@ -1,9 +1,9 @@
 //
 // Created       : 2008 May 14 (Wed) 13:09:35 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 19:13:30 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 21:20:46 by Harold Carr.
 //
 
-package swing;
+package org.openhc.trowser.swing.swing;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JButton;

@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jul 30 (Sun) 15:53:20 by Harold Carr.
-// Last Modified : 2007 Jun 08 (Fri) 22:30:32 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 20:42:45 by Harold Carr.
 //
 
-package com.differentity.client;
+package org.openhc.trowser.gwt.client;
 
 import java.util.ArrayList;
 import java.util.Iterator;

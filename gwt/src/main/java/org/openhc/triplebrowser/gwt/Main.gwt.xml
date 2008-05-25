@@ -7,10 +7,10 @@
         <inherits name='org.gwtwidgets.WidgetLibrary'/>
 
 	<!-- Specify the app entry point class.                   -->
-	<entry-point class='com.differentity.client.Main'/>
+	<entry-point class='org.openhc.trowser.gwt.client.Main'/>
 
 	<!-- The RPC point                                        -->
 	<servlet path="/Service"
-                 class='com.differentity.server.ServiceImpl'/>
+                 class='org.openhc.trowser.gwt.server.ServiceImpl'/>
 
 </module>

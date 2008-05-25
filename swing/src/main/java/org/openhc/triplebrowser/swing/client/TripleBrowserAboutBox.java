@@ -2,11 +2,14 @@
  * SwingAboutBox.java
  */
 
-package swing;
+package org.openhc.trowser.swing.swing;
 
 import org.jdesktop.application.Action;
 
-public class SwingAboutBox extends javax.swing.JDialog {
+public class SwingAboutBox
+    extends 
+	javax.swing.JDialog 
+{
 
     public SwingAboutBox(java.awt.Frame parent) {
         super(parent);
@@ -38,13 +41,13 @@ public class SwingAboutBox extends javax.swing.JDialog {
         javax.swing.JLabel imageLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(swing.SwingApp.class).getContext().getResourceMap(SwingAboutBox.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(SwingApp.class).getContext().getResourceMap(SwingAboutBox.class);
         setTitle(resourceMap.getString("title")); // NOI18N
         setModal(true);
         setName("aboutBox"); // NOI18N
         setResizable(false);
 
-        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(swing.SwingApp.class).getContext().getActionMap(SwingAboutBox.class, this);
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(SwingApp.class).getContext().getActionMap(SwingAboutBox.class, this);
         closeButton.setAction(actionMap.get("closeAboutBox")); // NOI18N
         closeButton.setName("closeButton"); // NOI18N
 

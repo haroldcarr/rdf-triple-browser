@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 19:25:49 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 21:15:37 by Harold Carr.
 //
 
-package client;
+package org.openhc.trowser.swing.client;
 
 import java.awt.BorderLayout;
 
@@ -19,16 +19,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-//import com.differentity.client.BrowserHistory;
-import client.Main;
-//import com.differentity.client.QueryRequest;
-//import com.differentity.client.Test; // *****
-
+import org.openhc.trowser.swing.client.Main;
 
 public class MainPanel
 {
     private final QueryPanel queryPanel;
-    private final SPVPanel spvPanel;
+    private final SPVPanel   spvPanel;
     private final WebBrowser browserPanel;
 
     MainPanel() 

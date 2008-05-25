@@ -1,6 +1,6 @@
-package swing;
+package org.openhc.trowser.swing.swing;
 
-import client.Main;
+import org.openhc.trowser.swing.client.Main;
 
 import java.awt.Component;
 

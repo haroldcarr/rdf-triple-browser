@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 19:19:25 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 21:16:29 by Harold Carr.
 //
 
-package client;
+package org.openhc.trowser.swing.client;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2007 Jun 16 (Sat) 06:42:34 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 20:44:32 by Harold Carr.
 //
 
-package com.differentity.server;
+package org.openhc.trowser.gwt.server;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -22,10 +22,10 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-import com.differentity.client.Main;
-import com.differentity.client.QueryRequest;
-import com.differentity.client.QueryResponse;
-import com.differentity.client.Triple;
+import org.openhc.trowser.gwt.client.Main;
+import org.openhc.trowser.gwt.client.QueryRequest;
+import org.openhc.trowser.gwt.client.QueryResponse;
+import org.openhc.trowser.gwt.client.Triple;
 
 public class Jena
 {

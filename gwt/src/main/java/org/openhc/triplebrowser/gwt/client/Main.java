@@ -1,16 +1,16 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 07 (Thu) 19:31:08 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 20:43:04 by Harold Carr.
 //
 
-package com.differentity.client;
+package org.openhc.trowser.gwt.client;
 
 import java.util.Iterator;
 
 import com.google.gwt.core.client.EntryPoint;
 
-import com.differentity.client.MainPanel;
-import com.differentity.client.ServerCalls;
+import org.openhc.trowser.gwt.client.MainPanel;
+import org.openhc.trowser.gwt.client.ServerCalls;
 
 public class Main 
     implements 

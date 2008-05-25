@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jul 30 (Sun) 15:53:20 by Harold Carr.
-// Last Modified : 2006 Sep 17 (Sun) 09:50:00 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 20:44:16 by Harold Carr.
 //
 
-package com.differentity.client;
+package org.openhc.trowser.gwt.client;
 
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;

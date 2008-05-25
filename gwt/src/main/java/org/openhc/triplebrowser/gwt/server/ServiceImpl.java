@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2008 Jan 10 (Thu) 16:22:15 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 20:44:38 by Harold Carr.
 //
 
-package com.differentity.server;
+package org.openhc.trowser.gwt.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,13 +14,13 @@ import java.util.List;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import com.differentity.client.Main;
-import com.differentity.client.QueryRequest;
-import com.differentity.client.QueryResponse;
-import com.differentity.client.Service;
-import com.differentity.client.Triple;
+import org.openhc.trowser.gwt.client.Main;
+import org.openhc.trowser.gwt.client.QueryRequest;
+import org.openhc.trowser.gwt.client.QueryResponse;
+import org.openhc.trowser.gwt.client.Service;
+import org.openhc.trowser.gwt.client.Triple;
 
-import com.differentity.server.Jena;
+import org.openhc.trowser.gwt.server.Jena;
 
 public class ServiceImpl
     extends RemoteServiceServlet

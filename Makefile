@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2008 Jan 11 (Fri) 18:55:08 by Harold Carr.
+# Last Modified : 2008 May 24 (Sat) 20:45:37 by Harold Carr.
 #
 
 hcMakefiles=$(shell hcMakefiles)
@@ -22,7 +22,7 @@ RDF_FILE	= rdf.rdf
 ### variables used by tomcatRules
 ###
 
-TOMCAT_WAR_NAME	= differentity
+TOMCAT_WAR_NAME	= trowser
 
 ###
 ### variables used by gwtRules
@@ -32,9 +32,9 @@ SRCDIR		= ./src
 BINDIR		= ./bin
 OUTDIR		= ./www
 TOMCATDIR	= ./tomcat
-URL		= com.differentity.Main
+URL		= org.openhc.trowser.gwt.Main
 ENTRY_PAGE	= Main.html
-PKG_PATH	= com/differentity
+PKG_PATH	= org/openhc/trowser/gwt
 SERVER_PATH	= $(SRCDIR)/$(PKG_PATH)/server
 
 SERVER_FILES	= \

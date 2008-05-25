@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Sep 04 (Mon) 10:50:21 by Harold Carr.
-// Last Modified : 2006 Sep 21 (Thu) 15:19:23 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 20:42:57 by Harold Carr.
 //
 
-package com.differentity.client;
+package org.openhc.trowser.gwt.client;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;

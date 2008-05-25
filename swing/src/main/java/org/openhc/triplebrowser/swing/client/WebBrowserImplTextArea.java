@@ -1,4 +1,4 @@
-package client;
+package org.openhc.trowser.swing.client;
 
 import java.awt.BorderLayout;
 

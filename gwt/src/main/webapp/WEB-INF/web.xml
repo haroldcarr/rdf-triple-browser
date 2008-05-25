@@ -6,7 +6,7 @@
    <servlet>
       <servlet-name>Service</servlet-name>
       <servlet-class>
-         com.differentity.server.ServiceImpl
+         org.openhc.trowser.gwt.server.ServiceImpl
       </servlet-class>
    </servlet>
    <servlet-mapping>

@@ -1,15 +1,15 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 19:34:59 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 21:17:04 by Harold Carr.
 //
 
-package client;
+package org.openhc.trowser.swing.client;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import client.Main;
+import org.openhc.trowser.swing.client.Main;
 
 public class ServerCalls
 {
