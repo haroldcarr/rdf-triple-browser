@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 09 (Sat) 07:43:04 by Harold Carr.
+// Last Modified : 2007 Jun 15 (Fri) 19:48:05 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -73,7 +73,9 @@ public class MainPanel
 
 	// TOP
 
+	/*
 	RootPanel.get("slot0").add(DevTime.makeStatusWidgets());
+	*/
 
 	final HorizontalPanel topPanel = new HorizontalPanel();
 	topPanel.setStyleName("topPanel");

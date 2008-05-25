@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2007 Jun 10 (Sun) 16:12:29 by Harold Carr.
+// Last Modified : 2008 May 12 (Mon) 21:10:33 by Harold Carr.
 //
 
 package com.differentity.client;
@@ -101,7 +101,7 @@ public class SPVPanel
 	final Iterator i = contents.iterator();
 	while (i.hasNext()) {
 	    final SPVItem spvItem = (SPVItem) i.next();
-	    verticalInsideScroll.add(spvItem.getVerticalPanel());
+	    verticalInsideScroll.add(spvItem.getLabel());
 
 	    if (expandCollapseState.equals(Main.expand)) {
 		spvItem.getLabel().setText(spvItem.getExpandedName());
@@ -117,29 +117,6 @@ public class SPVPanel
 			.setUrl(spvItem.getExpandedName());
 		}
 	    });
-
-	    spvItem.getButton().addClickListener(new ClickListener() {
-	        public void onClick(Widget sender) {
-		    // TODO: Triple expand/collapse:
-		    // + = expand to full URL and N "characters" of source.
-		    // * = expand to full URL and all source.
-		    // - = collapse to short URL and no source.
-		    if (spvItem.getPendingExpandCollapseState().equals(Main.expand)) {
-			spvItem.getLabel().setText(spvItem.getExpandedName());
-			// REVISIT - factor out with SPVItem
-			final Frame frame=new Frame(spvItem.getExpandedName());
-			frame.setPixelSize(280, 100); // REVISIT
-			spvItem.getVerticalPanel().add(frame);
-			spvItem.setExpandCollapseState(Main.expand);
-			spvItem.getButton().setText(Main.minusSymbol);
-		    } else {
-			Widget w = spvItem.getVerticalPanel().getWidget(1);
-			spvItem.getVerticalPanel().remove(w);
-			spvItem.getLabel().setText(spvItem.getCollapsedName());
-			spvItem.setExpandCollapseState(Main.collapse);
-			spvItem.getButton().setText(Main.plusSymbol);
-		    }
-		}});
 	}
     }
 
@@ -149,7 +126,9 @@ public class SPVPanel
 	final Iterator i = verticalInsideScroll.iterator();
 	final Iterator j = contents.iterator();
 	while (i.hasNext()) {
-	    final VerticalPanel verticalPanel = (VerticalPanel) i.next();
+	    // TODO: redundant i.next - just need to make sure i and j
+	    // are same size.
+	    final Object object = i.next();
 	    final SPVItem spvItem = (SPVItem) j.next();
 	    if (spvItem.getCurrentExpandCollapseState().equals(Main.collapse)){
 		if (pendingExpandCollapseState.equals(Main.expand)) {
