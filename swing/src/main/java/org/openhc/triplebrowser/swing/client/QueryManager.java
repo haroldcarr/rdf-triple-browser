@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 08:55:35 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 19:25:49 by Harold Carr.
 //
 
 package client;
@@ -162,9 +162,9 @@ public class MainPanel
 	return def;
     }
 
-    public QueryPanel getQueryPanel()            { return queryPanel; }
-    public SPVPanel   getSPVPanel()              { return spvPanel; }
-    public WebBrowser getFrameCurrentSelection() { return browserPanel; }
+    public QueryPanel getQueryPanel()   { return queryPanel; }
+    public SPVPanel   getSPVPanel()     { return spvPanel; }
+    public WebBrowser getBrowserPanel() { return browserPanel; }
 }
 
 // End of file.

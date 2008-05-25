@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 08:23:08 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 19:34:59 by Harold Carr.
 //
 
 package client;
@@ -30,25 +30,13 @@ public class ServerCalls
     public void doQuery(final MainPanel mainPanel,
 			final QueryRequest queryRequest)
     {
-	/*
-	final Label responseProgressLabel = 
-	    Main.getMainPanel().getResponseProgressLabel();
-	responseProgressLabel.setText("LOADING...");
-	*/
-	final QueryResponse queryResponse= service.doQuery(queryRequest);
-	//responseProgressLabel.setText("");
+	final QueryResponse queryResponse = service.doQuery(queryRequest);
 	mainPanel.handleQueryResponse(queryResponse);
     }
 
     public void assertFact(final QueryRequest queryRequest)
     {
-	/*
-	final Label responseProgressLabel = 
-	    Main.getMainPanel().getResponseProgressLabel();
-	responseProgressLabel.setText("LOADING...");
-	*/
 	final QueryResponse queryResponse = service.assertFact(queryRequest);
-	//responseProgressLabel.setText("");
 	Main.getMainPanel().handleQueryResponse(queryResponse);
     }
 

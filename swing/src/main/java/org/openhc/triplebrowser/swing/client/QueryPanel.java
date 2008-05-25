@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 15:26:29 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 19:19:25 by Harold Carr.
 //
 
 package client;
@@ -101,7 +101,6 @@ public class QueryPanel
 	    leftButton.addMouseListener(new MouseAdapter() {
 		public void mouseClicked(MouseEvent e) {
 		    addToVerticalPanel(makeTriplePanel());
-		    //window.pack();
 		}});
 	    baseRadioButton      = radioButton;
 	    baseSubjectTextField = subjectTextField;

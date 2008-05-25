@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 08:59:09 by Harold Carr.
+// Last Modified : 2008 May 24 (Sat) 19:40:17 by Harold Carr.
 //
 
 package client;
@@ -30,7 +30,7 @@ public class Main
 	= "expandOrCollapseSPVItemClick";
     public static final String historyFieldSeparator = ":;:";
     public static final String minusSymbol          = "-";
-     public static final String plusSymbol           = "+";
+    public static final String plusSymbol           = "+";
     public static final String property             = "property";
     public static final String questionMarkSymbol   = "?";
     public static final String qsubject             = "?subject";
