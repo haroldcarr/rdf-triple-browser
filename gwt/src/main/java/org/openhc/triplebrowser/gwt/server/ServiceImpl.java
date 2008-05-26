@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 20:44:38 by Harold Carr.
+// Last Modified : 2008 May 25 (Sun) 18:59:00 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.server;
@@ -15,10 +15,10 @@ import java.util.List;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import org.openhc.trowser.gwt.client.Main;
-import org.openhc.trowser.gwt.client.QueryRequest;
-import org.openhc.trowser.gwt.client.QueryResponse;
 import org.openhc.trowser.gwt.client.Service;
-import org.openhc.trowser.gwt.client.Triple;
+import org.openhc.trowser.gwt.common.QueryRequest;
+import org.openhc.trowser.gwt.common.QueryResponse;
+import org.openhc.trowser.gwt.common.Triple;
 
 import org.openhc.trowser.gwt.server.Jena;
 

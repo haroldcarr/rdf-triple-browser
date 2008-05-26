@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 21:33:04 by Harold Carr.
+// Last Modified : 2008 May 25 (Sun) 19:16:28 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.openhc.trowser.swing.client.Main;
-import org.openhc.trowser.swing.client.QueryRequest;
-import org.openhc.trowser.swing.client.QueryResponse;
-import org.openhc.trowser.swing.client.Triple;
+import org.openhc.trowser.gwt.common.QueryRequest;
+import org.openhc.trowser.gwt.common.QueryResponse;
+import org.openhc.trowser.gwt.common.Triple;
+import org.openhc.trowser.gwt.server.Jena;
 
-import org.openhc.trowser.swing.client.Jena;
+import org.openhc.trowser.swing.client.Main;
 
 public class ServiceImpl
 {

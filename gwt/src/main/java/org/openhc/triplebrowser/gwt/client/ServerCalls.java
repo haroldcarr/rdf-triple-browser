@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 20:44:01 by Harold Carr.
+// Last Modified : 2008 May 25 (Sun) 18:56:10 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -19,6 +19,9 @@ import org.openhc.trowser.gwt.client.Main;
 import org.openhc.trowser.gwt.client.SPVPanel;
 import org.openhc.trowser.gwt.client.Service;
 import org.openhc.trowser.gwt.client.ServiceAsync;
+
+import org.openhc.trowser.gwt.common.QueryRequest;
+import org.openhc.trowser.gwt.common.QueryResponse;
 
 public class ServerCalls
 {

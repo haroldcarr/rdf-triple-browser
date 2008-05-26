@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 30 (Sun) 15:53:20 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 20:42:45 by Harold Carr.
+// Last Modified : 2008 May 25 (Sun) 18:27:16 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -14,6 +14,8 @@ import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextBox;
+
+import org.openhc.trowser.gwt.common.Triple;
 
 public class BrowserHistory
     implements HistoryListener 

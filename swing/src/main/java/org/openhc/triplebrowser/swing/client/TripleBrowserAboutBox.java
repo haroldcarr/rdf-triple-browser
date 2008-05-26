@@ -2,7 +2,7 @@
  * SwingAboutBox.java
  */
 
-package org.openhc.trowser.swing.swing;
+package org.openhc.trowser.swing.client;
 
 import org.jdesktop.application.Action;
 

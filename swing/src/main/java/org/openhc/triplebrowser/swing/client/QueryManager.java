@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 21:15:37 by Harold Carr.
+// Last Modified : 2008 May 25 (Sun) 19:06:31 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -18,6 +18,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
+
+import org.openhc.trowser.gwt.common.Triple;
+import org.openhc.trowser.gwt.common.QueryRequest;
+import org.openhc.trowser.gwt.common.QueryResponse;
 
 import org.openhc.trowser.swing.client.Main;
 

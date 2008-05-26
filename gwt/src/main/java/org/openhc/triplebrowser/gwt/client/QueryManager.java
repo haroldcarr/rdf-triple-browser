@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 20:43:16 by Harold Carr.
+// Last Modified : 2008 May 25 (Sun) 18:54:20 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -21,9 +21,10 @@ import com.google.gwt.user.client.Window; // *****
 
 import org.openhc.trowser.gwt.client.BrowserHistory;
 import org.openhc.trowser.gwt.client.Main;
-import org.openhc.trowser.gwt.client.QueryRequest;
 import org.openhc.trowser.gwt.client.Test; // *****
-
+import org.openhc.trowser.gwt.common.QueryRequest;
+import org.openhc.trowser.gwt.common.QueryResponse;
+import org.openhc.trowser.gwt.common.Triple;
 
 public class MainPanel
 {

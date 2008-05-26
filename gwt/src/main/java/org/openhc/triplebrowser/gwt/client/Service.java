@@ -1,12 +1,12 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 20:44:06 by Harold Carr.
+// Last Modified : 2008 May 25 (Sun) 18:56:37 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
 
-import org.openhc.trowser.gwt.client.QueryRequest;
-import org.openhc.trowser.gwt.client.QueryResponse;
+import org.openhc.trowser.gwt.common.QueryRequest;
+import org.openhc.trowser.gwt.common.QueryResponse;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 

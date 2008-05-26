@@ -2,7 +2,7 @@
  * SwingApp.java
  */
 
-package org.openhc.trowser.swing.swing;
+package org.openhc.trowser.swing.client;
 
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;

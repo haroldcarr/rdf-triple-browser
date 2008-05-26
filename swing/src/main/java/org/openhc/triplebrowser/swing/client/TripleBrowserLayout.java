@@ -1,4 +1,4 @@
-package org.openhc.trowser.swing.swing;
+package org.openhc.trowser.swing.client;
 
 import org.openhc.trowser.swing.client.Main;
 
@@ -12,6 +12,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -41,6 +42,7 @@ public class SwingView
     extends 
 	FrameView 
 {
+    private Main     main;
     private JPanel   mainPanel;
     private JMenuBar menuBar;
     private JDialog  aboutBox;
@@ -49,8 +51,19 @@ public class SwingView
     {
         super(app);
         initComponents();
-	new Main(this);
+	this.main = new Main(this);
         ResourceMap resourceMap = getResourceMap();
+    }
+
+    @Action
+    public void openFile() {
+        JFileChooser fc = new JFileChooser();
+        int option = fc.showOpenDialog(getFrame());
+        if (JFileChooser.APPROVE_OPTION == option) {
+            System.out.println(fc.getSelectedFile());
+	    main.getServerCalls().openFile(fc.getSelectedFile().toString());
+	    main.getMainPanel().doQuery(true);
+        }
     }
 
     @Action
@@ -79,11 +92,12 @@ public class SwingView
 	    Application.getInstance(SwingApp.class)
 	        .getContext().getResourceMap(SwingView.class);
 
-                  menuBar       = new JMenuBar();
-        JMenu     fileMenu      = new JMenu();
-        JMenuItem exitMenuItem  = new JMenuItem();
-        JMenu     helpMenu      = new JMenu();
-        JMenuItem aboutMenuItem = new JMenuItem();
+                        menuBar          = new JMenuBar();
+        final JMenu     fileMenu         = new JMenu();
+        final JMenuItem openFileMenuItem = new JMenuItem();
+        final JMenuItem exitMenuItem     = new JMenuItem();
+        final JMenu     helpMenu         = new JMenu();
+        final JMenuItem aboutMenuItem    = new JMenuItem();
 
         menuBar.setName("menuBar"); // NOI18N
 
@@ -93,6 +107,12 @@ public class SwingView
         ActionMap actionMap = 
 	    Application.getInstance(SwingApp.class)
 	        .getContext().getActionMap(SwingView.class, this);
+
+
+        openFileMenuItem.setAction(actionMap.get("openFile")); // NOI18N
+        openFileMenuItem.setName("openFileMenuItem"); // NOI18N
+        fileMenu.add(openFileMenuItem);
+
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
         exitMenuItem.setName("exitMenuItem"); // NOI18N
         fileMenu.add(exitMenuItem);

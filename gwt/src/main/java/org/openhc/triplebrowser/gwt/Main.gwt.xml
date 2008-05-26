@@ -9,6 +9,11 @@
 	<!-- Specify the app entry point class.                   -->
 	<entry-point class='org.openhc.trowser.gwt.client.Main'/>
 
+        <!-- Specify other packages to be translated -->
+        <!-- See http://code.google.com/webtoolkit/documentation/com.google.gwt.doc.DeveloperGuide.Fundamentals.html#JavaToJavaScriptCompiler -->
+        <source path="client"/>
+        <source path="common"/>
+
 	<!-- The RPC point                                        -->
 	<servlet path="/Service"
                  class='org.openhc.trowser.gwt.server.ServiceImpl'/>

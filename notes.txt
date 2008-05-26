@@ -1,7 +1,12 @@
 #
 # Created       : 2006 Jul 14 (Wed) 19:15:16 by Harold Carr.
-# Last Modified : 2007 Jun 08 (Fri) 23:20:43 by Harold Carr.
+# Last Modified : 2008 May 24 (Sat) 21:49:19 by Harold Carr.
 #
+
+------------------------------------------------------------------------------
+2008-05-08
+
+Started writing Swing version (GWT version too slow on large data).
 
 ------------------------------------------------------------------------------
 2007-06-08
@@ -77,8 +82,9 @@ I am closing but still have problem.  Skipping fixing it for now.
 I successfully did a WAR deployment to Tomcat.
 
 In Tomcat the address is:
-   http://localhost:8080/differentity/Main.html
+   http://localhost:8080/trowser/Main.html
 whereas in GwtShell the address is:
+   *****: OLD:
    http://localhost:8888/com.differentity.Main/Main.html
 
 See the shell script "war"

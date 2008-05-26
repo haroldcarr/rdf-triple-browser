@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 20:44:32 by Harold Carr.
+// Last Modified : 2008 May 25 (Sun) 19:14:39 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.server;
@@ -22,10 +22,10 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-import org.openhc.trowser.gwt.client.Main;
-import org.openhc.trowser.gwt.client.QueryRequest;
-import org.openhc.trowser.gwt.client.QueryResponse;
-import org.openhc.trowser.gwt.client.Triple;
+import org.openhc.trowser.gwt.common.Constants;
+import org.openhc.trowser.gwt.common.QueryRequest;
+import org.openhc.trowser.gwt.common.QueryResponse;
+import org.openhc.trowser.gwt.common.Triple;
 
 public class Jena
 {
@@ -86,13 +86,13 @@ public class Jena
 	    final String subject  = formatInput(triple.getSubject());
 	    final String property = formatInput(triple.getProperty());
 	    final String value    = formatInput(triple.getValue());
-	    if (subject.startsWith(Main.questionMarkSymbol)) {
+	    if (subject.startsWith(Constants.questionMarkSymbol)) {
 		selectVars.append(" ").append(subject);
 	    }
-	    if (property.startsWith(Main.questionMarkSymbol)) {
+	    if (property.startsWith(Constants.questionMarkSymbol)) {
 		selectVars.append(" ").append(property);
 	    }
-	    if (value.startsWith(Main.questionMarkSymbol)) {
+	    if (value.startsWith(Constants.questionMarkSymbol)) {
 		selectVars.append(" ").append(value);
 	    }
 	    query.append(subject).append(" ")
@@ -173,11 +173,11 @@ public class Jena
 	while (i.hasNext()) {
 	    // REVISIT: limits variables to "subject*"/"property*"/"value*"
 	    final String varName = (String) i.next();
-	    if (varName.startsWith(Main.subject)) {
+	    if (varName.startsWith(Constants.subject)) {
 		isSubjectVar  = true;
-	    } else if (varName.startsWith(Main.property)) {
+	    } else if (varName.startsWith(Constants.property)) {
 		isPropertyVar = true;
-	    } else if (varName.startsWith(Main.value)) {
+	    } else if (varName.startsWith(Constants.value)) {
 		isValueVar    = true;
 	    }
 	}
@@ -213,19 +213,22 @@ public class Jena
 	while (resultSet.hasNext()) {
 	    final QuerySolution querySolution = resultSet.nextSolution();
 	    if (isSubjectVar) { 
-		final String x = querySolution.get(Main.subject).toString();
+		final String x = 
+		    querySolution.get(Constants.subject).toString();
 		if (! subjectResponse.contains(x)) {
 		    subjectResponse.add(x);
 		}
 	    }
 	    if (isPropertyVar) {
-		final String x = querySolution.get(Main.property).toString();
+		final String x = 
+		    querySolution.get(Constants.property).toString();
 		if (! propertyResponse.contains(x)) {
 		    propertyResponse.add(x);
 		}
 	    }
 	    if (isValueVar) {
-		final String x = querySolution.get(Main.value).toString();
+		final String x =
+		    querySolution.get(Constants.value).toString();
 		if (! valueResponse.contains(x)) {
 		    valueResponse.add(x);
 		}

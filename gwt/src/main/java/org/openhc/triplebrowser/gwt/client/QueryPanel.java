@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 20:43:22 by Harold Carr.
+// Last Modified : 2008 May 25 (Sun) 18:55:00 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -17,6 +17,9 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import org.openhc.trowser.gwt.common.QueryRequest;
+import org.openhc.trowser.gwt.common.Triple;
 
 public class QueryPanel
 {
