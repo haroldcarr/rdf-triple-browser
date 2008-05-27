@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 27 (Tue) 10:16:36 by Harold Carr.
+// Last Modified : 2008 May 27 (Tue) 10:37:45 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -27,6 +27,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openhc.trowser.gwt.common.SPVItem;
+import org.openhc.trowser.gwt.common.Util;
 import org.openhc.trowser.swing.client.Main;
 
 public class SPVPanel
@@ -144,7 +145,7 @@ class SPVList
 	    String uri = (String) i.next();
 	    result.add(new SPVItem(spvCategory, 
 				   uri,
-				   substringAfterLastSlashOrFirstSharp(uri)));
+				   Util.substringAfterLastSlashOrFirstSharp(uri)));
 	}
 	return result;
     }
@@ -185,25 +186,6 @@ class SPVList
 	}
 	expandCollapseState = pendingExpandCollapseState;
 	return getPendingExpandCollapseState();
-    }
-
-    private String substringAfterLastSlashOrFirstSharp(final String x)
-    {
-	int indexOfLastSlashOrFirstSharp = 0;
-	int i;
-	for (i = 0; i < x.length(); ++i) {
-	    if (x.charAt(i) == '/' || x.charAt(i) == '#') {
-		indexOfLastSlashOrFirstSharp = i;
-	    }
-	}
-	final String result = x.substring(indexOfLastSlashOrFirstSharp + 1);
-	// If it ends in a slash then remove the ending slash and try again.
-	if (result.length() == 0) {
-	    return substringAfterLastSlashOrFirstSharp(
-                       x.substring(0, x.length()-1));
-	} else {
-	    return result;
-	}
     }
 
     private DefaultListModel getModel()
