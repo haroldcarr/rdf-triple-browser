@@ -1,5 +1,6 @@
 package org.openhc.trowser.gwt.client;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -24,7 +25,7 @@ public class FileUploader
     {
 	final HorizontalPanel panel = new HorizontalPanel();
 
-        uploadForm.setAction("/UploadFormHandler");
+        uploadForm.setAction(GWT.getModuleBaseURL() + "/UploadFormHandler");
         uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
         uploadForm.setMethod(FormPanel.METHOD_POST);
 
@@ -52,6 +53,8 @@ public class FileUploader
 	    }
 	    public void onSubmitComplete(FormSubmitCompleteEvent event) {
 		Window.alert(event.getResults());
+		// TODO: reset query panel
+		Main.getMainPanel().doQuery(true);
 	    }
 	});
     }

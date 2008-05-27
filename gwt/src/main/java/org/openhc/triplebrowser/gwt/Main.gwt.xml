@@ -18,4 +18,8 @@
 	<servlet path="/Service"
                  class='org.openhc.trowser.gwt.server.ServiceImpl'/>
 
+	<servlet path="/UploadFormHandler"
+                 class='org.openhc.trowser.gwt.server.FileUploaderServlet'/>
+
+
 </module>
