@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2008 May 25 (Sun) 19:20:47 by Harold Carr.
+# Last Modified : 2008 May 26 (Mon) 18:22:31 by Harold Carr.
 #
 
 ##############################################################################
@@ -59,19 +59,29 @@ ENTRY_PAGE	= Main.html
 SERVER_PATH	= $(SRCDIR)/$(GWT_PKGDIR)/server
 
 SERVER_FILES	= \
+	$(SERVER_PATH)/FileUploaderServlet.java \
 	$(SERVER_PATH)/Jena.java \
-	$(SERVER_PATH)/ServiceImpl.java
+	$(SERVER_PATH)/ServiceImpl.java \
+	$(SERVER_PATH)/ServiceImplDelegate.java
+
+APACHE_FILE_UPLOAD = $(shell hcApacheCommonsFileUploadJar)
+APACHE_IO	= $(shell hcApacheCommonsIOJar)
+APACHE_COMMON	= $(APACHE_FILE_UPLOAD)$(PSEP)$(APACHE_IO)
+GWT_CLASSPATH_EXTRAS = $(APACHE_COMMON)
 
 ###
 ### Rules
 ###
+
+JENA_LIBS	= $(shell hcJenaClasspath)
+WAR_LIBS	= $(JENA_LIBS)$(PSEP)$(APACHE_COMMON)
 
 bgs : FORCE
 	mkdir -p ./tomcat/webapps/ROOT
 	cp ./$(RDF_FILE) ./tomcat/webapps/ROOT
 
 war : FORCE
-	hcMakeGwtServiceWar -d `pwd` -w $(TOMCAT_WAR_NAME).war  -t $(RDF_FILE) -l `hcJenaClasspath`
+	hcMakeGwtServiceWar -d `pwd` -w $(TOMCAT_WAR_NAME).war  -t $(RDF_FILE) -l "$(WAR_LIBS)"
 
 rdf$(ITEX_FILENAME_SUFFIX_PRIVATE) : FORCE
 	rm -f $(RDF_FILE)
@@ -102,7 +112,7 @@ include $(hcMakefiles)/binDirForceRules.gmk
 
 #
 # Created       : 2008 May 15 (Thu) 17:24:10 by Harold Carr.
-# Last Modified : 2008 May 25 (Sun) 19:20:47 by Harold Carr.
+# Last Modified : 2008 May 26 (Mon) 18:22:31 by Harold Carr.
 #
 
 SEP		=	$(shell hcPathSep)
@@ -115,7 +125,7 @@ SWING_CLIENT_PKGDIR  =	$(SWING_PKGDIR)/client
 SWING_SERVER_PACKAGE =	$(SWING_PACKAGE).server
 SWING_SERVER_PKGDIR  =	$(SWING_PKGDIR)/server
 
-FILES_java	= 	$(shell ls src/$(COMMON_PKGDIR)/*.java src/$(SWING_CLIENT_PKGDIR)/*.java src/$(SWING_SERVER_PKGDIR)/*.java src/$(GWT_SERVER_PKGDIR)/Jena.java)
+FILES_java	= 	$(shell ls src/$(COMMON_PKGDIR)/*.java src/$(SWING_CLIENT_PKGDIR)/*.java src/$(SWING_SERVER_PKGDIR)/*.java src/$(GWT_SERVER_PKGDIR)/Jena.java src/$(GWT_SERVER_PKGDIR)/ServiceImplDelegate.java)
 
 LIB		=	$(TOPDIR)/lib/swing
 DJLIB		=	$(LIB)/djnativeswing
