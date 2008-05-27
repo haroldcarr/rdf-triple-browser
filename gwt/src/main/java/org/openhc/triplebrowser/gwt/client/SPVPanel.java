@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 20:43:57 by Harold Carr.
+// Last Modified : 2008 May 27 (Tue) 10:19:21 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -81,13 +81,9 @@ public class SPVPanel
 	final List result = new ArrayList();
 	while (i.hasNext()) {
 	    String uri = (String) i.next();
-	    result.add(
-		       new SPVItem(spvCategory, 
+	    result.add(new SPVItem(spvCategory, 
 				   uri,
-				   substringAfterLastSlashOrFirstSharp(uri),
-				   // NOTE: during development change to
-				   // Main.expand to test full range.
-				   Main.collapse));
+				   substringAfterLastSlashOrFirstSharp(uri)));
 	}
 	return result;
     }
@@ -130,12 +126,10 @@ public class SPVPanel
 	    // are same size.
 	    final Object object = i.next();
 	    final SPVItem spvItem = (SPVItem) j.next();
-	    if (spvItem.getCurrentExpandCollapseState().equals(Main.collapse)){
-		if (pendingExpandCollapseState.equals(Main.expand)) {
-		    spvItem.getLabel().setText(spvItem.getExpandedName());
-		} else {
-		    spvItem.getLabel().setText(spvItem.getCollapsedName());
-		}
+	    if (pendingExpandCollapseState.equals(Main.expand)) {
+		spvItem.getLabel().setText(spvItem.getExpandedName());
+	    } else {
+		spvItem.getLabel().setText(spvItem.getCollapsedName());
 	    }
 	}
 	expandCollapseState = pendingExpandCollapseState;

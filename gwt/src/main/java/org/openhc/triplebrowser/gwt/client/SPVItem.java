@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 20:43:51 by Harold Carr.
+// Last Modified : 2008 May 27 (Tue) 10:15:40 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -10,43 +10,20 @@ import com.google.gwt.user.client.ui.Label;
 import org.openhc.trowser.gwt.client.Main;
 
 public class SPVItem
+    extends 
+	org.openhc.trowser.gwt.common.SPVItem
 {
-    private final String spvCategory;
-    private final String expandedName;
-    private final String collapsedName;
-    private String expandCollapseState;
     private final Label label;
     
-    SPVItem(String spvCategory, String expandedName, String collapsedName,
-	    String expandCollapseState)
+    SPVItem(final String spvCategory, 
+	    final String expandedName, 
+	    final String collapsedName)
     {
-	this.spvCategory = spvCategory;
-	this.expandedName = expandedName;
-	this.collapsedName = collapsedName;
-	this.expandCollapseState = expandCollapseState;
+	super(spvCategory, expandedName, collapsedName);
 	label = new Label(expandedName);
-
-	if (expandCollapseState.equals(Main.collapse)){
-	    label.setText(collapsedName);
-	}
     }
 
-    String getSPVCategory()              { return spvCategory; }
-    String getExpandedName()             { return expandedName; }
-    String getCollapsedName()            { return collapsedName; }
-    Label  getLabel()                    { return label; }
-
-    String getCurrentExpandCollapseState() {
-	return Main.getExpandCollapseState(expandCollapseState, false);
-    }
-
-    String getPendingExpandCollapseState() {
-	return Main.getExpandCollapseState(expandCollapseState, true);
-    }
-
-    void   setExpandCollapseState(String x) {
-	expandCollapseState = x; 
-    }
+    Label  getLabel() { return label; }
 }
 
 // End of file.
