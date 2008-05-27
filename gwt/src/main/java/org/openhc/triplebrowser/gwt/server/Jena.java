@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2008 May 26 (Mon) 17:27:40 by Harold Carr.
+// Last Modified : 2008 May 27 (Tue) 10:36:14 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.server;
@@ -28,6 +28,7 @@ import org.openhc.trowser.gwt.common.Constants;
 import org.openhc.trowser.gwt.common.QueryRequest;
 import org.openhc.trowser.gwt.common.QueryResponse;
 import org.openhc.trowser.gwt.common.Triple;
+import org.openhc.trowser.gwt.common.Util;
 
 public class Jena
 {
@@ -295,29 +296,9 @@ public class Jena
     {
 	// REVISIT - unicode
 	return 
-	   Character.isDigit(substringAfterLastSlashOrFirstSharp(x).charAt(0));
+	   Character.isDigit(
+               Util.substringAfterLastSlashOrFirstSharp(x).charAt(0));
     }
-
-    // REVISIT - factor into shared utility.
-    private String substringAfterLastSlashOrFirstSharp(final String x)
-    {
-	int indexOfLastSlashOrFirstSharp = 0;
-	int i;
-	for (i = 0; i < x.length(); ++i) {
-	    if (x.charAt(i) == '/' || x.charAt(i) == '#') {
-		indexOfLastSlashOrFirstSharp = i;
-	    }
-	}
-	final String result = x.substring(indexOfLastSlashOrFirstSharp + 1);
-	// If it ends in a slash then remove the ending slash and try again.
-	if (result.length() == 0) {
-	    return substringAfterLastSlashOrFirstSharp(
-                       x.substring(0, x.length()-1));
-	} else {
-	    return result;
-	}
-    }
-
 }
 
 // End of file.
