@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 25 (Sun) 09:36:03 by Harold Carr.
+// Last Modified : 2008 May 25 (Sun) 21:42:44 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -48,7 +48,7 @@ public class Main
 	serverCalls = new ServerCalls();
 	// TODO: a race with next statement that sets up the HTML 
 	// used by initialize
-	serverCalls.initialize();
+	//serverCalls.initialize();
     }
 
     // NOTE: After initial development - when the server is NOT

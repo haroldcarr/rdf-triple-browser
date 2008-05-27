@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 25 (Sun) 18:56:10 by Harold Carr.
+// Last Modified : 2008 May 26 (Mon) 09:05:50 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -36,16 +36,20 @@ public class ServerCalls
 				  + Main.serviceEntryPoint);
     }
 
-    public void initialize()
+    public void openFile(final String filename)
     {
-	serviceAsync.initialize(
+	serviceAsync.openFile(
+	    filename,
 	    new AsyncCallback() {
 		public void onSuccess(Object result) {
-		    Main.makeMainPanel();
-		    DevTime.getJenaStatusHTML().setHTML(result.toString());
+		    Window.alert(".openFile: success: " + result);
+		    //Main.getQueryPanel().reset();  // ***** TODO
+		    Main.getMainPanel().doQuery(true);
+		    //Main.makeMainPanel();
+		    //DevTime.getJenaStatusHTML().setHTML(result.toString());
 		}
 		public void onFailure(Throwable caught) {
-		    Window.alert(".doQuery: " + caught);
+		    Window.alert(".openFile: failure: " + caught);
 		}
 	    });
     }

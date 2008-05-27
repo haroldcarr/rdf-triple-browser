@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 25 (Sun) 13:06:17 by Harold Carr.
+// Last Modified : 2008 May 26 (Mon) 18:09:38 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -32,7 +32,8 @@ public class Main
 	serverCalls = new ServerCalls();
 	// TODO: a race with next statement that sets up the HTML 
 	// used by initialize
-	serverCalls.initialize();
+	//serverCalls.initialize();
+	makeMainPanel();
     }
 
     // NOTE: After initial development - when the server is NOT
@@ -53,7 +54,7 @@ public class Main
 
 	// This doQuery could happen while MainPanel is begin setup.
 	// But need access to MainPanel from Main for history on the query.
-	getMainPanel().doQuery(true);
+	//getMainPanel().doQuery(true);
     }	
 
     // Utility

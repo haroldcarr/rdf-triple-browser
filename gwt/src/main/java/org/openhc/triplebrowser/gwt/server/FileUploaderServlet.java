@@ -1,6 +1,6 @@
 //
 // Created       : 2008 May 26 (Mon) 13:01:58 by Harold Carr.
-// Last Modified : 2008 May 26 (Mon) 17:04:45 by Harold Carr.
+// Last Modified : 2008 May 26 (Mon) 17:31:59 by Harold Carr.
 // 
 // from http://home.izforge.com/index.php/2006/10/29/295-handling-file-uploads-with-the-google-web-toolkit
 //
@@ -41,7 +41,14 @@ public class FileUploaderServlet
 	    return;
 	}
 		
-	response.getWriter().write(new String(uploadItem.get()));
+	//response.getWriter().write(new String(uploadItem.get()));
+	try {
+	    ServiceImpl.serviceImplDelegate.loadData(
+	        new String(uploadItem.get()));
+	    response.getWriter().write("OK");
+	} catch (Throwable t) {
+	    response.getWriter().write(t.toString());
+	}
     }
 	
     private FileItem getFileItem(HttpServletRequest request)

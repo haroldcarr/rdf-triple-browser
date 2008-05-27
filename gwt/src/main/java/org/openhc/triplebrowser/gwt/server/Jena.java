@@ -1,11 +1,13 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2008 May 25 (Sun) 19:14:39 by Harold Carr.
+// Last Modified : 2008 May 26 (Mon) 17:27:40 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.server;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -49,24 +51,32 @@ public class Jena
 	model.close();
     }
 
-    public void readRDF(final String filename)
+    public void loadData(final String data)
 	throws IOException
     {
-	readRDF(filename, RDF_XML);
+	readRDF(new ByteArrayInputStream(data.getBytes()), RDF_XML);
     }
 
-    public void readRDF(final String filename, final String format)
+    public void readRDF(final String filename)
 	throws IOException
     {
 	FileInputStream in = null;
 	try {
 	    in = new FileInputStream(filename);
-	    model.read(in, NOWHERE, format);
+	    readRDF(in, RDF_XML);
 	} finally {
 	    if (in != null) {
 		try { in.close(); } catch (IOException e) {}
 	    }
 	}
+
+
+    }
+
+    public void readRDF(final InputStream in, final String format)
+	throws IOException
+    {
+	model.read(in, NOWHERE, format);
     }
 
     public void assertFact(final String s, final String p, final String v)

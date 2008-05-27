@@ -62,7 +62,6 @@ public class SwingView
         if (JFileChooser.APPROVE_OPTION == option) {
             System.out.println(fc.getSelectedFile());
 	    main.getServerCalls().openFile(fc.getSelectedFile().toString());
-	    main.getMainPanel().doQuery(true);
         }
     }
 

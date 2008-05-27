@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 25 (Sun) 18:54:20 by Harold Carr.
+// Last Modified : 2008 May 26 (Mon) 17:35:39 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -17,6 +19,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
 import com.google.gwt.user.client.Window; // *****
 
 import org.openhc.trowser.gwt.client.BrowserHistory;
@@ -81,7 +85,10 @@ public class MainPanel
 	final HorizontalPanel topPanel = new HorizontalPanel();
 	topPanel.setStyleName("topPanel");
 	topPanel.setHorizontalAlignment(DockPanel.ALIGN_LEFT);
-	topPanel.add(new HTML("a.nalogo.us / haroldcarr"));
+
+	FileUploader fileUploader = new FileUploader();
+	topPanel.add(fileUploader.getFormPanel());
+
 	topPanel.add(responseProgressLabel);
 	RootPanel.get("top").add(topPanel);
 
