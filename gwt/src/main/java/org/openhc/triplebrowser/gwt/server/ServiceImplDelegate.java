@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2008 May 25 (Sun) 19:16:28 by Harold Carr.
+// Last Modified : 2008 May 26 (Mon) 17:19:20 by Harold Carr.
 //
 
-package org.openhc.trowser.swing.client;
+package org.openhc.trowser.gwt.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,24 +17,16 @@ import org.openhc.trowser.gwt.common.QueryResponse;
 import org.openhc.trowser.gwt.common.Triple;
 import org.openhc.trowser.gwt.server.Jena;
 
-import org.openhc.trowser.swing.client.Main;
-
-public class ServiceImpl
+public class ServiceImplDelegate
 {
     private boolean initialized = false;
     private Jena jena;
 
-    private final String RDF_FILENAME = "rdf.rdf";
-
-    public String initialize() 
+    public String loadData(final String data)
     {
-	if (initialized) {
-	    return "already initialized";
-	}
-	
 	jena = new Jena();
 	try {
-	    jena.readRDF(RDF_FILENAME);
+	    jena.loadData(data);
 	    initialized = true;
 	} catch (Throwable t) {
 	    ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -45,7 +37,25 @@ public class ServiceImpl
 	    return stream.toString();
 	}
 
-	return "initialization complete";
+	return "data loaded successfully";
+	}
+
+    public String openFile(final String filename) 
+    {
+	jena = new Jena();
+	try {
+	    jena.readRDF(filename);
+	    initialized = true;
+	} catch (Throwable t) {
+	    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+	    PrintWriter printWriter = new PrintWriter(stream);
+	    t.printStackTrace(printWriter);
+	    printWriter.flush();
+	    printWriter.close();
+	    return stream.toString();
+	}
+
+	return filename + "read successfully";
     }
 
     public String close() 
@@ -72,8 +82,11 @@ public class ServiceImpl
 
     public QueryResponse doQuery(final QueryRequest queryRequest)
     {
-	return jena.doQuery(queryRequest,
-			    "NOT NEEDED");
+	if (initialized) {
+	    return jena.doQuery(queryRequest,
+				"NOT NEEDED");
+	}
+	return null;
     }
 
     public QueryResponse assertFact(QueryRequest queryRequest)
