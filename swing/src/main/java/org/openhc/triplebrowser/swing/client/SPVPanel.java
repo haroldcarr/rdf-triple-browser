@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 21:16:56 by Harold Carr.
+// Last Modified : 2008 May 27 (Tue) 10:16:36 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -26,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.openhc.trowser.gwt.common.SPVItem;
 import org.openhc.trowser.swing.client.Main;
 
 public class SPVPanel
@@ -209,28 +210,6 @@ class SPVList
     {
 	return (DefaultListModel) verticalInsideScroll.getModel();
     }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-
-class SPVItem
-{
-    private final String spvCategory;
-    private final String expandedName;
-    private final String collapsedName;
-    
-    SPVItem(final String spvCategory, 
-	    final String expandedName, 
-	    final String collapsedName)
-    {
-	this.spvCategory = spvCategory;
-	this.expandedName = expandedName;
-	this.collapsedName = collapsedName;
-    }
-
-    String getSPVCategory()              { return spvCategory; }
-    String getExpandedName()             { return expandedName; }
-    String getCollapsedName()            { return collapsedName; }
 }
 
 // End of file.

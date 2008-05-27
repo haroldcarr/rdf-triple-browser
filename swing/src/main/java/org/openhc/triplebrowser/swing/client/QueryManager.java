@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 25 (Sun) 19:06:31 by Harold Carr.
+// Last Modified : 2008 May 27 (Tue) 08:51:23 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -49,7 +49,7 @@ public class MainPanel
 	// Main panel.
 	//    
 
-	if (Main.realBrowser) {
+	if (Main.OS_NAME.startsWith("Windows")) {
 	    browserPanel = WebBrowser.create("DJNATIVESWING");
 	} else {
 	    browserPanel = WebBrowser.create("TEXTAREA");

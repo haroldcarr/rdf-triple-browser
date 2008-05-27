@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 25 (Sun) 21:42:44 by Harold Carr.
+// Last Modified : 2008 May 27 (Tue) 08:52:35 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -19,7 +19,7 @@ public class Main
     // TODO: these should be final.
     private static       MainPanel      mainPanel;
     private static       ServerCalls    serverCalls;
-            static       boolean        realBrowser = false;
+            static       String         OS_NAME;
     private static       SwingView      swingView;
 
     public static void main(String[] av)
@@ -34,8 +34,8 @@ public class Main
 
     private void init()
     {
-	if (/*av.length == 0*/ true) {
-	    realBrowser = true;
+	OS_NAME = System.getProperty("os.name");
+	if (OS_NAME.startsWith("Windows")) {
 	    chrriis.dj.nativeswing.NativeInterfaceHandler.init();
 	}
 	onModuleLoad();
