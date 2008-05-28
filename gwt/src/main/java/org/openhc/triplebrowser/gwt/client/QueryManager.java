@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 12:37:48 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 15:12:23 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -23,7 +23,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.google.gwt.user.client.Window; // *****
 
-import org.openhc.trowser.gwt.client.BrowserHistory;
 import org.openhc.trowser.gwt.client.Main;
 import org.openhc.trowser.gwt.client.Test; // *****
 import org.openhc.trowser.gwt.common.QueryRequest;
