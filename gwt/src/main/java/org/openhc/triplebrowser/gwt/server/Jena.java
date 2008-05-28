@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 12:31:30 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 12:57:20 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.server;
@@ -286,7 +286,6 @@ public class Jena
 	try {
 	    if (xxx(list.get(0),
 		    list.get(list.size()-1)) ) {
-		System.out.println("-------------------------");
 		while (startsWithDigit((String) list.get(0))) {
 		    Object x = list.get(0);
 		    list.remove(0);
@@ -294,16 +293,15 @@ public class Jena
 		}
 	    }
 	} catch (Throwable t) {
-	    System.out.println(t);
+	    t.printStackTrace(out);
 	}
     }
 
     private boolean xxx(Object x, Object y)
     {
-	System.out.println(x + " " + y);
 	boolean xb = startsWithDigit((String)x);
 	boolean yb = startsWithDigit((String)y);
-	System.out.println(xb + " " + yb);
+	//System.out.println(x + " " + xb + " " + y + " " yb);
 	return xb && !yb;
     }
 
