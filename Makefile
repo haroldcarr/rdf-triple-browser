@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2008 May 27 (Tue) 10:25:22 by Harold Carr.
+# Last Modified : 2008 May 28 (Wed) 10:38:30 by Harold Carr.
 #
 
 ##############################################################################
@@ -112,7 +112,7 @@ include $(hcMakefiles)/binDirForceRules.gmk
 
 #
 # Created       : 2008 May 15 (Thu) 17:24:10 by Harold Carr.
-# Last Modified : 2008 May 27 (Tue) 10:25:22 by Harold Carr.
+# Last Modified : 2008 May 28 (Wed) 10:38:30 by Harold Carr.
 #
 
 SEP		=	$(shell hcPathSep)
@@ -150,10 +150,10 @@ cpfv :
 #DEBUG	= -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5000
 
 r run ::
-	hcJavaCmd "$(CLASSDESTDIR)$(SEP)$(CLASSPATH_EXTRAS)" $(DEBUG) $(SWING_CLIENT_PACKAGE).SwingApp
+	hcJavaCmd "$(CLASSDESTDIR)$(SEP)$(CLASSPATH_EXTRAS)" $(DEBUG) $(SWING_CLIENT_PACKAGE).Trowser
 
 rf runs ::
-	hcJavaCmd "$(CLASSDESTDIR)$(SEP)$(CLASSPATH_EXTRAS)" $(DEBUG) $(SWING_CLIENT_PACKAGE).SwingApp
+	hcJavaCmd "$(CLASSDESTDIR)$(SEP)$(CLASSPATH_EXTRAS)" $(DEBUG) $(SWING_CLIENT_PACKAGE).Trowser
 
 include $(hcMakefiles)/javaDefs.gmk
 include $(hcMakefiles)/javaRules.gmk
