@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 10:57:31 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 14:05:49 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -30,7 +30,7 @@ public class QueryManager
 	this.main = main;
     }
 
-    public void doQuery(final boolean keepHistory)
+    public void doQuery()
     {
 	List triples = new ArrayList();
 	Iterator hpi = 
@@ -53,21 +53,18 @@ public class QueryManager
 	    triples.add(new Triple(subject, property, value));
 	}
 
-	doQuery(keepHistory, triples,
-	        main.qsubject + main.qproperty + main.qvalue);
+	doQuery(triples, main.qsubject + main.qproperty + main.qvalue);
     }
 
-    public void doQuery(final boolean keepHistory,
-			final String subject, final String property,
+    public void doQuery(final String subject, final String property,
 			final String value, final String setContentsOf)
     {
 	List triples = new ArrayList();
 	triples.add(new Triple(subject, property, value));
-	doQuery(keepHistory, triples, setContentsOf);
+	doQuery(triples, setContentsOf);
     }
 
-    public void doQuery(final boolean keepHistory, final List triples,
-			final String setContentsOf)
+    public void doQuery(final List triples, final String setContentsOf)
     {
 	QueryRequest queryRequest = new QueryRequest(triples, setContentsOf);
 
@@ -105,7 +102,7 @@ public class QueryManager
 	    main.getQueryPanel().getSubjectTextField().setText("ERROR");
 	    return;
 	}
-	doQuery(true);
+	doQuery();
     }
 
     //

@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 10:52:24 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 14:06:55 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -167,15 +167,14 @@ public class QueryPanel
 	final ActionListener clearCommand = new ActionListener() {
             public void actionPerformed(ActionEvent event) {
 		thisTextField.setText(thisText);
-		main.getQueryManager().doQuery(true);
+		main.getQueryManager().doQuery();
                 }
             };
 
 	final ActionListener showAllCommand = new ActionListener() {
             public void actionPerformed(ActionEvent event) {
 		main.getQueryManager()
-		    .doQuery(true,
-			     main.qsubject, main.qproperty,
+		    .doQuery(main.qsubject, main.qproperty,
 			     main.qvalue, thisText);
 	    }
 	};
@@ -185,7 +184,7 @@ public class QueryPanel
 		final String text = thisTextField.getText();
 		thisTextField.setText(thisText);
 		leftTextField.setText(text);
-		main.getQueryManager().doQuery(true);
+		main.getQueryManager().doQuery();
 	    }
 	};
 
@@ -194,7 +193,7 @@ public class QueryPanel
 		final String text = thisTextField.getText();
 		thisTextField.setText(thisText);
 		rightTextField.setText(text);
-		main.getQueryManager().doQuery(true);
+		main.getQueryManager().doQuery();
 	    }
 	};
 

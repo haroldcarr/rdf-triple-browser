@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 12:32:24 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 14:07:02 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -118,12 +118,12 @@ class SPVList
 
 	topButton.addMouseListener(new MouseAdapter() {
 	    public void mouseClicked(MouseEvent e) {
-		expandOrCollapseSPVClick(true);	
+		expandOrCollapseSPVClick();	
 	    }
 	});
     }
 
-    public void expandOrCollapseSPVClick(final boolean keepHistory)
+    public void expandOrCollapseSPVClick()
     {
 	final String newState = expandOrCollapse();
 	topButton.setText(newState);
