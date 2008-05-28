@@ -1,13 +1,15 @@
 //
 // Created       : 2006 Aug 12 (Sat) 14:56:41 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 07:51:01 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 12:27:34 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.common;
 
-public abstract class Util
+import org.openhc.trowser.gwt.common.Constants;
+
+public class Util
 {
-    public static String substringAfterLastSlashOrFirstSharp(final String x)
+    public String substringAfterLastSlashOrFirstSharp(final String x)
     {
 	int indexOfLastSlashOrFirstSharp = 0;
 	int i;
@@ -27,6 +29,18 @@ public abstract class Util
                        x.substring(0, x.length()-1));
 	} else {
 	    return result;
+	}
+    }
+
+    // Utility
+    public String getExpandCollapseState(
+	final String expandCollapseState,
+	final boolean pending)
+    {
+	if (expandCollapseState.equals(Constants.expand)) {
+	    return (pending ? Constants.collapse : Constants.expand);
+	} else {
+	    return (pending ? Constants.expand : Constants.collapse);
 	}
     }
 }
