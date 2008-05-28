@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 12:57:20 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 13:03:10 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.server;
@@ -278,6 +278,10 @@ public class Jena
 
     private void sort(final List list)
     {
+	if (list.size() == 0) {
+	    return;
+	}
+
 	// In alphabetic order - including URL.
 	java.util.Collections.sort(list);
 
@@ -293,7 +297,7 @@ public class Jena
 		}
 	    }
 	} catch (Throwable t) {
-	    t.printStackTrace(out);
+	    t.printStackTrace();
 	}
     }
 
