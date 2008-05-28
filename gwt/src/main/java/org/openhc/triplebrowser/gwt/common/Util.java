@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Aug 12 (Sat) 14:56:41 by Harold Carr.
-// Last Modified : 2008 May 27 (Tue) 10:36:52 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 07:51:01 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.common;
@@ -15,6 +15,10 @@ public abstract class Util
 	    if (x.charAt(i) == '/' || x.charAt(i) == '#') {
 		indexOfLastSlashOrFirstSharp = i;
 	    }
+	}
+	if (indexOfLastSlashOrFirstSharp == 0) {
+	    // It doesn't contain any.
+	    return x;
 	}
 	final String result = x.substring(indexOfLastSlashOrFirstSharp + 1);
 	// If it ends in a slash then remove the ending slash and try again.
