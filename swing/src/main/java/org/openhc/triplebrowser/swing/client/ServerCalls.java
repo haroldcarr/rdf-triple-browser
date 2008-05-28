@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 26 (Mon) 08:57:06 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 10:00:38 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -17,10 +17,12 @@ import org.openhc.trowser.swing.client.Main;
 
 public class ServerCalls
 {
+    final Main main;
     final ServiceImplDelegate service;
 
-    public ServerCalls()
+    public ServerCalls(Main main)
     {
+	this.main = main;
 	service = new ServiceImplDelegate();
     }
 
@@ -29,8 +31,8 @@ public class ServerCalls
 	final String result = service.openFile(filename);
 	java.lang.System.out.println(result);
 	// ***** : Need to check result - only reset/query on success.
-	//Main.getQueryPanel().reset(); // ***** TODO
-	Main.getMainPanel().doQuery(true);
+	//main.getQueryPanel().reset(); // ***** TODO
+	main.getMainPanel().doQuery(true);
 	return result;
     }
 
@@ -44,7 +46,7 @@ public class ServerCalls
     public void assertFact(final QueryRequest queryRequest)
     {
 	final QueryResponse queryResponse = service.assertFact(queryRequest);
-	Main.getMainPanel().handleQueryResponse(queryResponse);
+	main.getMainPanel().handleQueryResponse(queryResponse);
     }
 
     public void close()

@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 21:16:29 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 09:58:24 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -24,6 +24,8 @@ import javax.swing.JTextField;
 
 public class QueryPanel
 {
+    private final Main        main;
+
     private final JPanel      queryPanel;
     private final ButtonGroup buttonGroup;
 
@@ -39,8 +41,10 @@ public class QueryPanel
 
     private       int         triplePanelID = 0;
 
-    QueryPanel()
+    QueryPanel(Main main)
     {
+	this.main = main;
+
 	buttonGroup = new ButtonGroup();
 	queryPanel = new JPanel();
 	queryPanel.setLayout(new BoxLayout(queryPanel, 
@@ -50,7 +54,7 @@ public class QueryPanel
 
     private void addToVerticalPanel(JPanel triplePanel)
     {
-	Main.getSwingView().addTriplePanel(queryPanel, triplePanel);
+	main.getSwingView().addTriplePanel(queryPanel, triplePanel);
     }
 
     public void removeFromVerticalPanel(JPanel triplePanel)
@@ -127,23 +131,23 @@ public class QueryPanel
 		selectedValueTextField    = valueTextField;
 	    }});
 		
-	subjectTextField.setText(Main.qsubject);
-	propertyTextField.setText(Main.qproperty);
-	valueTextField.setText(Main.qvalue);
+	subjectTextField.setText(main.qsubject);
+	propertyTextField.setText(main.qproperty);
+	valueTextField.setText(main.qvalue);
 	subjectJMenuBar  = 
-	    makeJMenuBar(Main.qvalue,    valueTextField,
-			 Main.qsubject,  subjectTextField,
-			 Main.qproperty, propertyTextField);
+	    makeJMenuBar(main.qvalue,    valueTextField,
+			 main.qsubject,  subjectTextField,
+			 main.qproperty, propertyTextField);
 	propertyJMenuBar =
-	    makeJMenuBar(Main.qsubject,  subjectTextField,
-			 Main.qproperty, propertyTextField,
-			 Main.qvalue,    valueTextField);
+	    makeJMenuBar(main.qsubject,  subjectTextField,
+			 main.qproperty, propertyTextField,
+			 main.qvalue,    valueTextField);
 	valueJMenuBar    =
-	    makeJMenuBar(Main.qproperty, propertyTextField,
-			 Main.qvalue,    valueTextField,
-			 Main.qsubject,  subjectTextField);
+	    makeJMenuBar(main.qproperty, propertyTextField,
+			 main.qvalue,    valueTextField,
+			 main.qsubject,  subjectTextField);
 
-	Main.getSwingView().queryPanelLayout(
+	main.getSwingView().queryPanelLayout(
             triplePanel,
 	    leftButton, radioButton,
 	    subjectJMenuBar, subjectTextField,
@@ -163,16 +167,16 @@ public class QueryPanel
 	final ActionListener clearCommand = new ActionListener() {
             public void actionPerformed(ActionEvent event) {
 		thisTextField.setText(thisText);
-		Main.getMainPanel().doQuery(true);
+		main.getMainPanel().doQuery(true);
                 }
             };
 
 	final ActionListener showAllCommand = new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-		Main.getMainPanel()
+		main.getMainPanel()
 		    .doQuery(true,
-			     Main.qsubject, Main.qproperty,
-			     Main.qvalue, thisText);
+			     main.qsubject, main.qproperty,
+			     main.qvalue, thisText);
 	    }
 	};
 
@@ -181,7 +185,7 @@ public class QueryPanel
 		final String text = thisTextField.getText();
 		thisTextField.setText(thisText);
 		leftTextField.setText(text);
-		Main.getMainPanel().doQuery(true);
+		main.getMainPanel().doQuery(true);
 	    }
 	};
 
@@ -190,7 +194,7 @@ public class QueryPanel
 		final String text = thisTextField.getText();
 		thisTextField.setText(thisText);
 		rightTextField.setText(text);
-		Main.getMainPanel().doQuery(true);
+		main.getMainPanel().doQuery(true);
 	    }
 	};
 
@@ -201,19 +205,19 @@ public class QueryPanel
 
 	JMenuItem menuItem;
 
-	menuItem = new JMenuItem(Main.clear);
+	menuItem = new JMenuItem(main.clear);
 	menuItem.addActionListener(clearCommand);
 	menu.add(menuItem);
 
-	menuItem = new JMenuItem(Main.showAll);
+	menuItem = new JMenuItem(main.showAll);
 	menuItem.addActionListener(showAllCommand);
 	menu.add(menuItem);
 
-	menuItem = new JMenuItem(Main.shiftRight);
+	menuItem = new JMenuItem(main.shiftRight);
 	menuItem.addActionListener(moveRightCommand);
 	menu.add(menuItem);
 
-	menuItem = new JMenuItem(Main.shiftLeft);
+	menuItem = new JMenuItem(main.shiftLeft);
 	menuItem.addActionListener(moveLeftCommand);
 	menu.add(menuItem);
 

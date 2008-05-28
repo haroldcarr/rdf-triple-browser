@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 27 (Tue) 08:52:35 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 10:19:16 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -16,67 +16,37 @@ public class Main
     implements
 	Constants
 {
-    // TODO: these should be final.
-    private static       MainPanel      mainPanel;
-    private static       ServerCalls    serverCalls;
-            static       String         OS_NAME;
-    private static       SwingView      swingView;
-
-    public static void main(String[] av)
-    {
-    }
+    private final MainPanel      mainPanel;
+    private final ServerCalls    serverCalls;
+            final String         operatingSystemName; // *****
+    private final SwingView      swingView;
 
     public Main(SwingView swingView)
     {
 	this.swingView = swingView;
-	init();
-    }
-
-    private void init()
-    {
-	OS_NAME = System.getProperty("os.name");
-	if (OS_NAME.startsWith("Windows")) {
+	operatingSystemName = System.getProperty("os.name");
+	if (operatingSystemName.startsWith("Windows")) {
 	    chrriis.dj.nativeswing.NativeInterfaceHandler.init();
 	}
-	onModuleLoad();
-	makeMainPanel();
-    }
-
-    // This is the entry point method.
-    public static void onModuleLoad() 
-    {
-	serverCalls = new ServerCalls();
-	// TODO: a race with next statement that sets up the HTML 
-	// used by initialize
-	//serverCalls.initialize();
-    }
-
-    // NOTE: After initial development - when the server is NOT
-    // started by the client, then this async callback will not be
-    // necessary.
-    public static void makeMainPanel()
-    {
-	mainPanel = new MainPanel();
-
-	// NOTE: In Swing a race can happen here.  Put in main swing "run".
-	//getMainPanel().doQuery(true);
+	serverCalls = new ServerCalls(this);
+	mainPanel = new MainPanel(this);
     }	
 
     // Utility
-    public static String getExpandCollapseState(
+    public String getExpandCollapseState(
 	final String expandCollapseState,
 	final boolean pending)
     {
-	if (expandCollapseState.equals(Main.expand)) {
-	    return (pending ? Main.collapse : Main.expand);
+	if (expandCollapseState.equals(this.expand)) {
+	    return (pending ? this.collapse : this.expand);
 	} else {
-	    return (pending ? Main.expand : Main.collapse);
+	    return (pending ? this.expand : this.collapse);
 	}
     }
 
-    public static MainPanel      getMainPanel()      { return mainPanel; }
-    public static ServerCalls    getServerCalls()    { return serverCalls; }
-    public static SwingView      getSwingView()      { return swingView; }
+    public MainPanel   getMainPanel()   { return mainPanel; }
+    public ServerCalls getServerCalls() { return serverCalls; }
+    public SwingView   getSwingView()   { return swingView; }
 }
 
 // End of file.

@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 27 (Tue) 10:37:45 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 10:21:42 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -32,23 +32,26 @@ import org.openhc.trowser.swing.client.Main;
 
 public class SPVPanel
 {
+    private final Main    main;
     private final SPVList subjectPanel;
     private final SPVList propertyPanel;
     private final SPVList valuePanel;
-    private final JPanel spvHorizontalPanel;
+    private final JPanel  spvHorizontalPanel;
 
-    public SPVPanel()
+    public SPVPanel(Main main)
     {
+	this.main = main;
+
 	//
 	// Subject, Property, Value panels.
 	// Create now to get contents from server.
 	//
 
-	subjectPanel  = new SPVList(Main.subject);
-	propertyPanel = new SPVList(Main.property);
-	valuePanel    = new SPVList(Main.value);
+	subjectPanel  = new SPVList(main.subject, main);
+	propertyPanel = new SPVList(main.property, main);
+	valuePanel    = new SPVList(main.value, main);
 	spvHorizontalPanel = new JPanel();
-	Main.getSwingView().spvPanelLayout(spvHorizontalPanel,
+	main.getSwingView().spvPanelLayout(spvHorizontalPanel,
 					   subjectPanel.getButton(),
 					   subjectPanel.getScrollPane(),
 					   propertyPanel.getButton(),
@@ -67,17 +70,19 @@ public class SPVPanel
 
 class SPVList
 {
-    String expandCollapseState;
+    private        String      expandCollapseState;
 
+    private final Main        main;
     private final String      spvCategory;
     private       List        contents;
     private final JList       verticalInsideScroll;
     private final JButton     topButton;
     private final JScrollPane scrollPanel;
 
-    public SPVList(final String spvCategory)
+    public SPVList(final String spvCategory, final Main main)
     {
-	this.expandCollapseState = Main.collapse;
+	this.main = main;
+	this.expandCollapseState = main.collapse;
 	this.spvCategory = spvCategory;
 	topButton = new JButton();
 	topButton.setText(getPendingExpandCollapseState());
@@ -99,9 +104,9 @@ class SPVList
 				((SPVItem)contents.get(
 				    verticalInsideScroll.getSelectedIndex()))
 				        .getExpandedName();
-			    Main.getMainPanel().spvLinkClicked(
+			    main.getMainPanel().spvLinkClicked(
                                 spvCategory, choice);
-			    Main.getMainPanel().getBrowserPanel()
+			    main.getMainPanel().getBrowserPanel()
 				.setUrl(choice);
 			}
 		    }
@@ -109,7 +114,7 @@ class SPVList
 	    });
 
 	scrollPanel = new JScrollPane(verticalInsideScroll);
-	scrollPanel.setName(Main.subjectPropertyValue);
+	scrollPanel.setName(main.subjectPropertyValue);
 
 	topButton.addMouseListener(new MouseAdapter() {
 	    public void mouseClicked(MouseEvent e) {
@@ -129,12 +134,12 @@ class SPVList
 
     private String getCurrentExpandCollapseState()
     {
-	return Main.getExpandCollapseState(expandCollapseState, false);
+	return main.getExpandCollapseState(expandCollapseState, false);
     }
 
     private String getPendingExpandCollapseState()
     {
-	return Main.getExpandCollapseState(expandCollapseState, true);
+	return main.getExpandCollapseState(expandCollapseState, true);
     }
 
     private List convertContents(final List x)
@@ -160,7 +165,7 @@ class SPVList
 	int n = 0;
 	while (i.hasNext()) {
 	    final SPVItem spvItem = (SPVItem) i.next();
-	    getModel().add(n++, (expandCollapseState.equals(Main.expand) ?
+	    getModel().add(n++, (expandCollapseState.equals(main.expand) ?
 				 spvItem.getExpandedName() :
 				 spvItem.getCollapsedName()));
 	}
@@ -177,7 +182,7 @@ class SPVList
 	    // are same size.
 	    final Object object = i.nextElement();
 	    final SPVItem spvItem = (SPVItem) j.next();
-	    if (pendingExpandCollapseState.equals(Main.expand)) {
+	    if (pendingExpandCollapseState.equals(main.expand)) {
 		getModel().set(n, spvItem.getExpandedName());
 	    } else {
 		getModel().set(n, spvItem.getCollapsedName());
