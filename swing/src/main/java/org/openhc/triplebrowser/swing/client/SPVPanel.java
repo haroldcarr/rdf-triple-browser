@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 10:33:26 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 12:32:24 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -104,9 +104,9 @@ class SPVList
 				((SPVItem)contents.get(
 				    verticalInsideScroll.getSelectedIndex()))
 				        .getExpandedName();
-			    main.getMainPanel().spvLinkClicked(
+			    main.getQueryManager().spvLinkClicked(
                                 spvCategory, choice);
-			    main.getMainPanel().getBrowserPanel()
+			    main.getBrowserPanel()
 				.setUrl(choice);
 			}
 		    }
@@ -134,12 +134,14 @@ class SPVList
 
     private String getCurrentExpandCollapseState()
     {
-	return main.getExpandCollapseState(expandCollapseState, false);
+	return main.getUtil()
+	    .getExpandCollapseState(expandCollapseState, false);
     }
 
     private String getPendingExpandCollapseState()
     {
-	return main.getExpandCollapseState(expandCollapseState, true);
+	return main.getUtil()
+	    .getExpandCollapseState(expandCollapseState, true);
     }
 
     private List convertContents(final List x)
@@ -150,7 +152,7 @@ class SPVList
 	    String uri = (String) i.next();
 	    result.add(new SPVItem(spvCategory, 
 				   uri,
-				   Util.substringAfterLastSlashOrFirstSharp(uri)));
+				   main.getUtil().substringAfterLastSlashOrFirstSharp(uri)));
 	}
 	return result;
     }

@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 10:00:38 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 10:53:12 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -32,21 +32,20 @@ public class ServerCalls
 	java.lang.System.out.println(result);
 	// ***** : Need to check result - only reset/query on success.
 	//main.getQueryPanel().reset(); // ***** TODO
-	main.getMainPanel().doQuery(true);
+	main.getQueryManager().doQuery(true);
 	return result;
     }
 
-    public void doQuery(final MainPanel mainPanel,
-			final QueryRequest queryRequest)
+    public void doQuery(final QueryRequest queryRequest)
     {
 	final QueryResponse queryResponse = service.doQuery(queryRequest);
-	mainPanel.handleQueryResponse(queryResponse);
+	main.getQueryManager().handleQueryResponse(queryResponse);
     }
 
     public void assertFact(final QueryRequest queryRequest)
     {
 	final QueryResponse queryResponse = service.assertFact(queryRequest);
-	main.getMainPanel().handleQueryResponse(queryResponse);
+	main.getQueryManager().handleQueryResponse(queryResponse);
     }
 
     public void close()
