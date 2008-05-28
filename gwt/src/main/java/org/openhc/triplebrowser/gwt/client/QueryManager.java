@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 26 (Mon) 17:35:39 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 12:37:48 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -160,9 +160,6 @@ public class MainPanel
 
 	// "this" so async request can call handleQueryResponse.
 	Main.getServerCalls().doQuery(this, queryRequest);
-
-	Main.getBrowserHistory()
-	    .recordDoQuery(keepHistory, triples, setContentsOf);
     }
 
     public void handleQueryResponse(QueryResponse queryResponse)

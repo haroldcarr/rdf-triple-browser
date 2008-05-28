@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 27 (Tue) 10:37:29 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 12:37:07 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -54,12 +54,12 @@ public class SPVPanel
 	
 	topButton.addClickListener(new ClickListener() {
 	    public void onClick(Widget sender) {
-		expandOrCollapseSPVClick(true);
+		expandOrCollapseSPVClick();
 	    }
 	});
     }
 
-    public void expandOrCollapseSPVClick(final boolean keepHistory)
+    public void expandOrCollapseSPVClick()
     {
 	final String newState = expandOrCollapse();
 	topButton.setText(newState);
@@ -69,11 +69,14 @@ public class SPVPanel
 
     private String getCurrentExpandCollapseState()
     {
-	return Main.getExpandCollapseState(expandCollapseState, false);
+	return Main.getUtil()
+	    .getExpandCollapseState(expandCollapseState, false);
     }
+
     private String getPendingExpandCollapseState()
     {
-	return Main.getExpandCollapseState(expandCollapseState, true);
+	return Main.getUtil()
+	    .getExpandCollapseState(expandCollapseState, true);
     }
 
     private List convertContents(final List x)
@@ -84,7 +87,7 @@ public class SPVPanel
 	    String uri = (String) i.next();
 	    result.add(new SPVItem(spvCategory, 
 				   uri,
-				   Util.substringAfterLastSlashOrFirstSharp(uri)));
+				   Main.getUtil().substringAfterLastSlashOrFirstSharp(uri)));
 	}
 	return result;
     }
@@ -100,9 +103,10 @@ public class SPVPanel
 	    final SPVItem spvItem = (SPVItem) i.next();
 	    verticalInsideScroll.add(spvItem.getLabel());
 
-	    if (expandCollapseState.equals(Main.expand)) {
-		spvItem.getLabel().setText(spvItem.getExpandedName());
-	    }
+	    spvItem.getLabel().setText(
+                expandCollapseState.equals(Main.expand) ?
+		spvItem.getExpandedName() :
+		spvItem.getCollapsedName());
 
 	    spvItem.getLabel().addClickListener(new ClickListener() {
 		public void onClick(final Widget sender) {

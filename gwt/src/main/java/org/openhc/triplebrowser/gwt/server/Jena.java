@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2008 May 27 (Tue) 10:36:14 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 12:31:30 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.server;
@@ -34,6 +34,7 @@ public class Jena
 {
     public final String NOWHERE = "http://nowhere/";
     public final String RDF_XML = "RDF/XML";
+    public final Util   util    = new Util();
 
     Model model;
 
@@ -70,8 +71,6 @@ public class Jena
 		try { in.close(); } catch (IOException e) {}
 	    }
 	}
-
-
     }
 
     public void readRDF(final InputStream in, final String format)
@@ -131,6 +130,14 @@ public class Jena
 	if (x.startsWith("?")) {
 	    return x;
 	}
+	if (! x.startsWith("http")) {
+	    return '"' + x + '"';
+	}
+	/*
+	if (x.startsWith("-1")) {
+	    return "_:" + x;
+	}
+	*/
 	return "<" + x + ">";
     }
 
@@ -224,25 +231,16 @@ public class Jena
 	while (resultSet.hasNext()) {
 	    final QuerySolution querySolution = resultSet.nextSolution();
 	    if (isSubjectVar) { 
-		final String x = 
-		    querySolution.get(Constants.subject).toString();
-		if (! subjectResponse.contains(x)) {
-		    subjectResponse.add(x);
-		}
+		getSPVSolution(querySolution,
+			       Constants.subject, subjectResponse);
 	    }
 	    if (isPropertyVar) {
-		final String x = 
-		    querySolution.get(Constants.property).toString();
-		if (! propertyResponse.contains(x)) {
-		    propertyResponse.add(x);
-		}
+		getSPVSolution(querySolution,
+			       Constants.property, propertyResponse);
 	    }
 	    if (isValueVar) {
-		final String x =
-		    querySolution.get(Constants.value).toString();
-		if (! valueResponse.contains(x)) {
-		    valueResponse.add(x);
-		}
+		getSPVSolution(querySolution,
+			       Constants.value, valueResponse);
 	    }
 	}
 
@@ -259,6 +257,23 @@ public class Jena
 			      );
 
 	return queryResponse;
+    }
+
+    private void getSPVSolution(final QuerySolution querySolution,
+				final String kind, 
+				final List list)
+    {
+	final String x = querySolution.get(kind).toString();
+	if (! list.contains(x)) {
+	    list.add(x);
+	}
+	/*
+	final Object o = querySolution.get(kind);
+	System.out.println(kind);
+	System.out.println(x);
+	System.out.println(o.getClass());
+	System.out.println();
+	*/
     }
 
     private void sort(final List list)
@@ -297,7 +312,7 @@ public class Jena
 	// REVISIT - unicode
 	return 
 	   Character.isDigit(
-               Util.substringAfterLastSlashOrFirstSharp(x).charAt(0));
+               util.substringAfterLastSlashOrFirstSharp(x).charAt(0));
     }
 }
 
