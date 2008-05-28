@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2008 May 26 (Mon) 17:19:20 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 12:59:55 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.server;
@@ -29,12 +29,7 @@ public class ServiceImplDelegate
 	    jena.loadData(data);
 	    initialized = true;
 	} catch (Throwable t) {
-	    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-	    PrintWriter printWriter = new PrintWriter(stream);
-	    t.printStackTrace(printWriter);
-	    printWriter.flush();
-	    printWriter.close();
-	    return stream.toString();
+	    return stackTraceToString(t);
 	}
 
 	return "data loaded successfully";
@@ -47,12 +42,7 @@ public class ServiceImplDelegate
 	    jena.readRDF(filename);
 	    initialized = true;
 	} catch (Throwable t) {
-	    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-	    PrintWriter printWriter = new PrintWriter(stream);
-	    t.printStackTrace(printWriter);
-	    printWriter.flush();
-	    printWriter.close();
-	    return stream.toString();
+	    return stackTraceToString(t);
 	}
 
 	return filename + "read successfully";
@@ -108,6 +98,16 @@ public class ServiceImplDelegate
 	return new QueryResponse(subjectResponse, propertyResponse,
 				 valueResponse,
 				 queryRequest.getSetContentsOf(), "OK");
+    }
+
+    private String stackTraceToString(Throwable t)
+    {
+	ByteArrayOutputStream stream = new ByteArrayOutputStream();
+	PrintWriter printWriter = new PrintWriter(stream);
+	t.printStackTrace(printWriter);
+	printWriter.flush();
+	printWriter.close();
+	return stream.toString();
     }
 }
 
