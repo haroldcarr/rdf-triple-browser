@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 10:22:20 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 10:32:34 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -54,8 +54,8 @@ public class MainPanel
 	    browserPanel = WebBrowser.create("TEXTAREA");
 	}
 
-	main.getSwingView().mainPanelLayout(
-	    main.getSwingView().getSwingMainPanel(),
+	main.getTrowserLayout().mainPanelLayout(
+	    main.getTrowserLayout().getSwingMainPanel(),
 	    queryPanel.getPanel(),
 	    spvPanel.getPanel(),
 	    browserPanel);

@@ -38,7 +38,7 @@ import org.jdesktop.layout.LayoutStyle;
 // The application's main frame.
 //
 
-public class SwingView 
+public class TrowserLayout 
     extends 
 	FrameView 
 {
@@ -47,7 +47,7 @@ public class SwingView
     private JMenuBar menuBar;
     private JDialog  aboutBox;
 
-    public SwingView(SingleFrameApplication app) 
+    public TrowserLayout(SingleFrameApplication app) 
     {
         super(app);
         initComponents();
@@ -69,11 +69,11 @@ public class SwingView
     public void showAboutBox() 
     {
         if (aboutBox == null) {
-            JFrame mainFrame = SwingApp.getApplication().getMainFrame();
-            aboutBox = new SwingAboutBox(mainFrame);
+            JFrame mainFrame = Trowser.getApplication().getMainFrame();
+            aboutBox = new TrowserAboutBox(mainFrame);
             aboutBox.setLocationRelativeTo(mainFrame);
         }
-        SwingApp.getApplication().show(aboutBox);
+        Trowser.getApplication().show(aboutBox);
     }
 
     public JPanel getSwingMainPanel() 
@@ -88,8 +88,8 @@ public class SwingView
         mainPanel.setName("mainPanel"); // NOI18N
 
         ResourceMap resourceMap = 
-	    Application.getInstance(SwingApp.class)
-	        .getContext().getResourceMap(SwingView.class);
+	    Application.getInstance(Trowser.class)
+	        .getContext().getResourceMap(TrowserLayout.class);
 
                         menuBar          = new JMenuBar();
         final JMenu     fileMenu         = new JMenu();
@@ -104,8 +104,8 @@ public class SwingView
         fileMenu.setName("fileMenu"); // NOI18N
 
         ActionMap actionMap = 
-	    Application.getInstance(SwingApp.class)
-	        .getContext().getActionMap(SwingView.class, this);
+	    Application.getInstance(Trowser.class)
+	        .getContext().getActionMap(TrowserLayout.class, this);
 
 
         openFileMenuItem.setAction(actionMap.get("openFile")); // NOI18N

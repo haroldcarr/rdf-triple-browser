@@ -1,7 +1,3 @@
-/*
- * SwingAboutBox.java
- */
-
 package org.openhc.trowser.swing.client;
 
 import java.awt.Font;
@@ -20,14 +16,14 @@ import org.jdesktop.application.ResourceMap;
 import org.jdesktop.layout.GroupLayout;
 import org.jdesktop.layout.LayoutStyle;
 
-public class SwingAboutBox
+public class TrowserAboutBox
     extends 
 	JDialog 
 {
     
     private final JButton closeButton;
 
-    public SwingAboutBox(Frame parent) 
+    public TrowserAboutBox(Frame parent) 
     {
         super(parent);
 
@@ -56,16 +52,16 @@ public class SwingAboutBox
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         final ResourceMap resourceMap = 
-	    Application.getInstance(SwingApp.class)
-	        .getContext().getResourceMap(SwingAboutBox.class);
+	    Application.getInstance(Trowser.class)
+	        .getContext().getResourceMap(TrowserAboutBox.class);
         setTitle(resourceMap.getString("title")); // NOI18N
         setModal(true);
         setName("aboutBox"); // NOI18N
         setResizable(false);
 
         final ActionMap actionMap = 
-	    Application.getInstance(SwingApp.class)
-	        .getContext().getActionMap(SwingAboutBox.class, this);
+	    Application.getInstance(Trowser.class)
+	        .getContext().getActionMap(TrowserAboutBox.class, this);
         closeButton.setAction(actionMap.get("closeAboutBox")); // NOI18N
         closeButton.setName("closeButton"); // NOI18N
 

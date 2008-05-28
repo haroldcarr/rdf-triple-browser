@@ -8,25 +8,25 @@ import org.jdesktop.application.SingleFrameApplication;
 /**
  * The main class of the application.
  */
-public class SwingApp 
+public class Trowser 
     extends 
 	SingleFrameApplication 
 {
 
     public static void main(String[] args) 
     {
-        launch(SwingApp.class, args);
+        launch(Trowser.class, args);
     }
 
     @Override
     protected void startup() 
     {
-        show(new SwingView(this));
+        show(new TrowserLayout(this));
     }
 
-    public static SwingApp getApplication() 
+    public static Trowser getApplication() 
     {
-        return Application.getInstance(SwingApp.class);
+        return Application.getInstance(Trowser.class);
     }
 
     /**

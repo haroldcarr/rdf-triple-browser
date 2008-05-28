@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 10:21:42 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 10:33:26 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -51,13 +51,13 @@ public class SPVPanel
 	propertyPanel = new SPVList(main.property, main);
 	valuePanel    = new SPVList(main.value, main);
 	spvHorizontalPanel = new JPanel();
-	main.getSwingView().spvPanelLayout(spvHorizontalPanel,
-					   subjectPanel.getButton(),
-					   subjectPanel.getScrollPane(),
-					   propertyPanel.getButton(),
-					   propertyPanel.getScrollPane(),
-					   valuePanel.getButton(),
-					   valuePanel.getScrollPane());
+	main.getTrowserLayout().spvPanelLayout(spvHorizontalPanel,
+					       subjectPanel.getButton(),
+					       subjectPanel.getScrollPane(),
+					       propertyPanel.getButton(),
+					       propertyPanel.getScrollPane(),
+					       valuePanel.getButton(),
+					       valuePanel.getScrollPane());
     }
 
     public JPanel  getPanel()         { return spvHorizontalPanel; }

@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 09:58:24 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 10:33:05 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -54,7 +54,7 @@ public class QueryPanel
 
     private void addToVerticalPanel(JPanel triplePanel)
     {
-	main.getSwingView().addTriplePanel(queryPanel, triplePanel);
+	main.getTrowserLayout().addTriplePanel(queryPanel, triplePanel);
     }
 
     public void removeFromVerticalPanel(JPanel triplePanel)
@@ -147,7 +147,7 @@ public class QueryPanel
 			 main.qvalue,    valueTextField,
 			 main.qsubject,  subjectTextField);
 
-	main.getSwingView().queryPanelLayout(
+	main.getTrowserLayout().queryPanelLayout(
             triplePanel,
 	    leftButton, radioButton,
 	    subjectJMenuBar, subjectTextField,

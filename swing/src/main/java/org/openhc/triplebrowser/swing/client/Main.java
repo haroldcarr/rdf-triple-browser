@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 10:19:16 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 10:31:52 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -10,7 +10,7 @@ import java.util.Iterator;
 import org.openhc.trowser.gwt.common.Constants;
 import org.openhc.trowser.swing.client.MainPanel;
 import org.openhc.trowser.swing.client.ServerCalls;
-import org.openhc.trowser.swing.client.SwingView;
+import org.openhc.trowser.swing.client.TrowserLayout;
 
 public class Main 
     implements
@@ -19,11 +19,11 @@ public class Main
     private final MainPanel      mainPanel;
     private final ServerCalls    serverCalls;
             final String         operatingSystemName; // *****
-    private final SwingView      swingView;
+    private final TrowserLayout      trowserLayout;
 
-    public Main(SwingView swingView)
+    public Main(TrowserLayout trowserLayout)
     {
-	this.swingView = swingView;
+	this.trowserLayout = trowserLayout;
 	operatingSystemName = System.getProperty("os.name");
 	if (operatingSystemName.startsWith("Windows")) {
 	    chrriis.dj.nativeswing.NativeInterfaceHandler.init();
@@ -44,9 +44,9 @@ public class Main
 	}
     }
 
-    public MainPanel   getMainPanel()   { return mainPanel; }
-    public ServerCalls getServerCalls() { return serverCalls; }
-    public SwingView   getSwingView()   { return swingView; }
+    public MainPanel     getMainPanel()     { return mainPanel; }
+    public ServerCalls   getServerCalls()   { return serverCalls; }
+    public TrowserLayout getTrowserLayout() { return trowserLayout; }
 }
 
 // End of file.
