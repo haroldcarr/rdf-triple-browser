@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 10:35:33 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 14:49:34 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -65,7 +65,7 @@ public class SPVPanel
 
 class SPVList
 {
-    private        String      expandCollapseState;
+    private       String      expandCollapseState;
 
     private final Main        main;
     private final String      spvCategory;
@@ -124,7 +124,7 @@ class SPVList
 	topButton.setText(newState);
     }
 
-    public JButton getButton()         { return topButton; }
+    public JButton     getButton()     { return topButton; }
     public JScrollPane getScrollPane() { return scrollPanel; }
 
     private String getCurrentExpandCollapseState()

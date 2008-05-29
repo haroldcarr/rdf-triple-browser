@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 14:06:55 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 14:41:23 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -26,20 +26,19 @@ public class QueryPanel
 {
     private final Main        main;
 
-    private final JPanel      queryPanel;
-    private final ButtonGroup buttonGroup;
-
-    // These should be final
-    private       JRadioButton baseRadioButton;
-    private       JTextField   baseSubjectTextField;
-    private       JTextField   baseProperyTextField;
-    private       JTextField   baseValueTextField;
-
     private       JTextField  selectedSubjectTextField;
     private       JTextField  selectedPropertyTextField;
     private       JTextField  selectedValueTextField;
 
-    private       int         triplePanelID = 0;
+    private final JPanel      queryPanel;
+    private final ButtonGroup buttonGroup;
+
+    private/*final*/JRadioButton baseRadioButton;
+    private/*final*/JTextField   baseSubjectTextField;
+    private/*final*/JTextField   baseProperyTextField;
+    private/*final*/JTextField   baseValueTextField;
+
+    private       int         triplePanelID = 0; // For debug only.
 
     QueryPanel(Main main)
     {
@@ -89,19 +88,15 @@ public class QueryPanel
 	final JTextField   valueTextField    = new JTextField();
 
 	triplePanel.setName("triplePanel-" + ++triplePanelID);
-
 	buttonGroup.add(radioButton); // Only one can be selected.
 
-	// The latest created is always selected.
-	radioButton.setEnabled(true);
-	radioButton.setSelected(true);
-	selectedSubjectTextField  = subjectTextField;
-	selectedPropertyTextField = propertyTextField;
-	selectedValueTextField    = valueTextField;
+ 	subjectTextField.setText(main.qsubject);
+ 	propertyTextField.setText(main.qproperty);
+ 	valueTextField.setText(main.qvalue);
 
 	if (queryPanel.getComponentCount() == 0) {
-	    leftButton = new JButton("+");
-	    leftButton.setText("+");
+	    leftButton = new JButton(main.plusSymbol);
+	    leftButton.setText(main.plusSymbol);
 	    leftButton.addMouseListener(new MouseAdapter() {
 		public void mouseClicked(MouseEvent e) {
 		    addToVerticalPanel(makeTriplePanel());
@@ -111,8 +106,8 @@ public class QueryPanel
 	    baseProperyTextField = propertyTextField;
 	    baseValueTextField   = valueTextField;
 	} else {
-	    leftButton = new JButton("-");
-	    leftButton.setText("-");
+	    leftButton = new JButton(main.minusSymbol);
+	    leftButton.setText(main.minusSymbol);
 	    leftButton.addMouseListener(new MouseAdapter() {
 		public void mouseClicked(MouseEvent e) {
 		    removeFromVerticalPanel(triplePanel);
@@ -124,6 +119,13 @@ public class QueryPanel
 		}});
 	}
 
+	// The latest created is always selected.
+	radioButton.setEnabled(true);
+	radioButton.setSelected(true);
+	selectedSubjectTextField  = subjectTextField;
+	selectedPropertyTextField = propertyTextField;
+	selectedValueTextField    = valueTextField;
+
 	radioButton.addMouseListener(new MouseAdapter() {
 	    public void mouseClicked(MouseEvent e) {
 		selectedSubjectTextField  = subjectTextField;
@@ -131,9 +133,6 @@ public class QueryPanel
 		selectedValueTextField    = valueTextField;
 	    }});
 		
-	subjectTextField.setText(main.qsubject);
-	propertyTextField.setText(main.qproperty);
-	valueTextField.setText(main.qvalue);
 	subjectJMenuBar  = 
 	    makeJMenuBar(main.qvalue,    valueTextField,
 			 main.qsubject,  subjectTextField,
@@ -199,7 +198,7 @@ public class QueryPanel
 
 	final JMenuBar menuBar = new JMenuBar();
 	final JMenu menu = new JMenu();
-	menu.setText("v");
+	menu.setText(main.littleV);
 	menuBar.add(menu);
 
 	JMenuItem menuItem;

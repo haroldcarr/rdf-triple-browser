@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 14:05:49 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 14:06:17 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -15,9 +15,9 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.openhc.trowser.gwt.common.Triple;
 import org.openhc.trowser.gwt.common.QueryRequest;
 import org.openhc.trowser.gwt.common.QueryResponse;
+import org.openhc.trowser.gwt.common.Triple;
 
 import org.openhc.trowser.swing.client.Main;
 
@@ -67,8 +67,6 @@ public class QueryManager
     public void doQuery(final List triples, final String setContentsOf)
     {
 	QueryRequest queryRequest = new QueryRequest(triples, setContentsOf);
-
-	// "this" so async request can call handleQueryResponse.
 	main.getServerCalls().doQuery(queryRequest);
     }
 
