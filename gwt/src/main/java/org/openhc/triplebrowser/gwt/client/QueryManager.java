@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 15:12:23 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 22:33:18 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -9,119 +9,26 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
-import com.google.gwt.user.client.Window; // *****
-
-import org.openhc.trowser.gwt.client.Main;
-import org.openhc.trowser.gwt.client.Test; // *****
 import org.openhc.trowser.gwt.common.QueryRequest;
 import org.openhc.trowser.gwt.common.QueryResponse;
 import org.openhc.trowser.gwt.common.Triple;
 
-public class MainPanel
+public class QueryManager
 {
-    private final Label responseProgressLabel;
-    private final SPVPanel subjectPanel;
-    private final SPVPanel propertyPanel;
-    private final SPVPanel valuePanel;
-    private final VerticalPanel subjectVerticalPanel;
-    private final VerticalPanel propertyVerticalPanel;
-    private final VerticalPanel valueVerticalPanel;
-    private final HorizontalPanel spvHorizontalPanel;
-    private final DockPanel dockPanel;
-    private final HTML copyright;
-    private final QueryPanel queryPanel;
-    private final Frame frameCurrentSelection;
+    private final Main main;
 
-    MainPanel() {
-
-	responseProgressLabel = new Label();
-
-	//
-	// QueryPanel created before SPV panels since needed.
-	//
-
-	queryPanel = new QueryPanel();
-
-	//
-	// Subject, Property, Value panels.
-	// Create now to get contents from server.
-	//
-
-	subjectPanel  = new SPVPanel(Main.subject);
-	propertyPanel = new SPVPanel(Main.property);
-	valuePanel    = new SPVPanel(Main.value);
-	subjectVerticalPanel  = subjectPanel.getPanel();
-	propertyVerticalPanel = propertyPanel.getPanel();
-	valueVerticalPanel    = valuePanel.getPanel();
-	spvHorizontalPanel = new HorizontalPanel();
-	spvHorizontalPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
-	spvHorizontalPanel.add(subjectVerticalPanel);
-	spvHorizontalPanel.add(propertyVerticalPanel);
-	spvHorizontalPanel.add(valueVerticalPanel);
-
-	//
-	// Main panel.
-	//    
-
-	// TOP
-
-	/*
-	RootPanel.get("slot0").add(DevTime.makeStatusWidgets());
-	*/
-
-	final HorizontalPanel topPanel = new HorizontalPanel();
-	topPanel.setStyleName("topPanel");
-	topPanel.setHorizontalAlignment(DockPanel.ALIGN_LEFT);
-
-	FileUploader fileUploader = new FileUploader();
-	topPanel.add(fileUploader.getFormPanel());
-
-	topPanel.add(responseProgressLabel);
-	RootPanel.get("top").add(topPanel);
-
-	// MIDDLE
-
-	dockPanel = new DockPanel();
-	RootPanel.get("middle").add(dockPanel);
-
-	dockPanel.setHorizontalAlignment(DockPanel.ALIGN_CENTER);
-
-	dockPanel.add(queryPanel.getPanel(), DockPanel.NORTH);
-
-	dockPanel.add(spvHorizontalPanel, DockPanel.CENTER);
-
-	// NOTE: - Seem to need to add most southern first.
-	copyright = new HTML(Main.copyright, true);
-	dockPanel.add(copyright, DockPanel.SOUTH);
-
-	frameCurrentSelection = new Frame("http://openhc.org/");
-	frameCurrentSelection.setPixelSize(980, 300); // REVISIT
-	dockPanel.add(frameCurrentSelection, DockPanel.SOUTH);
-
-	// Host HTML has elements with IDs are "slot1", "slot2".
-	// Better: Search for all elements with a particular CSS class 
-	// and replace them with widgets.
-
-	// XXX - test
-	//RootPanel.get("bottom").add(new Test().getWidget());
+    QueryManager(Main main)
+    {
+	this.main = main;
     }
 
-    public void doQuery(final boolean keepHistory)
+    public void doQuery()
     {
 	List triples = new ArrayList();
-	Iterator hpi = queryPanel.getPanel().iterator();
+	Iterator hpi = main.getQueryPanel().getPanel().iterator();
 	while (hpi.hasNext()) {
 	    HorizontalPanel triple = (HorizontalPanel) hpi.next();
 	    Iterator i = triple.iterator();
@@ -129,71 +36,64 @@ public class MainPanel
 	    i.next(); // skip Button;
 	    i.next(); // skip subject MenuBar
 	    final String subject  = 
-		getSPVQueryValue(Main.qsubject,  (TextBox) i.next());
+		getSPVQueryValue(main.qsubject,  (TextBox) i.next());
 	    i.next(); // skip property MenuBar
 	    final String property = 
-		getSPVQueryValue(Main.qproperty, (TextBox) i.next());
+		getSPVQueryValue(main.qproperty, (TextBox) i.next());
 	    i.next(); // skip value MenuBar
 	    final String value    = 
-		getSPVQueryValue(Main.qvalue,    (TextBox) i.next());
+		getSPVQueryValue(main.qvalue,    (TextBox) i.next());
 	    triples.add(new Triple(subject, property, value));
 	}
 
-	doQuery(keepHistory, triples,
-		Main.qsubject + Main.qproperty + Main.qvalue);
+	doQuery(triples, main.qsubject + main.qproperty + main.qvalue);
     }
 
-    public void doQuery(final boolean keepHistory,
-			final String subject, final String property,
+    public void doQuery(final String subject, final String property,
 			final String value, final String setContentsOf)
     {
 	List triples = new ArrayList();
 	triples.add(new Triple(subject, property, value));
-	doQuery(keepHistory, triples, setContentsOf);
+	doQuery(triples, setContentsOf);
     }
 
-    public void doQuery(final boolean keepHistory, final List triples,
-			final String setContentsOf)
+    public void doQuery(final List triples, final String setContentsOf)
     {
 	QueryRequest queryRequest = new QueryRequest(triples, setContentsOf);
 
 	// "this" so async request can call handleQueryResponse.
-	Main.getServerCalls().doQuery(this, queryRequest);
+	main.getServerCalls().doQuery(queryRequest);
     }
 
     public void handleQueryResponse(QueryResponse queryResponse)
     {
 	String setContentsOf = queryResponse.getSetContentsOf();
-	if (setContentsOf.indexOf(Main.qsubject)  != -1) {
-	    subjectPanel .setContents(queryResponse.getSubject());
+	if (setContentsOf.indexOf(main.qsubject)  != -1) {
+	    main.getSubjectPanel() .setContents(queryResponse.getSubject());
 	}
-	if (setContentsOf.indexOf(Main.qproperty) != -1) {
-	    propertyPanel.setContents(queryResponse.getProperty());
+	if (setContentsOf.indexOf(main.qproperty) != -1) {
+	    main.getPropertyPanel().setContents(queryResponse.getProperty());
 	}
-	if (setContentsOf.indexOf(Main.qvalue)    != -1) {
-	    valuePanel   .setContents(queryResponse.getValue());
+	if (setContentsOf.indexOf(main.qvalue)    != -1) {
+	    main.getValuePanel()   .setContents(queryResponse.getValue());
 	}
 	DevTime.getQueryStatusHTML().setHTML(queryResponse.getStatus());
     }
 
     public void spvLinkClicked(final String category, final String url)
     {
-	if (category.equals(Main.subject)) {
-	    Main.getMainPanel()
-		.getQueryPanel().getSubjectTextBox().setText(url);
-	} else if (category.equals(Main.property)) {
-	    Main.getMainPanel()
-		.getQueryPanel().getPropertyTextBox().setText(url);
-	} else if (category.equals(Main.value)) {
-            Main.getMainPanel()
-		.getQueryPanel().getValueTextBox().setText(url);
+	if (category.equals(main.subject)) {
+	    main.getQueryPanel().getSubjectTextBox().setText(url);
+	} else if (category.equals(main.property)) {
+	    main.getQueryPanel().getPropertyTextBox().setText(url);
+	} else if (category.equals(main.value)) {
+            main.getQueryPanel().getValueTextBox().setText(url);
 	} else {
 	    // TODO: FIX
-	    Main.getMainPanel()
-		.getQueryPanel().getSubjectTextBox().setText("ERROR");
+	    main.getQueryPanel().getSubjectTextBox().setText("ERROR");
 	    return;
 	}
-	doQuery(true);
+	doQuery();
     }
 
     //
@@ -208,15 +108,6 @@ public class MainPanel
 	}
 	return def;
     }
-
-    public Label      getResponseProgressLabel()
-        { return responseProgressLabel; }
-    public QueryPanel getQueryPanel()    { return queryPanel; }
-    public SPVPanel   getSubjectPanel()  { return subjectPanel; }
-    public SPVPanel   getPropertyPanel() { return propertyPanel; }
-    public SPVPanel   getValuePanel()    { return valuePanel; }
-    public Frame      getFrameCurrentSelection() 
-                                         { return frameCurrentSelection; }
 }
 
 // End of file.

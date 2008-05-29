@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 12:37:07 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 22:40:03 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -24,6 +24,7 @@ public class SPVPanel
 {
     String expandCollapseState;
 
+    private final Main main;
     private final String spvCategory;
     private List  contents;
     private final VerticalPanel verticalInsideScroll;
@@ -31,9 +32,11 @@ public class SPVPanel
     private final Button topButton;
     private final ScrollPanel scrollPanel;
 
-    public SPVPanel(final String spvCategory)
+    public SPVPanel(final String spvCategory, final Main main)
     {
-	this.expandCollapseState = Main.collapse;
+	this.main = main;
+
+	this.expandCollapseState = main.collapse;
 
 	this.spvCategory = spvCategory;
 
@@ -48,7 +51,7 @@ public class SPVPanel
 
 
 	scrollPanel = new ScrollPanel(verticalInsideScroll);
-	scrollPanel.setStyleName(Main.subjectPropertyValue);
+	scrollPanel.setStyleName(main.subjectPropertyValue);
 	topVerticalPanel.add(scrollPanel);
 	// End layout.
 	
@@ -69,13 +72,13 @@ public class SPVPanel
 
     private String getCurrentExpandCollapseState()
     {
-	return Main.getUtil()
+	return main.getUtil()
 	    .getExpandCollapseState(expandCollapseState, false);
     }
 
     private String getPendingExpandCollapseState()
     {
-	return Main.getUtil()
+	return main.getUtil()
 	    .getExpandCollapseState(expandCollapseState, true);
     }
 
@@ -87,7 +90,7 @@ public class SPVPanel
 	    String uri = (String) i.next();
 	    result.add(new SPVItem(spvCategory, 
 				   uri,
-				   Main.getUtil().substringAfterLastSlashOrFirstSharp(uri)));
+				   main.getUtil().substringAfterLastSlashOrFirstSharp(uri)));
 	}
 	return result;
     }
@@ -104,18 +107,17 @@ public class SPVPanel
 	    verticalInsideScroll.add(spvItem.getLabel());
 
 	    spvItem.getLabel().setText(
-                expandCollapseState.equals(Main.expand) ?
+                expandCollapseState.equals(main.expand) ?
 		spvItem.getExpandedName() :
 		spvItem.getCollapsedName());
 
 	    spvItem.getLabel().addClickListener(new ClickListener() {
 		public void onClick(final Widget sender) {
 		    // Causes doQuery so no history necessary here.
-		    Main.getMainPanel().spvLinkClicked(
+		    main.getQueryManager().spvLinkClicked(
 		        spvCategory, spvItem.getExpandedName());
 
-		    Main.getMainPanel().getFrameCurrentSelection()
-			.setUrl(spvItem.getExpandedName());
+		    main.getWebBrowser().setUrl(spvItem.getExpandedName());
 		}
 	    });
 	}
@@ -131,7 +133,7 @@ public class SPVPanel
 	    // are same size.
 	    final Object object = i.next();
 	    final SPVItem spvItem = (SPVItem) j.next();
-	    if (pendingExpandCollapseState.equals(Main.expand)) {
+	    if (pendingExpandCollapseState.equals(main.expand)) {
 		spvItem.getLabel().setText(spvItem.getExpandedName());
 	    } else {
 		spvItem.getLabel().setText(spvItem.getCollapsedName());

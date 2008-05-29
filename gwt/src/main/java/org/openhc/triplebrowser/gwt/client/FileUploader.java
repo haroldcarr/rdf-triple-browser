@@ -17,12 +17,15 @@ import org.openhc.trowser.gwt.common.Constants;
 
 public class FileUploader
 {
+    private final Main main;
     private final FormPanel uploadForm = new FormPanel();
     
     public FormPanel getFormPanel() { return uploadForm; }
 
-    public FileUploader()
+    public FileUploader(Main x)
     {
+	this.main = x;
+
 	final HorizontalPanel panel = new HorizontalPanel();
 
         uploadForm.setAction(GWT.getModuleBaseURL() + "/UploadFormHandler");
@@ -54,7 +57,7 @@ public class FileUploader
 	    public void onSubmitComplete(FormSubmitCompleteEvent event) {
 		Window.alert(event.getResults());
 		// TODO: reset query panel
-		Main.getMainPanel().doQuery(true);
+		main.getQueryManager().doQuery();
 	    }
 	});
     }

@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 25 (Sun) 18:55:00 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 22:39:30 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -23,13 +23,15 @@ import org.openhc.trowser.gwt.common.Triple;
 
 public class QueryPanel
 {
+    private final Main            main;
     private final VerticalPanel   verticalPanel;
     private       TextBox         selectedSubjectTextBox;
     private       TextBox         selectedPropertyTextBox;
     private       TextBox         selectedValueTextBox;
 
-    QueryPanel()
+    QueryPanel(Main main)
     {
+	this.main = main;
 	verticalPanel = new VerticalPanel();
 	verticalPanel.setStyleName("queryPanel");
 	verticalPanel.add(makeTriplePanel());	
@@ -86,26 +88,26 @@ public class QueryPanel
 	org.gwtwidgets.client.util.WindowUtils wu =
 	    new org.gwtwidgets.client.util.WindowUtils();
 	org.gwtwidgets.client.util.Location location = wu.getLocation();
-	String start = location.getParameter(Main.url);
+	String start = location.getParameter(main.url);
 	if (start == null) {
-	    subjectTextBox.setText(Main.qsubject);
+	    subjectTextBox.setText(main.qsubject);
 	} else {
 	    subjectTextBox.setText(start);
 	}
-	propertyTextBox.setText(Main.qproperty);
-	valueTextBox.setText(Main.qvalue);
+	propertyTextBox.setText(main.qproperty);
+	valueTextBox.setText(main.qvalue);
 	MenuBar subjectMenuBar  = 
-	    makeMenuBar(Main.qvalue,    valueTextBox,
-			Main.qsubject,  subjectTextBox,
-			Main.qproperty, propertyTextBox);
+	    makeMenuBar(main.qvalue,    valueTextBox,
+			main.qsubject,  subjectTextBox,
+			main.qproperty, propertyTextBox);
 	MenuBar propertyMenuBar =
-	    makeMenuBar(Main.qsubject,  subjectTextBox,
-			Main.qproperty, propertyTextBox,
-			Main.qvalue,    valueTextBox);
+	    makeMenuBar(main.qsubject,  subjectTextBox,
+			main.qproperty, propertyTextBox,
+			main.qvalue,    valueTextBox);
 	MenuBar valueMenuBar    =
-	    makeMenuBar(Main.qproperty, propertyTextBox,
-			Main.qvalue,    valueTextBox,
-			    Main.qsubject,  subjectTextBox);
+	    makeMenuBar(main.qproperty, propertyTextBox,
+			main.qvalue,    valueTextBox,
+			    main.qsubject,  subjectTextBox);
 
 	horizontalPanel.add(subjectMenuBar);
 	horizontalPanel.add(subjectTextBox);
@@ -122,10 +124,10 @@ public class QueryPanel
 		    triples.add(new Triple(selectedSubjectTextBox.getText(),
 					   selectedPropertyTextBox.getText(),
 					   selectedValueTextBox.getText()));
-		    Main.getServerCalls().assertFact(
+		    main.getServerCalls().assertFact(
 		        new QueryRequest(
 				   triples,
-			           Main.qsubject+Main.qproperty+Main.qvalue));
+			           main.qsubject+main.qproperty+main.qvalue));
 		}});
 
 	    horizontalPanel.add(saveButton);
@@ -144,7 +146,7 @@ public class QueryPanel
 	Command clearCommand = new Command() {
 	    public void execute() {
 		thisTextBox.setText(thisText);
-		Main.getMainPanel().doQuery(true);
+		main.getQueryManager().doQuery();
 	    }
 	};
 
@@ -153,7 +155,7 @@ public class QueryPanel
 		String text = thisTextBox.getText();
 		thisTextBox.setText(thisText);
 		leftTextBox.setText(text);
-		Main.getMainPanel().doQuery(true);
+		main.getQueryManager().doQuery();
 	    }
 	};
 
@@ -162,35 +164,34 @@ public class QueryPanel
 		String text = thisTextBox.getText();
 		thisTextBox.setText(thisText);
 		rightTextBox.setText(text);
-		Main.getMainPanel().doQuery(true);
+		main.getQueryManager().doQuery();
 	    }
 	};
 
 	/*
 	Command showMatchCommand = new Command() {
 	    public void execute() {
-		Main.getMainPanel().doQuery(true);
+		main.getQueryManager().doQuery();
 	    }
 	};
 	*/
 
 	Command showAllCommand = new Command() {
 	    public void execute() {
-		Main.getMainPanel()
-		    .doQuery(true,
-			     Main.qsubject, Main.qproperty,
-			     Main.qvalue, thisText);
+		main.getQueryManager()
+		    .doQuery(main.qsubject, main.qproperty,
+			     main.qvalue, thisText);
 	    }
 	};
 
 	MenuBar inside = new MenuBar(true);
-	inside.addItem(Main.clear, clearCommand);
-	//inside.addItem(Main.showMatch, showMatchCommand);
-	inside.addItem(Main.showAll, showAllCommand);
-	inside.addItem(Main.shiftRight, moveRightCommand);
-	inside.addItem(Main.shiftLeft, moveLeftCommand);
+	inside.addItem(main.clear, clearCommand);
+	//inside.addItem(main.showMatch, showMatchCommand);
+	inside.addItem(main.showAll, showAllCommand);
+	inside.addItem(main.shiftRight, moveRightCommand);
+	inside.addItem(main.shiftLeft, moveLeftCommand);
 	MenuBar outside = new MenuBar();
-	outside.addItem("v" /*Main.asteriskSymbol*/, inside);
+	outside.addItem("v" /*main.asteriskSymbol*/, inside);
 	//outside.setAutoOpen(true);
 	return outside;
     }

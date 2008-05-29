@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 26 (Mon) 09:05:50 by Harold Carr.
+// Last Modified : 2008 May 28 (Wed) 22:41:20 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -25,15 +25,18 @@ import org.openhc.trowser.gwt.common.QueryResponse;
 
 public class ServerCalls
 {
-    private ServiceAsync serviceAsync;
+    private final Main         main;
+    private final ServiceAsync serviceAsync;
 
-    public ServerCalls()
+    public ServerCalls(Main main)
     {
+	this.main = main;
+
 	serviceAsync = (ServiceAsync) GWT.create(Service.class);
 	ServiceDefTarget serviceDefTarget = (ServiceDefTarget) serviceAsync;
 	serviceDefTarget
 	    .setServiceEntryPoint(GWT.getModuleBaseURL() 
-				  + Main.serviceEntryPoint);
+				  + main.serviceEntryPoint);
     }
 
     public void openFile(final String filename)
@@ -43,9 +46,9 @@ public class ServerCalls
 	    new AsyncCallback() {
 		public void onSuccess(Object result) {
 		    Window.alert(".openFile: success: " + result);
-		    //Main.getQueryPanel().reset();  // ***** TODO
-		    Main.getMainPanel().doQuery(true);
-		    //Main.makeMainPanel();
+		    //main.getQueryPanel().reset();  // ***** TODO
+		    main.getQueryManager().doQuery();
+		    //main.makeMainPanel();
 		    //DevTime.getJenaStatusHTML().setHTML(result.toString());
 		}
 		public void onFailure(Throwable caught) {
@@ -54,23 +57,21 @@ public class ServerCalls
 	    });
     }
 
-    public void doQuery(final MainPanel mainPanel,
-			final QueryRequest queryRequest)
+    public void doQuery(final QueryRequest queryRequest)
     {
-	final Label responseProgressLabel = 
-	    Main.getMainPanel().getResponseProgressLabel();
-	responseProgressLabel.setText("LOADING...");
+	main.getResponseProgressLabel().setText("LOADING...");
 
 	serviceAsync.doQuery(
             queryRequest,
 	    new AsyncCallback() {
 		public void onSuccess(Object x) {
-		    responseProgressLabel.setText("");
-		    mainPanel.handleQueryResponse((QueryResponse) x);
+		    main.getResponseProgressLabel().setText("");
+		    main.getQueryManager()
+			.handleQueryResponse((QueryResponse) x);
 		}
 
 		public void onFailure(Throwable caught) {
-		    responseProgressLabel.setText("");
+		    main.getResponseProgressLabel().setText("");
 		    Window.alert(".doQuery: " + caught);
 		}
 	    });
@@ -78,20 +79,18 @@ public class ServerCalls
 
     public void assertFact(final QueryRequest queryRequest)
     {
-	final Label responseProgressLabel = 
-	    Main.getMainPanel().getResponseProgressLabel();
-	responseProgressLabel.setText("LOADING...");
-
+	main.getResponseProgressLabel().setText("LOADING...");
+	
 	serviceAsync.assertFact(
             queryRequest,
 	    new AsyncCallback() {
 		public void onSuccess(Object x) {
-		    responseProgressLabel.setText("");
-		    Main.getMainPanel().handleQueryResponse((QueryResponse) x);
+		    main.getResponseProgressLabel().setText("");
+		    main.getQueryManager().handleQueryResponse((QueryResponse) x);
 		}
 
 		public void onFailure(Throwable caught) {
-		    responseProgressLabel.setText("");
+		    main.getResponseProgressLabel().setText("");
 		    Window.alert(".assertFact: " + caught);
 		}
 	    });
