@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 14:07:02 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 10:35:33 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -41,11 +41,6 @@ public class SPVPanel
     public SPVPanel(Main main)
     {
 	this.main = main;
-
-	//
-	// Subject, Property, Value panels.
-	// Create now to get contents from server.
-	//
 
 	subjectPanel  = new SPVList(main.subject, main);
 	propertyPanel = new SPVList(main.property, main);
