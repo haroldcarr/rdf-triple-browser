@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 22:39:00 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 10:40:57 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -44,16 +44,10 @@ public class Main
 
     // These should be final
     private /*final*/ Label           responseProgressLabel;
-    private /*final*/ SPVPanel        subjectPanel;
-    private /*final*/ SPVPanel        propertyPanel;
-    private /*final*/ SPVPanel        valuePanel;
-    private /*final*/ VerticalPanel   subjectVerticalPanel;
-    private /*final*/ VerticalPanel   propertyVerticalPanel;
-    private /*final*/ VerticalPanel   valueVerticalPanel;
-    private /*final*/ HorizontalPanel spvHorizontalPanel;
     private /*final*/ DockPanel       dockPanel;
     private /*final*/ HTML            copyrightHTML;
     private /*final*/                 QueryPanel queryPanel;
+    private /*final*/                 SPVPanel spvPanel;
     private /*final*/ Frame           webBrowser;
 
     /**
@@ -67,31 +61,8 @@ public class Main
 
 	responseProgressLabel = new Label();
 
-	//
-	// QueryPanel created before SPV panels since needed.
-	//
-
-	queryPanel = new QueryPanel(this);
-
-	//
-	// Subject, Property, Value panels.
-	//
-
-	subjectPanel          = new SPVPanel(this.subject, this);
-	propertyPanel         = new SPVPanel(this.property, this);
-	valuePanel            = new SPVPanel(this.value, this);
-	subjectVerticalPanel  = subjectPanel.getPanel();
-	propertyVerticalPanel = propertyPanel.getPanel();
-	valueVerticalPanel    = valuePanel.getPanel();
-	spvHorizontalPanel    = new HorizontalPanel();
-	spvHorizontalPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
-	spvHorizontalPanel.add(subjectVerticalPanel);
-	spvHorizontalPanel.add(propertyVerticalPanel);
-	spvHorizontalPanel.add(valueVerticalPanel);
-
-	//
-	// Main panel.
-	//    
+	queryPanel = new QueryPanel(this); 
+	spvPanel   = new SPVPanel(this);
 
 	// TOP
 
@@ -118,7 +89,7 @@ public class Main
 
 	dockPanel.add(queryPanel.getPanel(), DockPanel.NORTH);
 
-	dockPanel.add(spvHorizontalPanel, DockPanel.CENTER);
+	dockPanel.add(spvPanel.getPanel(), DockPanel.CENTER);
 
 	// NOTE: - Seem to need to add most southern first.
 	copyrightHTML = new HTML(this.copyright, true);
@@ -144,9 +115,7 @@ public class Main
     public Label      getResponseProgressLabel()
                                          { return responseProgressLabel; }
     public QueryPanel getQueryPanel()    { return queryPanel; }
-    public SPVPanel   getSubjectPanel()  { return subjectPanel; }
-    public SPVPanel   getPropertyPanel() { return propertyPanel; }
-    public SPVPanel   getValuePanel()    { return valuePanel; }
+    public SPVPanel   getSPVPanel()      { return spvPanel; }
     public Frame      getWebBrowser()    { return webBrowser; }
 
 }

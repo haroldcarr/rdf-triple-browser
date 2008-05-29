@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 22:33:18 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 10:39:32 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -69,13 +69,16 @@ public class QueryManager
     {
 	String setContentsOf = queryResponse.getSetContentsOf();
 	if (setContentsOf.indexOf(main.qsubject)  != -1) {
-	    main.getSubjectPanel() .setContents(queryResponse.getSubject());
+	    main.getSPVPanel().getSubjectPanel()
+		.setContents(queryResponse.getSubject());
 	}
 	if (setContentsOf.indexOf(main.qproperty) != -1) {
-	    main.getPropertyPanel().setContents(queryResponse.getProperty());
+	    main.getSPVPanel().getPropertyPanel()
+		.setContents(queryResponse.getProperty());
 	}
 	if (setContentsOf.indexOf(main.qvalue)    != -1) {
-	    main.getValuePanel()   .setContents(queryResponse.getValue());
+	    main.getSPVPanel().getValuePanel()
+		.setContents(queryResponse.getValue());
 	}
 	DevTime.getQueryStatusHTML().setHTML(queryResponse.getStatus());
     }

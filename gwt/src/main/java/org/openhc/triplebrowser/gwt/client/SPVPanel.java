@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 22:40:03 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 10:46:30 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -12,6 +12,7 @@ import java.util.List;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Frame;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -22,17 +23,51 @@ import org.openhc.trowser.gwt.common.Util;
 
 public class SPVPanel
 {
+    private final Main            main;
+    private final SPVList         subjectPanel;
+    private final SPVList         propertyPanel;
+    private final SPVList         valuePanel;
+    private final VerticalPanel   subjectVerticalPanel;
+    private final VerticalPanel   propertyVerticalPanel;
+    private final VerticalPanel   valueVerticalPanel;
+    private final HorizontalPanel spvHorizontalPanel;
+
+    public SPVPanel(Main main)
+    {
+	this.main = main;
+
+	subjectPanel          = new SPVList(main.subject, main);
+	propertyPanel         = new SPVList(main.property, main);
+	valuePanel            = new SPVList(main.value, main);
+	subjectVerticalPanel  = subjectPanel.getPanel();
+	propertyVerticalPanel = propertyPanel.getPanel();
+	valueVerticalPanel    = valuePanel.getPanel();
+	spvHorizontalPanel    = new HorizontalPanel();
+	spvHorizontalPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
+	spvHorizontalPanel.add(subjectVerticalPanel);
+	spvHorizontalPanel.add(propertyVerticalPanel);
+	spvHorizontalPanel.add(valueVerticalPanel);
+    }
+
+    public HorizontalPanel getPanel()         { return spvHorizontalPanel; }
+    public SPVList         getSubjectPanel()  { return subjectPanel; }
+    public SPVList         getPropertyPanel() { return propertyPanel; }
+    public SPVList         getValuePanel()    { return valuePanel; }
+}
+
+class SPVList
+{
     String expandCollapseState;
 
     private final Main main;
     private final String spvCategory;
-    private List  contents;
+    private       List  contents;
     private final VerticalPanel verticalInsideScroll;
     private final VerticalPanel topVerticalPanel;
     private final Button topButton;
     private final ScrollPanel scrollPanel;
 
-    public SPVPanel(final String spvCategory, final Main main)
+    public SPVList(final String spvCategory, final Main main)
     {
 	this.main = main;
 
