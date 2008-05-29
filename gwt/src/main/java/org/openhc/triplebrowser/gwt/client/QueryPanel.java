@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 22:39:30 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 14:41:13 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -24,67 +24,40 @@ import org.openhc.trowser.gwt.common.Triple;
 public class QueryPanel
 {
     private final Main            main;
-    private final VerticalPanel   verticalPanel;
+
     private       TextBox         selectedSubjectTextBox;
     private       TextBox         selectedPropertyTextBox;
     private       TextBox         selectedValueTextBox;
 
+    private final VerticalPanel   verticalPanel;
+
     QueryPanel(Main main)
     {
 	this.main = main;
+
 	verticalPanel = new VerticalPanel();
 	verticalPanel.setStyleName("queryPanel");
 	verticalPanel.add(makeTriplePanel());	
     }
 
-    TextBox         getSubjectTextBox()  { return selectedSubjectTextBox; }
-    TextBox         getPropertyTextBox() { return selectedPropertyTextBox; }
-    TextBox         getValueTextBox()    { return selectedValueTextBox; }
-    VerticalPanel   getPanel()           { return verticalPanel; }
+    TextBox       getSubjectTextBox()  { return selectedSubjectTextBox; }
+    TextBox       getPropertyTextBox() { return selectedPropertyTextBox; }
+    TextBox       getValueTextBox()    { return selectedValueTextBox; }
+    VerticalPanel getPanel()           { return verticalPanel; }
 
     private HorizontalPanel makeTriplePanel()
     {
-	final HorizontalPanel horizontalPanel = new HorizontalPanel();
+	final HorizontalPanel triplePanel = new HorizontalPanel();
+	final Button          leftButton;
+	final RadioButton     radioButton = new RadioButton("current-triple");
+	final MenuBar         subjectMenuBar;
+	final TextBox         subjectTextBox  = new TextBox();
+	final MenuBar         propertyMenuBar;
+	final TextBox         propertyTextBox = new TextBox();
+	final MenuBar         valueMenuBar;
+	final TextBox         valueTextBox    = new TextBox();
 
-	final RadioButton radioButton = new RadioButton("current-triple");
-	horizontalPanel.add(radioButton);
-
-
-	final Button leftButton;
-	if (!verticalPanel.iterator().hasNext()) {
-	    leftButton = new Button("+");
-	    leftButton.addClickListener(new ClickListener() {
-		public void onClick(Widget sender) {
-		    verticalPanel.add(makeTriplePanel());
-		}});
-	} else {
-	    leftButton = new Button("-");
-	    leftButton.addClickListener(new ClickListener() {
-		public void onClick(Widget sender) {
-		    verticalPanel.remove(horizontalPanel);
-		}});
-	}
-	horizontalPanel.add(leftButton);	
-
-
-	final TextBox subjectTextBox  = new TextBox();
-	final TextBox propertyTextBox = new TextBox();
-	final TextBox valueTextBox    = new TextBox();
-
-	if (!verticalPanel.iterator().hasNext()) {
-	    radioButton.setEnabled(true);
-	    radioButton.setChecked(true);
-	    selectedSubjectTextBox  = subjectTextBox;
-	    selectedPropertyTextBox = propertyTextBox;
-	    selectedValueTextBox    = valueTextBox;
-	}
-	radioButton.addClickListener(new ClickListener() {
-	    public void onClick(Widget sender) {
-		selectedSubjectTextBox  = subjectTextBox;
-		selectedPropertyTextBox = propertyTextBox;
-		selectedValueTextBox    = valueTextBox;
-	    }});
-		
+	// Looking to future when used like bookmarker.
 	org.gwtwidgets.client.util.WindowUtils wu =
 	    new org.gwtwidgets.client.util.WindowUtils();
 	org.gwtwidgets.client.util.Location location = wu.getLocation();
@@ -96,25 +69,56 @@ public class QueryPanel
 	}
 	propertyTextBox.setText(main.qproperty);
 	valueTextBox.setText(main.qvalue);
-	MenuBar subjectMenuBar  = 
+
+	if (!verticalPanel.iterator().hasNext()) {
+	    leftButton = new Button(main.plusSymbol);
+	    leftButton.addClickListener(new ClickListener() {
+		public void onClick(Widget sender) {
+		    verticalPanel.add(makeTriplePanel());
+		}});
+	} else {
+	    leftButton = new Button(main.minusSymbol);
+	    leftButton.addClickListener(new ClickListener() {
+		public void onClick(Widget sender) {
+		    verticalPanel.remove(triplePanel);
+		}});
+	}
+
+	// The latest created is always selected.
+	radioButton.setEnabled(true);
+	radioButton.setChecked(true);
+	selectedSubjectTextBox  = subjectTextBox;
+	selectedPropertyTextBox = propertyTextBox;
+	selectedValueTextBox    = valueTextBox;
+
+	radioButton.addClickListener(new ClickListener() {
+	    public void onClick(Widget sender) {
+		selectedSubjectTextBox  = subjectTextBox;
+		selectedPropertyTextBox = propertyTextBox;
+		selectedValueTextBox    = valueTextBox;
+	    }});
+
+	subjectMenuBar  = 
 	    makeMenuBar(main.qvalue,    valueTextBox,
 			main.qsubject,  subjectTextBox,
 			main.qproperty, propertyTextBox);
-	MenuBar propertyMenuBar =
+	propertyMenuBar =
 	    makeMenuBar(main.qsubject,  subjectTextBox,
 			main.qproperty, propertyTextBox,
 			main.qvalue,    valueTextBox);
-	MenuBar valueMenuBar    =
+	valueMenuBar    =
 	    makeMenuBar(main.qproperty, propertyTextBox,
 			main.qvalue,    valueTextBox,
 			    main.qsubject,  subjectTextBox);
 
-	horizontalPanel.add(subjectMenuBar);
-	horizontalPanel.add(subjectTextBox);
-	horizontalPanel.add(propertyMenuBar);
-	horizontalPanel.add(propertyTextBox);
-	horizontalPanel.add(valueMenuBar);
-	horizontalPanel.add(valueTextBox);
+	triplePanel.add(leftButton);	
+	triplePanel.add(radioButton);
+	triplePanel.add(subjectMenuBar);
+	triplePanel.add(subjectTextBox);
+	triplePanel.add(propertyMenuBar);
+	triplePanel.add(propertyTextBox);
+	triplePanel.add(valueMenuBar);
+	triplePanel.add(valueTextBox);
 
 	if (!verticalPanel.iterator().hasNext()) {
 	    Button saveButton = new Button("s");
@@ -130,10 +134,10 @@ public class QueryPanel
 			           main.qsubject+main.qproperty+main.qvalue));
 		}});
 
-	    horizontalPanel.add(saveButton);
+	    triplePanel.add(saveButton);
 	}
 
-	return horizontalPanel;
+	return triplePanel;
     }
 
     private MenuBar makeMenuBar(final String  leftText,
@@ -147,6 +151,14 @@ public class QueryPanel
 	    public void execute() {
 		thisTextBox.setText(thisText);
 		main.getQueryManager().doQuery();
+	    }
+	};
+
+	Command showAllCommand = new Command() {
+	    public void execute() {
+		main.getQueryManager()
+		    .doQuery(main.qsubject, main.qproperty,
+			     main.qvalue, thisText);
 	    }
 	};
 
@@ -168,31 +180,13 @@ public class QueryPanel
 	    }
 	};
 
-	/*
-	Command showMatchCommand = new Command() {
-	    public void execute() {
-		main.getQueryManager().doQuery();
-	    }
-	};
-	*/
-
-	Command showAllCommand = new Command() {
-	    public void execute() {
-		main.getQueryManager()
-		    .doQuery(main.qsubject, main.qproperty,
-			     main.qvalue, thisText);
-	    }
-	};
-
 	MenuBar inside = new MenuBar(true);
-	inside.addItem(main.clear, clearCommand);
-	//inside.addItem(main.showMatch, showMatchCommand);
-	inside.addItem(main.showAll, showAllCommand);
+	inside.addItem(main.clear,      clearCommand);
+	inside.addItem(main.showAll,    showAllCommand);
 	inside.addItem(main.shiftRight, moveRightCommand);
-	inside.addItem(main.shiftLeft, moveLeftCommand);
+	inside.addItem(main.shiftLeft,  moveLeftCommand);
 	MenuBar outside = new MenuBar();
-	outside.addItem("v" /*main.asteriskSymbol*/, inside);
-	//outside.setAutoOpen(true);
+	outside.addItem(main.littleV, inside);
 	return outside;
     }
 }

@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 10:46:30 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 15:02:56 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -27,9 +27,6 @@ public class SPVPanel
     private final SPVList         subjectPanel;
     private final SPVList         propertyPanel;
     private final SPVList         valuePanel;
-    private final VerticalPanel   subjectVerticalPanel;
-    private final VerticalPanel   propertyVerticalPanel;
-    private final VerticalPanel   valueVerticalPanel;
     private final HorizontalPanel spvHorizontalPanel;
 
     public SPVPanel(Main main)
@@ -39,14 +36,12 @@ public class SPVPanel
 	subjectPanel          = new SPVList(main.subject, main);
 	propertyPanel         = new SPVList(main.property, main);
 	valuePanel            = new SPVList(main.value, main);
-	subjectVerticalPanel  = subjectPanel.getPanel();
-	propertyVerticalPanel = propertyPanel.getPanel();
-	valueVerticalPanel    = valuePanel.getPanel();
 	spvHorizontalPanel    = new HorizontalPanel();
+
 	spvHorizontalPanel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
-	spvHorizontalPanel.add(subjectVerticalPanel);
-	spvHorizontalPanel.add(propertyVerticalPanel);
-	spvHorizontalPanel.add(valueVerticalPanel);
+	spvHorizontalPanel.add(subjectPanel.getPanel());
+	spvHorizontalPanel.add(propertyPanel.getPanel());
+	spvHorizontalPanel.add(valuePanel.getPanel());
     }
 
     public HorizontalPanel getPanel()         { return spvHorizontalPanel; }
@@ -55,46 +50,44 @@ public class SPVPanel
     public SPVList         getValuePanel()    { return valuePanel; }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+
 class SPVList
 {
-    String expandCollapseState;
+    private       String        expandCollapseState;
 
-    private final Main main;
-    private final String spvCategory;
-    private       List  contents;
+    private final Main          main;
+    private final String        spvCategory;
+    private       List          contents;
     private final VerticalPanel verticalInsideScroll;
     private final VerticalPanel topVerticalPanel;
-    private final Button topButton;
-    private final ScrollPanel scrollPanel;
+    private final Button        topButton;
+    private final ScrollPanel   scrollPanel;
 
     public SPVList(final String spvCategory, final Main main)
     {
 	this.main = main;
-
 	this.expandCollapseState = main.collapse;
-
 	this.spvCategory = spvCategory;
-
-	// Begin layout.
-	topVerticalPanel = new VerticalPanel();
-	topVerticalPanel.setHorizontalAlignment(VerticalPanel.ALIGN_LEFT);
 	topButton = new Button(getPendingExpandCollapseState());
-	topVerticalPanel.add(topButton);
+
 	// TODO: Would like a scroll or a cloud
 	verticalInsideScroll = new VerticalPanel();
-
-
-
 	scrollPanel = new ScrollPanel(verticalInsideScroll);
 	scrollPanel.setStyleName(main.subjectPropertyValue);
-	topVerticalPanel.add(scrollPanel);
-	// End layout.
-	
+
 	topButton.addClickListener(new ClickListener() {
 	    public void onClick(Widget sender) {
 		expandOrCollapseSPVClick();
 	    }
 	});
+
+	// Begin layout.
+	topVerticalPanel = new VerticalPanel();
+	topVerticalPanel.setHorizontalAlignment(VerticalPanel.ALIGN_LEFT);
+	topVerticalPanel.add(topButton);
+	topVerticalPanel.add(scrollPanel);
+	// End layout.
     }
 
     public void expandOrCollapseSPVClick()
@@ -152,7 +145,7 @@ class SPVList
 		    main.getQueryManager().spvLinkClicked(
 		        spvCategory, spvItem.getExpandedName());
 
-		    main.getWebBrowser().setUrl(spvItem.getExpandedName());
+		    main.getBrowserPanel().setUrl(spvItem.getExpandedName());
 		}
 	    });
 	}

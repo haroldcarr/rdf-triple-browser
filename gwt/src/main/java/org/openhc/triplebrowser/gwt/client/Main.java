@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 10:40:57 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 14:02:53 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -9,26 +9,17 @@ import java.util.Iterator;
 
 import com.google.gwt.core.client.EntryPoint;
 
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
-import com.google.gwt.user.client.Window; // *****
-
-import org.openhc.trowser.gwt.client.Main;
 import org.openhc.trowser.gwt.client.Test; // *****
 
 import org.openhc.trowser.gwt.common.Constants;
 import org.openhc.trowser.gwt.common.Util;
-       
 import org.openhc.trowser.gwt.client.QueryManager;
 import org.openhc.trowser.gwt.client.ServerCalls;
 
@@ -38,17 +29,17 @@ public class Main
 	EntryPoint // Entry point classes define onModuleLoad()
 {
     // These should be final.
-    private /*final*/ QueryManager   queryManager;
-    private /*final*/ ServerCalls    serverCalls;
-    private /*final*/ Util           util;
+    private /*final*/ Util         util;
+    private /*final*/ QueryManager queryManager;
+    private /*final*/ ServerCalls  serverCalls;
 
-    // These should be final
-    private /*final*/ Label           responseProgressLabel;
-    private /*final*/ DockPanel       dockPanel;
-    private /*final*/ HTML            copyrightHTML;
-    private /*final*/                 QueryPanel queryPanel;
-    private /*final*/                 SPVPanel spvPanel;
-    private /*final*/ Frame           webBrowser;
+    private /*final*/              QueryPanel queryPanel;
+    private /*final*/              SPVPanel spvPanel;
+    private /*final*/ Frame        webBrowser;
+
+    private /*final*/ Label        responseProgressLabel;
+    private /*final*/ DockPanel    dockPanel;
+    private /*final*/ HTML         copyrightHTML;
 
     /**
      * This is the entry point method.
@@ -107,17 +98,14 @@ public class Main
 	//RootPanel.get("bottom").add(new Test().getWidget());
     }
 
-    public QueryManager   getQueryManager() { return queryManager; }
-    public ServerCalls    getServerCalls()  { return serverCalls; }
-    public Util           getUtil()         { return util; }
-
-
-    public Label      getResponseProgressLabel()
-                                         { return responseProgressLabel; }
-    public QueryPanel getQueryPanel()    { return queryPanel; }
-    public SPVPanel   getSPVPanel()      { return spvPanel; }
-    public Frame      getWebBrowser()    { return webBrowser; }
-
+    public QueryManager getQueryManager() { return queryManager; }
+    public QueryPanel   getQueryPanel()   { return queryPanel; }
+    public SPVPanel     getSPVPanel()     { return spvPanel; }
+    public Frame        getBrowserPanel() { return webBrowser; }
+    public ServerCalls  getServerCalls()  { return serverCalls; }
+    public Util         getUtil()         { return util; }
+    public Label        getResponseProgressLabel()
+                                          { return responseProgressLabel; }
 }
 
 // End of file.

@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 22:41:20 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 15:17:47 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -45,7 +45,7 @@ public class ServerCalls
 	    filename,
 	    new AsyncCallback() {
 		public void onSuccess(Object result) {
-		    Window.alert(".openFile: success: " + result);
+		    //Window.alert(".openFile: success: " + result);
 		    //main.getQueryPanel().reset();  // ***** TODO
 		    main.getQueryManager().doQuery();
 		    //main.makeMainPanel();
@@ -59,19 +59,19 @@ public class ServerCalls
 
     public void doQuery(final QueryRequest queryRequest)
     {
-	main.getResponseProgressLabel().setText("LOADING...");
+	main.getResponseProgressLabel().setText(main.querying);
 
 	serviceAsync.doQuery(
             queryRequest,
 	    new AsyncCallback() {
 		public void onSuccess(Object x) {
-		    main.getResponseProgressLabel().setText("");
+		    main.getResponseProgressLabel().setText(main.emptyString);
 		    main.getQueryManager()
 			.handleQueryResponse((QueryResponse) x);
 		}
 
 		public void onFailure(Throwable caught) {
-		    main.getResponseProgressLabel().setText("");
+		    main.getResponseProgressLabel().setText(main.emptyString);
 		    Window.alert(".doQuery: " + caught);
 		}
 	    });
@@ -79,18 +79,18 @@ public class ServerCalls
 
     public void assertFact(final QueryRequest queryRequest)
     {
-	main.getResponseProgressLabel().setText("LOADING...");
+	main.getResponseProgressLabel().setText(main.querying);
 	
 	serviceAsync.assertFact(
             queryRequest,
 	    new AsyncCallback() {
 		public void onSuccess(Object x) {
-		    main.getResponseProgressLabel().setText("");
+		    main.getResponseProgressLabel().setText(main.emptyString);
 		    main.getQueryManager().handleQueryResponse((QueryResponse) x);
 		}
 
 		public void onFailure(Throwable caught) {
-		    main.getResponseProgressLabel().setText("");
+		    main.getResponseProgressLabel().setText(main.emptyString);
 		    Window.alert(".assertFact: " + caught);
 		}
 	    });

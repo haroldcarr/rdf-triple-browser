@@ -1,3 +1,10 @@
+//
+// Created       : 2008 May 26 (Mon) 13:01:58 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 15:16:36 by Harold Carr.
+// 
+// from http://home.izforge.com/index.php/2006/10/29/295-handling-file-uploads-with-the-google-web-toolkit
+//
+
 package org.openhc.trowser.gwt.client;
 
 import com.google.gwt.core.client.GWT;
@@ -28,7 +35,7 @@ public class FileUploader
 
 	final HorizontalPanel panel = new HorizontalPanel();
 
-        uploadForm.setAction(GWT.getModuleBaseURL() + "/UploadFormHandler");
+        uploadForm.setAction(GWT.getModuleBaseURL() + main.uploadFormHandler);
         uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
         uploadForm.setMethod(FormPanel.METHOD_POST);
 
@@ -51,11 +58,13 @@ public class FileUploader
 		    Window.alert("nothing selected");
 		    event.setCancelled(true);
 		} else {
-		    Window.alert(fileUpload.getFilename());
+		    //Window.alert(fileUpload.getFilename());
+		    main.getResponseProgressLabel().setText(main.uploading);
 		}
 	    }
 	    public void onSubmitComplete(FormSubmitCompleteEvent event) {
-		Window.alert(event.getResults());
+		main.getResponseProgressLabel().setText(main.emptyString);
+		//Window.alert(event.getResults());
 		// TODO: reset query panel
 		main.getQueryManager().doQuery();
 	    }

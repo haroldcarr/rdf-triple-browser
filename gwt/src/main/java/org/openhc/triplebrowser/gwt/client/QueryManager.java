@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 10:39:32 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 14:07:46 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -60,8 +60,6 @@ public class QueryManager
     public void doQuery(final List triples, final String setContentsOf)
     {
 	QueryRequest queryRequest = new QueryRequest(triples, setContentsOf);
-
-	// "this" so async request can call handleQueryResponse.
 	main.getServerCalls().doQuery(queryRequest);
     }
 
@@ -80,7 +78,6 @@ public class QueryManager
 	    main.getSPVPanel().getValuePanel()
 		.setContents(queryResponse.getValue());
 	}
-	DevTime.getQueryStatusHTML().setHTML(queryResponse.getStatus());
     }
 
     public void spvLinkClicked(final String category, final String url)
