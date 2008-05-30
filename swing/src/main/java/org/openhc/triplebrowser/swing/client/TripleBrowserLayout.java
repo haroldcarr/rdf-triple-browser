@@ -226,17 +226,16 @@ public class TrowserLayout
 	GroupLayout.SequentialGroup sequentialGroup =
 	    queryPanelLayout.createSequentialGroup();
 
+	// Redo existing components.
 	Component[] component = queryPanel.getComponents();
-	System.out.println("---------------------------------");
 	for (int i = 0; i < component.length; i++) {
-	    System.out.println("Adding: " + component[i].getName());
 	    parallelGroup.add(component[i], GroupLayout.DEFAULT_SIZE,
 			      601, Short.MAX_VALUE);
 	    sequentialGroup.add(component[i], GroupLayout.DEFAULT_SIZE,
 				25, Short.MAX_VALUE);
 	}
+	// Add the new one.
 	if (jPanel1 != null) {
-	    System.out.println("Adding: " + jPanel1.getName());
 	    parallelGroup.add(jPanel1, GroupLayout.DEFAULT_SIZE,
 			      601, Short.MAX_VALUE);
 	    sequentialGroup.add(jPanel1, GroupLayout.DEFAULT_SIZE,
