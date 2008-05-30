@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 15:17:47 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 19:31:22 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -25,8 +25,8 @@ import org.openhc.trowser.gwt.common.QueryResponse;
 
 public class ServerCalls
 {
-    private final Main         main;
-    private final ServiceAsync serviceAsync;
+    protected final Main         main;
+    private   final ServiceAsync serviceAsync;
 
     public ServerCalls(Main main)
     {
