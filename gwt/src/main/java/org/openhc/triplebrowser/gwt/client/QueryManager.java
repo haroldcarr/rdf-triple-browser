@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 14:07:46 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 19:20:10 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -32,8 +32,8 @@ public class QueryManager
 	while (hpi.hasNext()) {
 	    HorizontalPanel triple = (HorizontalPanel) hpi.next();
 	    Iterator i = triple.iterator();
-	    i.next(); // skip RadioButton;
 	    i.next(); // skip Button;
+	    i.next(); // skip RadioButton;
 	    i.next(); // skip subject MenuBar
 	    final String subject  = 
 		getSPVQueryValue(main.qsubject,  (TextBox) i.next());
