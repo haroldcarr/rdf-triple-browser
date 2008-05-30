@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 14:06:17 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 19:23:45 by Harold Carr.
 //
 
 package org.openhc.trowser.swing.client;
@@ -39,8 +39,8 @@ public class QueryManager
 	while (hpi.hasNext()) {
 	    JPanel triple = (JPanel) hpi.next();
 	    Iterator i = Arrays.asList(triple.getComponents()).iterator();
-	    i.next(); // skip RadioButton;
 	    i.next(); // skip Button;
+	    i.next(); // skip RadioButton;
 	    i.next(); // skip subject MenuBar
 	    final String subject  = 
 		getSPVQueryValue(main.qsubject,  (JTextField) i.next());
