@@ -1,6 +1,6 @@
 //
 // Created       : 2008 May 26 (Mon) 13:01:58 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 15:16:36 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 18:48:25 by Harold Carr.
 // 
 // from http://home.izforge.com/index.php/2006/10/29/295-handling-file-uploads-with-the-google-web-toolkit
 //
@@ -24,8 +24,8 @@ import org.openhc.trowser.gwt.common.Constants;
 
 public class FileUploader
 {
-    private final Main main;
-    private final FormPanel uploadForm = new FormPanel();
+    protected final Main main;
+    private   final FormPanel uploadForm = new FormPanel();
     
     public FormPanel getFormPanel() { return uploadForm; }
 
