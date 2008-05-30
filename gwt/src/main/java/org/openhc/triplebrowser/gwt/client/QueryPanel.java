@@ -1,11 +1,12 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 14:41:13 by Harold Carr.
+// Last Modified : 2008 May 29 (Thu) 19:24:08 by Harold Carr.
 //
 
 package org.openhc.trowser.gwt.client;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.Command;
@@ -29,27 +30,32 @@ public class QueryPanel
     private       TextBox         selectedPropertyTextBox;
     private       TextBox         selectedValueTextBox;
 
-    private final VerticalPanel   verticalPanel;
+    private final VerticalPanel   queryPanel;
+
+    private/*final*/RadioButton baseRadioButton;
+    private/*final*/TextBox     baseSubjectTextBox;
+    private/*final*/TextBox     baseProperyTextBox;
+    private/*final*/TextBox     baseValueTextBox;
 
     QueryPanel(Main main)
     {
 	this.main = main;
 
-	verticalPanel = new VerticalPanel();
-	verticalPanel.setStyleName("queryPanel");
-	verticalPanel.add(makeTriplePanel());	
+	queryPanel = new VerticalPanel();
+	queryPanel.setStyleName("queryPanel");
+	queryPanel.add(makeTriplePanel());	
     }
 
     TextBox       getSubjectTextBox()  { return selectedSubjectTextBox; }
     TextBox       getPropertyTextBox() { return selectedPropertyTextBox; }
     TextBox       getValueTextBox()    { return selectedValueTextBox; }
-    VerticalPanel getPanel()           { return verticalPanel; }
+    VerticalPanel getPanel()           { return queryPanel; }
 
     private HorizontalPanel makeTriplePanel()
     {
 	final HorizontalPanel triplePanel = new HorizontalPanel();
 	final Button          leftButton;
-	final RadioButton     radioButton = new RadioButton("current-triple");
+	final RadioButton     radioButton = new RadioButton("Mutual-Excl");
 	final MenuBar         subjectMenuBar;
 	final TextBox         subjectTextBox  = new TextBox();
 	final MenuBar         propertyMenuBar;
@@ -70,21 +76,30 @@ public class QueryPanel
 	propertyTextBox.setText(main.qproperty);
 	valueTextBox.setText(main.qvalue);
 
-	if (!verticalPanel.iterator().hasNext()) {
+	if (!queryPanel.iterator().hasNext()) {
 	    leftButton = new Button(main.plusSymbol);
 	    leftButton.addClickListener(new ClickListener() {
 		public void onClick(Widget sender) {
-		    verticalPanel.add(makeTriplePanel());
+		    queryPanel.add(makeTriplePanel());
 		}});
+	    baseRadioButton    = radioButton;
+	    baseSubjectTextBox = subjectTextBox;
+	    baseProperyTextBox = propertyTextBox;
+	    baseValueTextBox   = valueTextBox;
 	} else {
 	    leftButton = new Button(main.minusSymbol);
 	    leftButton.addClickListener(new ClickListener() {
 		public void onClick(Widget sender) {
-		    verticalPanel.remove(triplePanel);
+		    queryPanel.remove(triplePanel);
+		    baseRadioButton.setChecked(true);
+		    selectedSubjectTextBox  = baseSubjectTextBox;
+		    selectedPropertyTextBox = baseProperyTextBox;
+		    selectedValueTextBox    = baseValueTextBox;
 		}});
 	}
 
 	// The latest created is always selected.
+	uncheckAllRadioButtons(); // I swear I didn't need this before.
 	radioButton.setEnabled(true);
 	radioButton.setChecked(true);
 	selectedSubjectTextBox  = subjectTextBox;
@@ -120,7 +135,7 @@ public class QueryPanel
 	triplePanel.add(valueMenuBar);
 	triplePanel.add(valueTextBox);
 
-	if (!verticalPanel.iterator().hasNext()) {
+	if (!queryPanel.iterator().hasNext()) {
 	    Button saveButton = new Button("s");
 	    saveButton.addClickListener(new ClickListener() {
 		public void onClick(Widget sender) {
@@ -188,6 +203,17 @@ public class QueryPanel
 	MenuBar outside = new MenuBar();
 	outside.addItem(main.littleV, inside);
 	return outside;
+    }
+
+    private void uncheckAllRadioButtons()
+    {
+	Iterator hpi = getPanel().iterator();
+	while (hpi.hasNext()) {
+	    HorizontalPanel triple = (HorizontalPanel) hpi.next();
+	    Iterator i = triple.iterator();
+	    i.next(); // skip button
+	    ((RadioButton)i.next()).setChecked(false);
+	}
     }
 }
 
