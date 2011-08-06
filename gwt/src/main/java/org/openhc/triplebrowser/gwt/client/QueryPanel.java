@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 19:24:08 by Harold Carr.
+// Last Modified : 2011 Aug 01 (Mon) 21:15:47 by carr.
 //
 
 package org.openhc.trowser.gwt.client;
@@ -62,12 +62,15 @@ public class QueryPanel
 	final TextBox         propertyTextBox = new TextBox();
 	final MenuBar         valueMenuBar;
 	final TextBox         valueTextBox    = new TextBox();
-
+        
+        /*
 	// Looking to future when used like bookmarker.
 	org.gwtwidgets.client.util.WindowUtils wu =
 	    new org.gwtwidgets.client.util.WindowUtils();
 	org.gwtwidgets.client.util.Location location = wu.getLocation();
 	String start = location.getParameter(main.url);
+        */
+        String start = null;
 	if (start == null) {
 	    subjectTextBox.setText(main.qsubject);
 	} else {
