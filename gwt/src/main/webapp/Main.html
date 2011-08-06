@@ -1,31 +1,49 @@
+<!doctype html>
 <html>
-<head>
-	
-<title>trowser.openhc.org</title>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 
-<link rel='stylesheet' href='style.css'>
+        <link type="text/css" rel='stylesheet' href='style.css'>
 
-<!-- The module reference below is the link    -->
-<!-- between html and your Web Toolkit module  -->		
-<meta name='gwt:module' content='org.openhc.trowser.gwt.Main'>
-		
-</head>
+        <title>trowser.openhc.org</title>
 
-<!-- The body can have arbitrary or empty html. -->
-<body>
+        <!-- OLD -->
+        <!-- The module reference below is the link    -->
+        <!-- between html and your Web Toolkit module  -->
+        <!-- meta name='gwt:module' content='org.openhc.trowser.gwt.Main' -->
 
-<!-- This script is required bootstrap stuff.   -->
-<!-- You can put it in the HEAD, but startup    -->
-<!-- is slightly faster if you include it here. -->
-<script language="javascript" src="gwt.js"></script>
+        <!-- NEW                                       -->
+        <!-- This script loads your compiled module.   -->
+        <!-- If you add any GWT meta tags, they must   -->
+        <!-- be added before this line.                -->
+        <!--                                           -->
+        <script type="text/javascript" language="javascript" src="trowser/trowser.nocache.js"></script>
+    </head>
 
-<!-- OPTIONAL: include this if you want history support -->
-<iframe id="__gwt_historyFrame" style="width:0;height:0;border:0"></iframe>
+    <!-- The body can have arbitrary or empty html. -->
+    <body>
 
-<div id="slot0"></div>
-<div id="top"></div>
-<div id="middle"></div>
-<div id="bottom"></div>
+        <!-- OLD -->
+        <!-- This script is required bootstrap stuff.   -->
+        <!-- You can put it in the HEAD, but startup    -->
+        <!-- is slightly faster if you include it here. -->
+        <!-- script language="javascript" src="gwt.js" --><!-- /script -->
 
-</body>
+        <!-- OPTIONAL: include this if you want history support -->
+        <iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe>
+    
+        <!-- RECOMMENDED if your web app will not function without JavaScript enabled -->
+        <noscript>
+            <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
+                Your web browser must have JavaScript enabled
+                in order for this application to display correctly.
+            </div>
+        </noscript>
+
+        <div id="slot0"></div>
+        <div id="top"></div>
+        <div id="middle"></div>
+        <div id="bottom"></div>
+
+    </body>
 </html>

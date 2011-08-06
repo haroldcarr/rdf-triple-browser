@@ -1,25 +1,24 @@
-<module>
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='trowser'>
+    <!-- Inherit the core Web Toolkit stuff.                  -->
+    <inherits name='com.google.gwt.user.User'/>
 
-	<!-- Inherit the core Web Toolkit stuff.                  -->
-	<inherits name='com.google.gwt.user.User'/>
+    <!-- Inherit the widgets library       .                  -->
+    <!-- inherits name='org.gwtwidgets.WidgetLibrary'/ -->
 
-	<!-- Inherit the widgets library       .                  -->
-        <inherits name='org.gwtwidgets.WidgetLibrary'/>
+    <!-- Specify the app entry point class.                   -->
+    <entry-point class='org.openhc.trowser.gwt.client.Main'/>
 
-	<!-- Specify the app entry point class.                   -->
-	<entry-point class='org.openhc.trowser.gwt.client.Main'/>
+    <!-- Specify other packages to be translated -->
+    <!-- See http://code.google.com/webtoolkit/documentation/com.google.gwt.doc.DeveloperGuide.Fundamentals.html#JavaToJavaScriptCompiler -->
+    <source path="client"/>
+    <source path="common"/>
 
-        <!-- Specify other packages to be translated -->
-        <!-- See http://code.google.com/webtoolkit/documentation/com.google.gwt.doc.DeveloperGuide.Fundamentals.html#JavaToJavaScriptCompiler -->
-        <source path="client"/>
-        <source path="common"/>
+    <!-- OLD: The RPC point
+    <servlet path="/trowser/Service"
+             class='org.openhc.trowser.gwt.server.ServiceImpl'/>
 
-	<!-- The RPC point                                        -->
-	<servlet path="/Service"
-                 class='org.openhc.trowser.gwt.server.ServiceImpl'/>
-
-	<servlet path="/UploadFormHandler"
-                 class='org.openhc.trowser.gwt.server.FileUploaderServlet'/>
-
-
+    <servlet path="/trowser/UploadFormHandler"
+             class='org.openhc.trowser.gwt.server.FileUploaderServlet'/>
+    -->
 </module>

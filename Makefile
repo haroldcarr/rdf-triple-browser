@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2008 May 28 (Wed) 10:38:30 by Harold Carr.
+# Last Modified : 2011 Aug 01 (Mon) 20:42:54 by carr.
 #
 
 ##############################################################################
@@ -50,7 +50,7 @@ TOMCAT_WAR_NAME	= trowser
 ### variables used by gwtRules
 ###
 
-SRCDIR		= ./src
+SRCDIR		= ./src/main/java
 BINDIR		= ./bin
 OUTDIR		= ./www
 TOMCATDIR	= ./tomcat
@@ -97,6 +97,7 @@ rdf$(ITEX_FILENAME_SUFFIX_PUBLIC) : FORCE
 
 clean :: FORCE
 	rm -rf .gwt-cache $(BINDIR) $(OUTDIR) $(TOMCATDIR) $(TOMCAT_WAR_NAME).war
+	rm -rf .classes
 
 include $(hcMakefiles)/gwtDefs.gmk
 include $(hcMakefiles)/gwtRules.gmk
@@ -112,7 +113,7 @@ include $(hcMakefiles)/binDirForceRules.gmk
 
 #
 # Created       : 2008 May 15 (Thu) 17:24:10 by Harold Carr.
-# Last Modified : 2008 May 28 (Wed) 10:38:30 by Harold Carr.
+# Last Modified : 2011 Aug 01 (Mon) 20:42:54 by carr.
 #
 
 SEP		=	$(shell hcPathSep)
@@ -123,7 +124,7 @@ SWING_PKGDIR	=	$(TROWSER_PKGDIR)/swing
 SWING_CLIENT_PACKAGE =	$(SWING_PACKAGE).client
 SWING_CLIENT_PKGDIR  =	$(SWING_PKGDIR)/client
 
-FILES_java	= 	$(shell ls src/$(COMMON_PKGDIR)/*.java src/$(SWING_CLIENT_PKGDIR)/*.java src/$(GWT_SERVER_PKGDIR)/Jena.java src/$(GWT_SERVER_PKGDIR)/ServiceImplDelegate.java)
+FILES_java	= 	$(shell ls $(SRCDIR)/$(COMMON_PKGDIR)/*.java $(SRCDIR)/$(SWING_CLIENT_PKGDIR)/*.java $(SRCDIR)/$(GWT_SERVER_PKGDIR)/Jena.java $(SRCDIR)/$(GWT_SERVER_PKGDIR)/ServiceImplDelegate.java)
 
 LIB		=	$(TOPDIR)/lib/swing
 DJLIB		=	$(LIB)/djnativeswing
@@ -142,9 +143,9 @@ CLASSPATH_EXTRAS= 	$(shell hcJenaClasspath)$(SEP)$(DJNATIVESWING)$(SEP)$(NBSWING
 
 all :: classes cpfv
 
-## TODO: parameterize src and .classes
+## TODO: parameterize .classes
 cpfv :
-	cp -r src/$(SWING_CLIENT_PKGDIR)/resources .classes/$(SWING_CLIENT_PKGDIR)
+	cp -r $(SRCDIR)/$(SWING_CLIENT_PKGDIR)/resources .classes/$(SWING_CLIENT_PKGDIR)
 
 #DEBUG_CLASSFILES= true
 #DEBUG	= -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5000

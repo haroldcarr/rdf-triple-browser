@@ -1,7 +1,38 @@
 #
 # Created       : 2006 Jul 14 (Wed) 19:15:16 by Harold Carr.
-# Last Modified : 2008 May 24 (Sat) 21:49:19 by Harold Carr.
+# Last Modified : 2011 Aug 02 (Tue) 21:07:26 by carr.
 #
+
+------------------------------------------------------------------------------
+2011-08-01
+
+possible names
+
+triple browser
+
+trowser
+triser
+trizer
+tower
+tripser
+tipser
+tiple
+tipler
+tiplow
+riple
+ripser
+rowser
+power
+el pit
+pit brew
+
+--------------------------------------------------
+
+moved swing directory temporarily out of src so I can get pom.xml
+working
+
+NEXT: when doing this get unresolved: need dependencies
+mvn clean gwt:compile gwt:run
 
 ------------------------------------------------------------------------------
 2008-05-08

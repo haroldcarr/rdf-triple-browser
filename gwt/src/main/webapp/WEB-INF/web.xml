@@ -4,26 +4,31 @@
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app>
 
-   <servlet>
-      <servlet-name>UploadFormHandler</servlet-name>
-      <servlet-class>
-         org.openhc.trowser.gwt.server.FileUploaderServlet
-      </servlet-class>
-   </servlet>
-   <servlet-mapping>
-      <servlet-name>UploadFormHandler</servlet-name>
-      <url-pattern>/UploadFormHandler</url-pattern>
-   </servlet-mapping>
+    <!-- Default page to serve -->
+    <welcome-file-list>
+        <welcome-file>Main.html</welcome-file>
+    </welcome-file-list>
 
-   <servlet>
-      <servlet-name>Service</servlet-name>
-      <servlet-class>
-         org.openhc.trowser.gwt.server.ServiceImpl
-      </servlet-class>
-   </servlet>
-   <servlet-mapping>
-      <servlet-name>Service</servlet-name>
-      <url-pattern>/Service</url-pattern>
-   </servlet-mapping>
+    <servlet>
+        <servlet-name>UploadFormHandler</servlet-name>
+        <servlet-class>
+            org.openhc.trowser.gwt.server.FileUploaderServlet
+        </servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UploadFormHandler</servlet-name>
+        <url-pattern>/trowser/UploadFormHandler</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Service</servlet-name>
+        <servlet-class>
+            org.openhc.trowser.gwt.server.ServiceImpl
+        </servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Service</servlet-name>
+        <url-pattern>/trowser/Service</url-pattern>
+    </servlet-mapping>
 
 </web-app>
