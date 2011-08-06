@@ -1,6 +1,6 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 15:16:21 by Harold Carr.
+// Last Modified : 2011 Aug 04 (Thu) 15:17:07 by carr.
 //
 
 package org.openhc.trowser.gwt.common;
@@ -8,8 +8,12 @@ package org.openhc.trowser.gwt.common;
 public interface Constants
 {
     // Only used by GWT version.
-    public static final String serviceEntryPoint    = "/Service";
-    public static final String uploadFormHandler    = "/UploadFormHandler";
+    // These are the relative paths in the service URIs.
+    //public static final String serviceEntryPoint    = "/Service";
+    public static final String uploadFormHandler    = "UploadFormHandler";
+
+
+    // Shared
 
     public static final String clear                = "clear";
     public static final String asteriskSymbol       = "*";
@@ -19,7 +23,7 @@ public interface Constants
     public static final String doQuery              = "doQuery";
     public static final String emptyString          = "";
     public static final String expand               = "+";
-    public static final String expandOrCollapseSPVClick 
+    public static final String expandOrCollapseSPVClick
 	= "expandOrCollapseSPVClick";
     public static final String expandOrCollapseSPVItemClick
 	= "expandOrCollapseSPVItemClick";
