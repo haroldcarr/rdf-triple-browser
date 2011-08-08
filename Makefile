@@ -1,6 +1,6 @@
 #
 # Created       : 2006 Jul 26 (Wed) 14:50:24 by Harold Carr.
-# Last Modified : 2011 Aug 01 (Mon) 20:42:54 by carr.
+# Last Modified : 2011 Aug 08 (Mon) 16:16:23 by carr.
 #
 
 ##############################################################################
@@ -44,7 +44,9 @@ RDF_FILE	= rdf.rdf
 ### variables used by tomcatRules
 ###
 
-TOMCAT_WAR_NAME	= trowser
+#TOMCAT_WAR_NAME	= trowser
+# Note - undeploy doesn't work with this name (have to remove "target" from path)
+TOMCAT_WAR_NAME	= target/trowser-1.0-SNAPSHOT
 
 ###
 ### variables used by gwtRules
@@ -113,7 +115,7 @@ include $(hcMakefiles)/binDirForceRules.gmk
 
 #
 # Created       : 2008 May 15 (Thu) 17:24:10 by Harold Carr.
-# Last Modified : 2011 Aug 01 (Mon) 20:42:54 by carr.
+# Last Modified : 2011 Aug 08 (Mon) 16:16:23 by carr.
 #
 
 SEP		=	$(shell hcPathSep)
