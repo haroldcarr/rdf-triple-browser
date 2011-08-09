@@ -11,7 +11,8 @@ public abstract class WebBrowser
     public static WebBrowser create(final String type)
     {
 	if ("DJNATIVESWING".equals(type)) {
-	    return new WebBrowserImplDJNative();
+	    //return new WebBrowserImplDJNative();
+            throw new RuntimeException("WebBrowser.create: disabled: " + type);
 	}
 	if ("TEXTAREA".equals(type)) {
 	    return new WebBrowserImplTextArea();
