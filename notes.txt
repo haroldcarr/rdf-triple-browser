@@ -1,10 +1,14 @@
 #
 # Created       : 2006 Jul 14 (Wed) 19:15:16 by Harold Carr.
-# Last Modified : 2011 Aug 02 (Tue) 21:07:26 by carr.
+# Last Modified : 2011 Aug 08 (Mon) 20:27:35 by carr.
 #
 
 ------------------------------------------------------------------------------
-2011-08-01
+2011-08
+
+Ported to a maven-based build.
+Updated to latest GWT.
+Updated to latest Jena.
 
 possible names
 
