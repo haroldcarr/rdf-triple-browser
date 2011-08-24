@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module rename-to='trowser'>
+<module rename-to='triplebrowser'>
     <!-- Inherit the core Web Toolkit stuff.                  -->
     <inherits name='com.google.gwt.user.User'/>
 
@@ -7,7 +7,7 @@
     <!-- inherits name='org.gwtwidgets.WidgetLibrary'/ -->
 
     <!-- Specify the app entry point class.                   -->
-    <entry-point class='org.openhc.trowser.gwt.client.Main'/>
+    <entry-point class='org.openhc.triplebrowser.gwt.client.Main'/>
 
     <!-- Specify other packages to be translated -->
     <!-- See http://code.google.com/webtoolkit/documentation/com.google.gwt.doc.DeveloperGuide.Fundamentals.html#JavaToJavaScriptCompiler -->
@@ -15,10 +15,10 @@
     <source path="common"/>
 
     <!-- OLD: The RPC point
-    <servlet path="/trowser/Service"
-             class='org.openhc.trowser.gwt.server.ServiceImpl'/>
+    <servlet path="/triplebrowser/Service"
+             class='org.openhc.triplebrowser.gwt.server.ServiceImpl'/>
 
-    <servlet path="/trowser/UploadFormHandler"
-             class='org.openhc.trowser.gwt.server.FileUploaderServlet'/>
+    <servlet path="/triplebrowser/UploadFormHandler"
+             class='org.openhc.triplebrowser.gwt.server.FileUploaderServlet'/>
     -->
 </module>

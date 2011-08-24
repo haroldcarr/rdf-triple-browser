@@ -6,10 +6,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.openhc</groupId>
-    <artifactId>trowser</artifactId>
+    <artifactId>triple-browser</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Trowser</name>
+    <name>Triple Browser</name>
 
     <properties>
         <gwtVersion>2.3.0</gwtVersion>
