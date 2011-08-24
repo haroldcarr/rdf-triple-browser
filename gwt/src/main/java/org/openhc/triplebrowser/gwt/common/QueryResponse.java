@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Aug 12 (Sat) 14:56:41 by Harold Carr.
-// Last Modified : 2008 May 25 (Sun) 18:52:56 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:54:08 by carr.
 //
 
-package org.openhc.trowser.gwt.common;
+package org.openhc.triplebrowser.gwt.common;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class QueryResponse
     implements IsSerializable
 {
-    // NOTE: cannot make fields final.  
+    // NOTE: cannot make fields final.
     // GWT complains at required zero arg constructor.
 
     /**
@@ -37,7 +37,7 @@ public class QueryResponse
     // GWT requires zero arg constructor.
     public QueryResponse() {}
 
-    public QueryResponse(final List subject, final List property, 
+    public QueryResponse(final List subject, final List property,
 			 final List value, final String setContentsOf,
 			 final String status)
     {

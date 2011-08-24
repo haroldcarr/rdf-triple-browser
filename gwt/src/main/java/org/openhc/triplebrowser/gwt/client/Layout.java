@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 21:51:38 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:48:29 by carr.
 //
 
-package org.openhc.trowser.gwt.client;
+package org.openhc.triplebrowser.gwt.client;
 
 public class Layout
 {

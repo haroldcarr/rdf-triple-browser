@@ -1,4 +1,4 @@
-package org.openhc.trowser.swing.client;
+package org.openhc.triplebrowser.swing.client;
 
 import java.awt.Font;
 import java.awt.Frame;
@@ -16,14 +16,14 @@ import org.jdesktop.application.ResourceMap;
 import org.jdesktop.layout.GroupLayout;
 import org.jdesktop.layout.LayoutStyle;
 
-public class TrowserAboutBox
-    extends 
-	JDialog 
+public class TripleBrowserAboutBox
+    extends
+	JDialog
 {
-    
+
     private final JButton closeButton;
 
-    public TrowserAboutBox(Frame parent) 
+    public TripleBrowserAboutBox(Frame parent)
     {
         super(parent);
 
@@ -32,13 +32,13 @@ public class TrowserAboutBox
         getRootPane().setDefaultButton(closeButton);
     }
 
-    @Action 
-    public void closeAboutBox() 
+    @Action
+    public void closeAboutBox()
     {
         setVisible(false);
     }
 
-    private void initComponents() 
+    private void initComponents()
     {
         final JLabel appTitleLabel    = new JLabel();
         final JLabel versionLabel     = new JLabel();
@@ -51,17 +51,17 @@ public class TrowserAboutBox
         final JLabel imageLabel       = new JLabel();
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        final ResourceMap resourceMap = 
-	    Application.getInstance(Trowser.class)
-	        .getContext().getResourceMap(TrowserAboutBox.class);
+        final ResourceMap resourceMap =
+	    Application.getInstance(TripleBrowser.class)
+	        .getContext().getResourceMap(TripleBrowserAboutBox.class);
         setTitle(resourceMap.getString("title")); // NOI18N
         setModal(true);
         setName("aboutBox"); // NOI18N
         setResizable(false);
 
-        final ActionMap actionMap = 
-	    Application.getInstance(Trowser.class)
-	        .getContext().getActionMap(TrowserAboutBox.class, this);
+        final ActionMap actionMap =
+	    Application.getInstance(TripleBrowser.class)
+	        .getContext().getActionMap(TripleBrowserAboutBox.class, this);
         closeButton.setAction(actionMap.get("closeAboutBox")); // NOI18N
         closeButton.setName("closeButton"); // NOI18N
 

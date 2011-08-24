@@ -1,4 +1,4 @@
-package org.openhc.trowser.swing.client;
+package org.openhc.triplebrowser.swing.client;
 
 import java.awt.BorderLayout;
 
@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class WebBrowserImplTextArea
-    extends 
+    extends
 	WebBrowser
 {
     final JTextField webBrowser;
@@ -26,7 +26,7 @@ public class WebBrowserImplTextArea
     webBrowserPanel.add(webBrowser, BorderLayout.CENTER);
     add(webBrowserPanel, BorderLayout.CENTER);
   }
-  
+
 }
 
 // End of file.

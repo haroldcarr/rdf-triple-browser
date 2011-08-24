@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 14:41:23 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 21:02:20 by carr.
 //
 
-package org.openhc.trowser.swing.client;
+package org.openhc.triplebrowser.swing.client;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,14 +46,14 @@ public class QueryPanel
 
 	buttonGroup = new ButtonGroup();
 	queryPanel = new JPanel();
-	queryPanel.setLayout(new BoxLayout(queryPanel, 
+	queryPanel.setLayout(new BoxLayout(queryPanel,
 					      BoxLayout.PAGE_AXIS));
 	addToVerticalPanel(makeTriplePanel());
     }
 
     private void addToVerticalPanel(JPanel triplePanel)
     {
-	main.getTrowserLayout().addTriplePanel(queryPanel, triplePanel);
+	main.getTripleBrowserLayout().addTriplePanel(queryPanel, triplePanel);
     }
 
     public void removeFromVerticalPanel(JPanel triplePanel)
@@ -146,7 +146,7 @@ public class QueryPanel
 			 main.qvalue,    valueTextField,
 			 main.qsubject,  subjectTextField);
 
-	main.getTrowserLayout().queryPanelLayout(
+	main.getTripleBrowserLayout().queryPanelLayout(
             triplePanel,
 	    leftButton, radioButton,
 	    subjectJMenuBar, subjectTextField,

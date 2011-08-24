@@ -1,19 +1,19 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 14:05:57 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 21:03:14 by carr.
 //
 
-package org.openhc.trowser.swing.client;
+package org.openhc.triplebrowser.swing.client;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.openhc.trowser.gwt.common.QueryRequest;
-import org.openhc.trowser.gwt.common.QueryResponse;
-import org.openhc.trowser.gwt.server.ServiceImplDelegate;
+import org.openhc.triplebrowser.gwt.common.QueryRequest;
+import org.openhc.triplebrowser.gwt.common.QueryResponse;
+import org.openhc.triplebrowser.gwt.server.ServiceImplDelegate;
 
-import org.openhc.trowser.swing.client.Main;
+import org.openhc.triplebrowser.swing.client.Main;
 
 public class ServerCalls
 {

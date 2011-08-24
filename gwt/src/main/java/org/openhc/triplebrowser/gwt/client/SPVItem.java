@@ -1,22 +1,22 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 27 (Tue) 10:15:40 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:50:03 by carr.
 //
 
-package org.openhc.trowser.gwt.client;
+package org.openhc.triplebrowser.gwt.client;
 
 import com.google.gwt.user.client.ui.Label;
 
-import org.openhc.trowser.gwt.client.Main;
+import org.openhc.triplebrowser.gwt.client.Main;
 
 public class SPVItem
-    extends 
-	org.openhc.trowser.gwt.common.SPVItem
+    extends
+	org.openhc.triplebrowser.gwt.common.SPVItem
 {
     private final Label label;
-    
-    SPVItem(final String spvCategory, 
-	    final String expandedName, 
+
+    SPVItem(final String spvCategory,
+	    final String expandedName,
 	    final String collapsedName)
     {
 	super(spvCategory, expandedName, collapsedName);

@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jul 28 (Fri) 14:21:09 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 13:03:10 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:56:51 by carr.
 //
 
-package org.openhc.trowser.gwt.server;
+package org.openhc.triplebrowser.gwt.server;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -24,11 +24,11 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-import org.openhc.trowser.gwt.common.Constants;
-import org.openhc.trowser.gwt.common.QueryRequest;
-import org.openhc.trowser.gwt.common.QueryResponse;
-import org.openhc.trowser.gwt.common.Triple;
-import org.openhc.trowser.gwt.common.Util;
+import org.openhc.triplebrowser.gwt.common.Constants;
+import org.openhc.triplebrowser.gwt.common.QueryRequest;
+import org.openhc.triplebrowser.gwt.common.QueryResponse;
+import org.openhc.triplebrowser.gwt.common.Triple;
+import org.openhc.triplebrowser.gwt.common.Util;
 
 public class Jena
 {
@@ -160,7 +160,7 @@ public class Jena
 				  final String servletContextRealPathOfSlash)
     {
 	final Query query = QueryFactory.create(queryString);
-	final QueryExecution queryExecution = 
+	final QueryExecution queryExecution =
 	    QueryExecutionFactory.create(query, model);
 	final ResultSet resultSet = queryExecution.execSelect();
 
@@ -213,24 +213,24 @@ public class Jena
 	while (triples.hasNext()) {
 	    Triple triple = (Triple) triples.next();
 	    if (!isSubjectVar) {
-		subjectResponse.add(triple.getSubject()); 
+		subjectResponse.add(triple.getSubject());
 	    }
 	    if (!isPropertyVar) {
 		propertyResponse.add(triple.getProperty());
 	    }
 	    if (!isValueVar) {
-		valueResponse.add(triple.getValue()); 
+		valueResponse.add(triple.getValue());
 	    }
 	}
 
 	//
 	// For the parts of the query that ARE variables
 	// return what was found.
-	// 
+	//
 
 	while (resultSet.hasNext()) {
 	    final QuerySolution querySolution = resultSet.nextSolution();
-	    if (isSubjectVar) { 
+	    if (isSubjectVar) {
 		getSPVSolution(querySolution,
 			       Constants.subject, subjectResponse);
 	    }
@@ -248,7 +248,7 @@ public class Jena
 	sort(propertyResponse);
 	sort(valueResponse);
 
-	final QueryResponse queryResponse = 
+	final QueryResponse queryResponse =
 	    new QueryResponse(subjectResponse, propertyResponse,
 			      valueResponse,
 			      queryRequest.getSetContentsOf(), // Cookie
@@ -260,7 +260,7 @@ public class Jena
     }
 
     private void getSPVSolution(final QuerySolution querySolution,
-				final String kind, 
+				final String kind,
 				final List list)
     {
 	final String x = querySolution.get(kind).toString();
@@ -312,7 +312,7 @@ public class Jena
     private boolean startsWithDigit(String x)
     {
 	// REVISIT - unicode
-	return 
+	return
 	   Character.isDigit(
                util.substringAfterLastSlashOrFirstSharp(x).charAt(0));
     }

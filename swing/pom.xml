@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!--
-        mvn exec:java -Dexec.mainClass="org.openhc.trowser.swing.client.Trowser"
+        mvn exec:java -Dexec.mainClass="org.openhc.triplebrowser.swing.client.TripleBrowser"
         can also add: -Dexec.args="arg0 arg1 arg2"
       -->
 
@@ -13,14 +13,14 @@
 
     <parent>
         <groupId>org.openhc</groupId>
-        <artifactId>trowser</artifactId>
+        <artifactId>triple-browser</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>trowser-swing</artifactId>
+    <artifactId>triple-browser-swing</artifactId>
     <packaging>jar</packaging>
-    <name>Trowser Swing</name>
+    <name>Triple Browser Swing</name>
 
     <repositories>
         <repository>
@@ -35,7 +35,7 @@
     <dependencies>
         <dependency>
             <groupId>org.openhc</groupId>
-            <artifactId>trowser-gwt</artifactId>
+            <artifactId>triple-browser-gwt</artifactId>
             <version>1.0-SNAPSHOT</version>
             <classifier>classes</classifier>
         </dependency>
@@ -68,12 +68,12 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <!-- TODO: 
-                                 even though this is here, 
+                            <!-- TODO:
+                                 even though this is here,
                                  the same resources also end up
-                                 in the target/classes directory 
+                                 in the target/classes directory
                               -->
-                            <outputDirectory>target/classes/org/openhc/trowser/swing/client/resources</outputDirectory>
+                            <outputDirectory>target/classes/org/openhc/triplebrowser/swing/client/resources</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>

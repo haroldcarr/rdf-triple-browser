@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2011 Aug 04 (Thu) 13:46:26 by carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:52:11 by carr.
 //
 
-package org.openhc.trowser.gwt.client;
+package org.openhc.triplebrowser.gwt.client;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,13 +15,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Label;
 
-import org.openhc.trowser.gwt.client.Main;
-import org.openhc.trowser.gwt.client.SPVPanel;
-import org.openhc.trowser.gwt.client.Service;
-import org.openhc.trowser.gwt.client.ServiceAsync;
+import org.openhc.triplebrowser.gwt.client.Main;
+import org.openhc.triplebrowser.gwt.client.SPVPanel;
+import org.openhc.triplebrowser.gwt.client.Service;
+import org.openhc.triplebrowser.gwt.client.ServiceAsync;
 
-import org.openhc.trowser.gwt.common.QueryRequest;
-import org.openhc.trowser.gwt.common.QueryResponse;
+import org.openhc.triplebrowser.gwt.common.QueryRequest;
+import org.openhc.triplebrowser.gwt.common.QueryResponse;
 
 public class ServerCalls
 {
@@ -82,7 +82,7 @@ public class ServerCalls
     public void assertFact(final QueryRequest queryRequest)
     {
 	main.getResponseProgressLabel().setText(main.querying);
-	
+
 	serviceAsync.assertFact(
             queryRequest,
 	    new AsyncCallback() {

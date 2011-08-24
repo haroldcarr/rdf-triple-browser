@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Sep 04 (Mon) 10:50:21 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 22:38:34 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:47:14 by carr.
 //
 
-package org.openhc.trowser.gwt.client;
+package org.openhc.triplebrowser.gwt.client;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;

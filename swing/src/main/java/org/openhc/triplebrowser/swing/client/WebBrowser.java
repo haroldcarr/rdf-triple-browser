@@ -1,4 +1,4 @@
-package org.openhc.trowser.swing.client;
+package org.openhc.triplebrowser.swing.client;
 
 import java.awt.BorderLayout;
 
@@ -20,7 +20,7 @@ public abstract class WebBrowser
 	throw new RuntimeException("WebBrowser.create: unknown type: " + type);
     }
 
-    public WebBrowser(BorderLayout borderLayout) 
+    public WebBrowser(BorderLayout borderLayout)
     {
 	super(borderLayout);
     }

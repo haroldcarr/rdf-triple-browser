@@ -1,12 +1,12 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2011 Aug 04 (Thu) 13:06:28 by carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:52:23 by carr.
 //
 
-package org.openhc.trowser.gwt.client;
+package org.openhc.triplebrowser.gwt.client;
 
-import org.openhc.trowser.gwt.common.QueryRequest;
-import org.openhc.trowser.gwt.common.QueryResponse;
+import org.openhc.triplebrowser.gwt.common.QueryRequest;
+import org.openhc.triplebrowser.gwt.common.QueryResponse;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

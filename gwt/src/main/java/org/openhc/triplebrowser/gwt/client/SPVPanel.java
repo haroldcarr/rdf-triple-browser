@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 15:02:56 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:50:20 by carr.
 //
 
-package org.openhc.trowser.gwt.client;
+package org.openhc.triplebrowser.gwt.client;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,8 +18,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import org.openhc.trowser.gwt.client.Main;
-import org.openhc.trowser.gwt.common.Util;
+import org.openhc.triplebrowser.gwt.client.Main;
+import org.openhc.triplebrowser.gwt.common.Util;
 
 public class SPVPanel
 {
@@ -116,7 +116,7 @@ class SPVList
 	final List result = new ArrayList();
 	while (i.hasNext()) {
 	    String uri = (String) i.next();
-	    result.add(new SPVItem(spvCategory, 
+	    result.add(new SPVItem(spvCategory,
 				   uri,
 				   main.getUtil().substringAfterLastSlashOrFirstSharp(uri)));
 	}

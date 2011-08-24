@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2011 Aug 04 (Thu) 15:17:07 by carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:53:37 by carr.
 //
 
-package org.openhc.trowser.gwt.common;
+package org.openhc.triplebrowser.gwt.common;
 
 public interface Constants
 {
@@ -43,7 +43,8 @@ public interface Constants
     public static final String showMatch            = "show match";
     public static final String subject              = "subject";
     public static final String subjectPropertyValue = "subjectPropertyValue";
-    public static final String trowserUploadedFile  = "trowserUploadedFile";
+    public static final String tripleBrowserUploadedFile
+                                                    = "tripleBrowserUploadedFile";
     public static final String uploading            = "UPLOADING ...";
     public static final String url                  = "url";
     public static final String value                = "value";

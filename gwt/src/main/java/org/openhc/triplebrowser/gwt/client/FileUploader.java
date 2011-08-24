@@ -1,11 +1,11 @@
 //
 // Created       : 2008 May 26 (Mon) 13:01:58 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 18:48:25 by Harold Carr.
-// 
+// Last Modified : 2011 Aug 10 (Wed) 20:47:59 by carr.
+//
 // from http://home.izforge.com/index.php/2006/10/29/295-handling-file-uploads-with-the-google-web-toolkit
 //
 
-package org.openhc.trowser.gwt.client;
+package org.openhc.triplebrowser.gwt.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -20,7 +20,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import org.openhc.trowser.gwt.common.Constants;
+import org.openhc.triplebrowser.gwt.common.Constants;
 
 public class FileUploader
 {
@@ -42,7 +42,7 @@ public class FileUploader
         uploadForm.setWidget(panel);
 
         final FileUpload fileUpload = new FileUpload();
-        fileUpload.setName(Constants.trowserUploadedFile);
+        fileUpload.setName(Constants.tripleBrowserUploadedFile);
         panel.add(fileUpload);
 
         panel.add(new Button("Submit", new ClickListener() {

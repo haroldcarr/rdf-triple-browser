@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 12:59:55 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:57:31 by carr.
 //
 
-package org.openhc.trowser.gwt.server;
+package org.openhc.triplebrowser.gwt.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.openhc.trowser.gwt.common.QueryRequest;
-import org.openhc.trowser.gwt.common.QueryResponse;
-import org.openhc.trowser.gwt.common.Triple;
-import org.openhc.trowser.gwt.server.Jena;
+import org.openhc.triplebrowser.gwt.common.QueryRequest;
+import org.openhc.triplebrowser.gwt.common.QueryResponse;
+import org.openhc.triplebrowser.gwt.common.Triple;
+import org.openhc.triplebrowser.gwt.server.Jena;
 
 public class ServiceImplDelegate
 {
@@ -35,7 +35,7 @@ public class ServiceImplDelegate
 	return "data loaded successfully";
 	}
 
-    public String openFile(final String filename) 
+    public String openFile(final String filename)
     {
 	jena = new Jena();
 	try {
@@ -48,12 +48,12 @@ public class ServiceImplDelegate
 	return filename + "read successfully";
     }
 
-    public String close() 
+    public String close()
     {
 	if (! initialized) {
 	    return "not initialized";
 	}
-	
+
 	try {
 	    jena.close();
 	    jena = null;

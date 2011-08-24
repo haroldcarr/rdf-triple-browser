@@ -1,9 +1,9 @@
 //
 // Created       : 2008 May 14 (Wed) 13:09:35 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 21:20:46 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 21:04:12 by carr.
 //
 
-package org.openhc.trowser.swing.swing;
+package org.openhc.triplebrowser.swing.swing;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JButton;
@@ -26,7 +26,7 @@ import javax.swing.JPanel;
 
 public class Test
     extends
-	JFrame 
+	JFrame
 {
 
     private final JRadioButton selectedQueryLineButton = new JRadioButton();
@@ -58,7 +58,7 @@ public class Test
 
     private final JTextArea webBrowser = new JTextArea();
 
-    private final java.util.Properties resourceMap = 
+    private final java.util.Properties resourceMap =
 	new java.util.Properties();
 
     public Test()
@@ -67,9 +67,9 @@ public class Test
     }
 
     @SuppressWarnings("unchecked")
-    private void initComponents() 
+    private void initComponents()
     {
-	resourceMap.setProperty("selectedQueryLineButton", 
+	resourceMap.setProperty("selectedQueryLineButton",
 				"selectedQueryLineButton");
 	resourceMap.setProperty("addQueryLineButton.text", "+");
 	resourceMap.setProperty("subjectTextField.text", "?subject");
@@ -155,17 +155,17 @@ public class Test
         subjectScrollPane.setName("subjectScrollPane");
         //subjectList.setFont(resourceMap.getProperty("subjectList.font"));
         subjectList.setModel(
-            new AbstractListModel() 
+            new AbstractListModel()
 	    { String[] strings =
 	     {
-		 "http://google.com/", 
+		 "http://google.com/",
 		 "http://openhc.org/",
 		 "http://haroldcarr.org/",
 		 "http://flaviacwood.org/",
 		 "http://cowdaddies.com/",
 		 "http://differntity.com/",
 		 "http://fuhz.biz/",
-		 "http://google.com/", 
+		 "http://google.com/",
 		 "http://openhc.org/",
 		 "http://haroldcarr.org/",
 		 "http://flaviacwood.org/",
@@ -187,17 +187,17 @@ public class Test
         propertyScrollPane.setName("propertyScrollPane");
         //propertyList.setFont(resourceMap.getProperty("propertyList.font"));
         propertyList.setModel(
-            new AbstractListModel() 
+            new AbstractListModel()
 	    { String[] strings =
 	      {
-		 "http://google.com/", 
+		 "http://google.com/",
 		 "http://openhc.org/",
 		 "http://haroldcarr.org/",
 		 "http://flaviacwood.org/",
 		 "http://cowdaddies.com/",
 		 "http://differntity.com/",
 		 "http://fuhz.biz/",
-		 "http://google.com/", 
+		 "http://google.com/",
 		 "http://openhc.org/",
 		 "http://haroldcarr.org/",
 		 "http://flaviacwood.org/",
@@ -214,17 +214,17 @@ public class Test
         valueScrollPane.setName("valueScrollPane");
         //valueList.setFont(resourceMap.getProperty("valueList.font"));
         valueList.setModel(
-            new AbstractListModel() 
-	    { String[] strings = 
+            new AbstractListModel()
+	    { String[] strings =
 	      {
-		 "http://google.com/", 
+		 "http://google.com/",
 		 "http://openhc.org/",
 		 "http://haroldcarr.org/",
 		 "http://flaviacwood.org/",
 		 "http://cowdaddies.com/",
 		 "http://differntity.com/",
 		 "http://fuhz.biz/",
-		 "http://google.com/", 
+		 "http://google.com/",
 		 "http://openhc.org/",
 		 "http://haroldcarr.org/",
 		 "http://flaviacwood.org/",
@@ -296,7 +296,7 @@ public class Test
 			java.awt.BorderLayout.NORTH);
 	*/
 	contentPane.add(dataPanel, java.awt.BorderLayout.CENTER);
-	contentPane.add(webBrowser, java.awt.BorderLayout.SOUTH); 
+	contentPane.add(webBrowser, java.awt.BorderLayout.SOUTH);
 
 
 

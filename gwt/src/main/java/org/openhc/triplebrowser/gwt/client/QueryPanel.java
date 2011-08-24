@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2011 Aug 01 (Mon) 21:15:47 by carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:49:44 by carr.
 //
 
-package org.openhc.trowser.gwt.client;
+package org.openhc.triplebrowser.gwt.client;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,8 +19,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import org.openhc.trowser.gwt.common.QueryRequest;
-import org.openhc.trowser.gwt.common.Triple;
+import org.openhc.triplebrowser.gwt.common.QueryRequest;
+import org.openhc.triplebrowser.gwt.common.Triple;
 
 public class QueryPanel
 {
@@ -43,7 +43,7 @@ public class QueryPanel
 
 	queryPanel = new VerticalPanel();
 	queryPanel.setStyleName("queryPanel");
-	queryPanel.add(makeTriplePanel());	
+	queryPanel.add(makeTriplePanel());
     }
 
     TextBox       getSubjectTextBox()  { return selectedSubjectTextBox; }
@@ -62,7 +62,7 @@ public class QueryPanel
 	final TextBox         propertyTextBox = new TextBox();
 	final MenuBar         valueMenuBar;
 	final TextBox         valueTextBox    = new TextBox();
-        
+
         /*
 	// Looking to future when used like bookmarker.
 	org.gwtwidgets.client.util.WindowUtils wu =
@@ -116,7 +116,7 @@ public class QueryPanel
 		selectedValueTextBox    = valueTextBox;
 	    }});
 
-	subjectMenuBar  = 
+	subjectMenuBar  =
 	    makeMenuBar(main.qvalue,    valueTextBox,
 			main.qsubject,  subjectTextBox,
 			main.qproperty, propertyTextBox);
@@ -129,7 +129,7 @@ public class QueryPanel
 			main.qvalue,    valueTextBox,
 			    main.qsubject,  subjectTextBox);
 
-	triplePanel.add(leftButton);	
+	triplePanel.add(leftButton);
 	triplePanel.add(radioButton);
 	triplePanel.add(subjectMenuBar);
 	triplePanel.add(subjectTextBox);

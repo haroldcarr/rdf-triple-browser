@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 19:20:10 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:49:18 by carr.
 //
 
-package org.openhc.trowser.gwt.client;
+package org.openhc.triplebrowser.gwt.client;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,9 +12,9 @@ import java.util.List;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-import org.openhc.trowser.gwt.common.QueryRequest;
-import org.openhc.trowser.gwt.common.QueryResponse;
-import org.openhc.trowser.gwt.common.Triple;
+import org.openhc.triplebrowser.gwt.common.QueryRequest;
+import org.openhc.triplebrowser.gwt.common.QueryResponse;
+import org.openhc.triplebrowser.gwt.common.Triple;
 
 public class QueryManager
 {
@@ -35,13 +35,13 @@ public class QueryManager
 	    i.next(); // skip Button;
 	    i.next(); // skip RadioButton;
 	    i.next(); // skip subject MenuBar
-	    final String subject  = 
+	    final String subject  =
 		getSPVQueryValue(main.qsubject,  (TextBox) i.next());
 	    i.next(); // skip property MenuBar
-	    final String property = 
+	    final String property =
 		getSPVQueryValue(main.qproperty, (TextBox) i.next());
 	    i.next(); // skip value MenuBar
-	    final String value    = 
+	    final String value    =
 		getSPVQueryValue(main.qvalue,    (TextBox) i.next());
 	    triples.add(new Triple(subject, property, value));
 	}

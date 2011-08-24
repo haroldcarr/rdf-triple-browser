@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 19:23:45 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 21:01:27 by carr.
 //
 
-package org.openhc.trowser.swing.client;
+package org.openhc.triplebrowser.swing.client;
 
 import java.awt.BorderLayout;
 
@@ -15,17 +15,17 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.openhc.trowser.gwt.common.QueryRequest;
-import org.openhc.trowser.gwt.common.QueryResponse;
-import org.openhc.trowser.gwt.common.Triple;
+import org.openhc.triplebrowser.gwt.common.QueryRequest;
+import org.openhc.triplebrowser.gwt.common.QueryResponse;
+import org.openhc.triplebrowser.gwt.common.Triple;
 
-import org.openhc.trowser.swing.client.Main;
+import org.openhc.triplebrowser.swing.client.Main;
 
 public class QueryManager
 {
     private final Main       main;
 
-    QueryManager(Main main) 
+    QueryManager(Main main)
     {
 	this.main = main;
     }
@@ -33,7 +33,7 @@ public class QueryManager
     public void doQuery()
     {
 	List triples = new ArrayList();
-	Iterator hpi = 
+	Iterator hpi =
 	    Arrays.asList(
                 main.getQueryPanel().getPanel().getComponents()).iterator();
 	while (hpi.hasNext()) {
@@ -42,13 +42,13 @@ public class QueryManager
 	    i.next(); // skip Button;
 	    i.next(); // skip RadioButton;
 	    i.next(); // skip subject MenuBar
-	    final String subject  = 
+	    final String subject  =
 		getSPVQueryValue(main.qsubject,  (JTextField) i.next());
 	    i.next(); // skip property MenuBar
-	    final String property = 
+	    final String property =
 		getSPVQueryValue(main.qproperty, (JTextField) i.next());
 	    i.next(); // skip value MenuBar
-	    final String value    = 
+	    final String value    =
 		getSPVQueryValue(main.qvalue,    (JTextField) i.next());
 	    triples.add(new Triple(subject, property, value));
 	}

@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jul 30 (Sun) 15:53:20 by Harold Carr.
-// Last Modified : 2008 May 24 (Sat) 20:44:16 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:52:46 by carr.
 //
 
-package org.openhc.trowser.gwt.client;
+package org.openhc.triplebrowser.gwt.client;
 
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;

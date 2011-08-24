@@ -1,16 +1,16 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2008 May 25 (Sun) 21:59:37 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:52:35 by carr.
 //
 
-package org.openhc.trowser.gwt.client;
+package org.openhc.triplebrowser.gwt.client;
 
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import org.openhc.trowser.gwt.common.QueryRequest;
-import org.openhc.trowser.gwt.client.Service;
+import org.openhc.triplebrowser.gwt.common.QueryRequest;
+import org.openhc.triplebrowser.gwt.client.Service;
 
 interface ServiceAsync {
     public void openFile(String filename, AsyncCallback callback);

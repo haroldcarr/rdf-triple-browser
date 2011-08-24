@@ -1,11 +1,11 @@
 //
 // Created       : 2006 Aug 12 (Sat) 14:56:41 by Harold Carr.
-// Last Modified : 2008 May 28 (Wed) 12:27:34 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:55:21 by carr.
 //
 
-package org.openhc.trowser.gwt.common;
+package org.openhc.triplebrowser.gwt.common;
 
-import org.openhc.trowser.gwt.common.Constants;
+import org.openhc.triplebrowser.gwt.common.Constants;
 
 public class Util
 {

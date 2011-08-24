@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Aug 12 (Sat) 14:56:41 by Harold Carr.
-// Last Modified : 2008 May 25 (Sun) 18:52:43 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:53:52 by carr.
 //
 
-package org.openhc.trowser.gwt.common;
+package org.openhc.triplebrowser.gwt.common;
 
 import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;

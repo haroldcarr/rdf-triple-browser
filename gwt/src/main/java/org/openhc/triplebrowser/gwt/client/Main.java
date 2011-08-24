@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 14:02:53 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:48:59 by carr.
 //
 
-package org.openhc.trowser.gwt.client;
+package org.openhc.triplebrowser.gwt.client;
 
 import java.util.Iterator;
 
@@ -16,15 +16,15 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
-import org.openhc.trowser.gwt.client.Test; // *****
+import org.openhc.triplebrowser.gwt.client.Test; // *****
 
-import org.openhc.trowser.gwt.common.Constants;
-import org.openhc.trowser.gwt.common.Util;
-import org.openhc.trowser.gwt.client.QueryManager;
-import org.openhc.trowser.gwt.client.ServerCalls;
+import org.openhc.triplebrowser.gwt.common.Constants;
+import org.openhc.triplebrowser.gwt.common.Util;
+import org.openhc.triplebrowser.gwt.client.QueryManager;
+import org.openhc.triplebrowser.gwt.client.ServerCalls;
 
-public class Main 
-    implements 
+public class Main
+    implements
 	Constants,
 	EntryPoint // Entry point classes define onModuleLoad()
 {
@@ -44,7 +44,7 @@ public class Main
     /**
      * This is the entry point method.
      */
-    public void onModuleLoad() 
+    public void onModuleLoad()
     {
 	util         = new Util();
 	queryManager = new QueryManager(this);
@@ -52,7 +52,7 @@ public class Main
 
 	responseProgressLabel = new Label();
 
-	queryPanel = new QueryPanel(this); 
+	queryPanel = new QueryPanel(this);
 	spvPanel   = new SPVPanel(this);
 
 	// TOP
@@ -91,7 +91,7 @@ public class Main
 	dockPanel.add(webBrowser, DockPanel.SOUTH);
 
 	// Host HTML has elements with IDs are "slot1", "slot2".
-	// Better: Search for all elements with a particular CSS class 
+	// Better: Search for all elements with a particular CSS class
 	// and replace them with widgets.
 
 	// XXX - test

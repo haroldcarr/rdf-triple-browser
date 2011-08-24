@@ -12,23 +12,23 @@
     <servlet>
         <servlet-name>UploadFormHandler</servlet-name>
         <servlet-class>
-            org.openhc.trowser.gwt.server.FileUploaderServlet
+            org.openhc.triplebrowser.gwt.server.FileUploaderServlet
         </servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UploadFormHandler</servlet-name>
-        <url-pattern>/trowser/UploadFormHandler</url-pattern>
+        <url-pattern>/triplebrowser/UploadFormHandler</url-pattern>
     </servlet-mapping>
 
     <servlet>
         <servlet-name>Service</servlet-name>
         <servlet-class>
-            org.openhc.trowser.gwt.server.ServiceImpl
+            org.openhc.triplebrowser.gwt.server.ServiceImpl
         </servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Service</servlet-name>
-        <url-pattern>/trowser/Service</url-pattern>
+        <url-pattern>/triplebrowser/Service</url-pattern>
     </servlet-mapping>
 
 </web-app>

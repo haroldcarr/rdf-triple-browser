@@ -1,11 +1,11 @@
 /*
  * Christopher Deckers (chrriis@nextencia.net)
  * http://www.nextencia.net
- * 
+ *
  * See the file "readme.txt" for information on usage and redistribution of
  * this file, and for a DISCLAIMER OF ALL WARRANTIES.
  */
-package org.openhc.trowser.swing.client;
+package org.openhc.triplebrowser.swing.client;
 
 import java.awt.BorderLayout;
 
@@ -17,8 +17,8 @@ import chrriis.dj.nativeswing.ui.JWebBrowser;
 /**
  * @author Christopher Deckers
  */
-public class WebBrowserImplDJNative 
-    extends 
+public class WebBrowserImplDJNative
+    extends
 	WebBrowser
 {
 
@@ -38,7 +38,7 @@ public class WebBrowserImplDJNative
     webBrowserPanel.add(webBrowser, BorderLayout.CENTER);
     add(webBrowserPanel, BorderLayout.CENTER);
   }
-  
+
 }
 
 // End of file.

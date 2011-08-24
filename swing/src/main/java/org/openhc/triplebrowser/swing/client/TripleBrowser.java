@@ -1,4 +1,4 @@
-package org.openhc.trowser.swing.client;
+package org.openhc.triplebrowser.swing.client;
 
 import java.awt.Window;
 
@@ -8,25 +8,25 @@ import org.jdesktop.application.SingleFrameApplication;
 /**
  * The main class of the application.
  */
-public class Trowser 
-    extends 
-	SingleFrameApplication 
+public class TripleBrowser
+    extends
+	SingleFrameApplication
 {
 
-    public static void main(String[] args) 
+    public static void main(String[] args)
     {
-        launch(Trowser.class, args);
+        launch(TripleBrowser.class, args);
     }
 
     @Override
-    protected void startup() 
+    protected void startup()
     {
-        show(new TrowserLayout(this));
+        show(new TripleBrowserLayout(this));
     }
 
-    public static Trowser getApplication() 
+    public static TripleBrowser getApplication()
     {
-        return Application.getInstance(Trowser.class);
+        return Application.getInstance(TripleBrowser.class);
     }
 
     /**
@@ -36,7 +36,7 @@ public class Trowser
      * builder, so this additional configuration is not needed.
      */
     @Override
-    protected void configureWindow(Window root) 
+    protected void configureWindow(Window root)
     {
     }
 }

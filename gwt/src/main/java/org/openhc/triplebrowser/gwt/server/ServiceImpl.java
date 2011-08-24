@@ -1,16 +1,16 @@
 //
 // Created       : 2006 Jul 28 (Fri) 17:52:12 by Harold Carr.
-// Last Modified : 2008 May 26 (Mon) 17:20:02 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 20:57:10 by carr.
 //
 
-package org.openhc.trowser.gwt.server;
+package org.openhc.triplebrowser.gwt.server;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import org.openhc.trowser.gwt.client.Service;
-import org.openhc.trowser.gwt.common.QueryRequest;
-import org.openhc.trowser.gwt.common.QueryResponse;
-import org.openhc.trowser.gwt.common.Triple;
+import org.openhc.triplebrowser.gwt.client.Service;
+import org.openhc.triplebrowser.gwt.common.QueryRequest;
+import org.openhc.triplebrowser.gwt.common.QueryResponse;
+import org.openhc.triplebrowser.gwt.common.Triple;
 
 public class ServiceImpl
     extends RemoteServiceServlet
@@ -20,12 +20,12 @@ public class ServiceImpl
     public static final ServiceImplDelegate serviceImplDelegate =
 	new ServiceImplDelegate();
 
-    public String openFile(final String filename) 
+    public String openFile(final String filename)
     {
 	return serviceImplDelegate.openFile(filename);
     }
 
-    public String close() 
+    public String close()
     {
 	return serviceImplDelegate.close();
     }

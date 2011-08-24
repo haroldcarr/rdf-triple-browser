@@ -1,9 +1,9 @@
 //
 // Created       : 2006 Jun 14 (Wed) 18:29:38 by Harold Carr.
-// Last Modified : 2008 May 29 (Thu) 14:49:34 by Harold Carr.
+// Last Modified : 2011 Aug 10 (Wed) 21:02:57 by carr.
 //
 
-package org.openhc.trowser.swing.client;
+package org.openhc.triplebrowser.swing.client;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -26,9 +26,9 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.openhc.trowser.gwt.common.SPVItem;
-import org.openhc.trowser.gwt.common.Util;
-import org.openhc.trowser.swing.client.Main;
+import org.openhc.triplebrowser.gwt.common.SPVItem;
+import org.openhc.triplebrowser.gwt.common.Util;
+import org.openhc.triplebrowser.swing.client.Main;
 
 public class SPVPanel
 {
@@ -46,13 +46,13 @@ public class SPVPanel
 	propertyPanel = new SPVList(main.property, main);
 	valuePanel    = new SPVList(main.value, main);
 	spvHorizontalPanel = new JPanel();
-	main.getTrowserLayout().spvPanelLayout(spvHorizontalPanel,
-					       subjectPanel.getButton(),
-					       subjectPanel.getScrollPane(),
-					       propertyPanel.getButton(),
-					       propertyPanel.getScrollPane(),
-					       valuePanel.getButton(),
-					       valuePanel.getScrollPane());
+	main.getTripleBrowserLayout().spvPanelLayout(spvHorizontalPanel,
+                                                     subjectPanel.getButton(),
+                                                     subjectPanel.getScrollPane(),
+                                                     propertyPanel.getButton(),
+                                                     propertyPanel.getScrollPane(),
+                                                     valuePanel.getButton(),
+                                                     valuePanel.getScrollPane());
     }
 
     public JPanel  getPanel()         { return spvHorizontalPanel; }
@@ -113,7 +113,7 @@ class SPVList
 
 	topButton.addMouseListener(new MouseAdapter() {
 	    public void mouseClicked(MouseEvent e) {
-		expandOrCollapseSPVClick();	
+		expandOrCollapseSPVClick();
 	    }
 	});
     }
@@ -145,7 +145,7 @@ class SPVList
 	final List result = new ArrayList();
 	while (i.hasNext()) {
 	    String uri = (String) i.next();
-	    result.add(new SPVItem(spvCategory, 
+	    result.add(new SPVItem(spvCategory,
 				   uri,
 				   main.getUtil().substringAfterLastSlashOrFirstSharp(uri)));
 	}

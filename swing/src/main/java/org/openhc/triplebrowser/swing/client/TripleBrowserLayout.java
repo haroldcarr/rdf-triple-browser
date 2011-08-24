@@ -1,6 +1,6 @@
-package org.openhc.trowser.swing.client;
+package org.openhc.triplebrowser.swing.client;
 
-import org.openhc.trowser.swing.client.Main;
+import org.openhc.triplebrowser.swing.client.Main;
 
 import java.awt.Component;
 
@@ -38,16 +38,16 @@ import org.jdesktop.layout.LayoutStyle;
 // The application's main frame.
 //
 
-public class TrowserLayout 
-    extends 
-	FrameView 
+public class TripleBrowserLayout
+    extends
+	FrameView
 {
     private Main     main;
     private JPanel   mainPanel;
     private JMenuBar menuBar;
     private JDialog  aboutBox;
 
-    public TrowserLayout(SingleFrameApplication app) 
+    public TripleBrowserLayout(SingleFrameApplication app)
     {
         super(app);
         initComponents();
@@ -66,30 +66,30 @@ public class TrowserLayout
     }
 
     @Action
-    public void showAboutBox() 
+    public void showAboutBox()
     {
         if (aboutBox == null) {
-            JFrame mainFrame = Trowser.getApplication().getMainFrame();
-            aboutBox = new TrowserAboutBox(mainFrame);
+            JFrame mainFrame = TripleBrowser.getApplication().getMainFrame();
+            aboutBox = new TripleBrowserAboutBox(mainFrame);
             aboutBox.setLocationRelativeTo(mainFrame);
         }
-        Trowser.getApplication().show(aboutBox);
+        TripleBrowser.getApplication().show(aboutBox);
     }
 
-    public JPanel getSwingMainPanel() 
-    { 
-	return mainPanel; 
+    public JPanel getSwingMainPanel()
+    {
+	return mainPanel;
     }
 
     @SuppressWarnings("unchecked")
-    private void initComponents() 
+    private void initComponents()
     {
         mainPanel = new JPanel();
         mainPanel.setName("mainPanel"); // NOI18N
 
-        ResourceMap resourceMap = 
-	    Application.getInstance(Trowser.class)
-	        .getContext().getResourceMap(TrowserLayout.class);
+        ResourceMap resourceMap =
+	    Application.getInstance(TripleBrowser.class)
+	        .getContext().getResourceMap(TripleBrowserLayout.class);
 
                         menuBar          = new JMenuBar();
         final JMenu     fileMenu         = new JMenu();
@@ -103,9 +103,9 @@ public class TrowserLayout
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
 
-        ActionMap actionMap = 
-	    Application.getInstance(Trowser.class)
-	        .getContext().getActionMap(TrowserLayout.class, this);
+        ActionMap actionMap =
+	    Application.getInstance(TripleBrowser.class)
+	        .getContext().getActionMap(TripleBrowserLayout.class, this);
 
 
         openFileMenuItem.setAction(actionMap.get("openFile")); // NOI18N
@@ -187,7 +187,7 @@ public class TrowserLayout
             .add(jPanel1Layout.createParallelGroup(GroupLayout.BASELINE)
 		 .add(jButton1)
 		 .add(jRadioButton1)
-		 .add(jComboBox1, GroupLayout.PREFERRED_SIZE, 
+		 .add(jComboBox1, GroupLayout.PREFERRED_SIZE,
 		      GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 		 .add(jTextField1, GroupLayout.PREFERRED_SIZE,
 		      GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -195,7 +195,7 @@ public class TrowserLayout
 		      GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 		 .add(jTextField2, GroupLayout.PREFERRED_SIZE,
 		      GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-		 .add(jComboBox3, GroupLayout.PREFERRED_SIZE, 
+		 .add(jComboBox3, GroupLayout.PREFERRED_SIZE,
 		      GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 		 .add(jTextField3, GroupLayout.PREFERRED_SIZE,
 		      GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -214,7 +214,7 @@ public class TrowserLayout
 	    GroupLayout.VERTICAL);
     }
 
-    public void addTriplePanel(final JPanel queryPanel, 
+    public void addTriplePanel(final JPanel queryPanel,
 			       final JPanel jPanel1)
     {
         GroupLayout queryPanelLayout = new GroupLayout(queryPanel);
@@ -328,8 +328,8 @@ public class TrowserLayout
     //
     // mainPanelLayout
     //
-    public void mainPanelLayout(final JPanel mainPanel, 
-				final JPanel jPanel1, 
+    public void mainPanelLayout(final JPanel mainPanel,
+				final JPanel jPanel1,
 				final JPanel jPanel2,
 				final JPanel jPanel3)
     {
@@ -345,21 +345,21 @@ public class TrowserLayout
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(GroupLayout.LEADING)
             .add(mainPanelLayout.createSequentialGroup()
-		 .add(splitPanel, 0, 
+		 .add(splitPanel, 0,
 		      GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 		 )
 	    );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(GroupLayout.LEADING)
             .add(mainPanelLayout.createSequentialGroup()
-		 .add(splitPanel, 0, 
+		 .add(splitPanel, 0,
 		      GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 		 )
 	    );
     }
 
-    public void mainTopPanelLayout(final JPanel topPanel, 
-				   final JPanel jPanel1, 
+    public void mainTopPanelLayout(final JPanel topPanel,
+				   final JPanel jPanel1,
 				   final JPanel jPanel2)
     {
         GroupLayout topPanelLayout = new GroupLayout(topPanel);
@@ -369,7 +369,7 @@ public class TrowserLayout
             .add(topPanelLayout.createSequentialGroup()
 		 //.addContainerGap()
 		 .add(topPanelLayout.createParallelGroup(GroupLayout.LEADING)
-		      .add(GroupLayout.TRAILING, jPanel2, 
+		      .add(GroupLayout.TRAILING, jPanel2,
 			   GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
 			   Short.MAX_VALUE)
 		      .add(GroupLayout.TRAILING, jPanel1,
