@@ -2,6 +2,8 @@ RCS
 gwt/src/main/java/org/openhc/triplebrowser/gwt/client/tt.lva
 gwt/src/main/java/org/openhc/triplebrowser/gwt/server/tt.lva
 gwt/target/
+haskell/cabal.sandbox.config
+haskell/dist
 hc-p.rdf
 hc-x.rdf
 rdf/
