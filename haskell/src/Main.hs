@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Jul 14 (Mon) 07:24:43 by Harold Carr.
+Last Modified : 2014 Jul 14 (Mon) 08:09:25 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -23,11 +23,12 @@ main = startGUI defaultConfig setup
 
 setup :: Window -> UI ()
 setup window = void $ mdo
-    let s = mkSPVPanel
-        p = mkSPVPanel
-        v = mkSPVPanel
-    getBody window #+ [ row [s, p, v] ]
-    return window # set title "CRUD Example (Simple)"
+    let s    = mkSPVPanel
+        p    = mkSPVPanel
+        v    = mkSPVPanel
+        nbsp = string " "
+    getBody window #+ [ row [s, nbsp, p, nbsp, v] ]
+    return window # set title "RDF Triple Browser"
 
 mkSPVPanel :: UI Element
 mkSPVPanel = mdo
@@ -36,8 +37,8 @@ mkSPVPanel = mdo
     deleteBtn   <- UI.button #+ [string "Delete"]
     listBox     <- UI.listBox  bListBoxItems bSelection bDisplayDataItem
     filterEntry <- UI.entry    bFilterString
-    ((firstname, lastname), tDataItem)
-                 <- dataItem    bSelectionDataItem
+    (firstname, tDataItem)
+                <- dataItem    bSelectionDataItem
 
     -- events and behaviors
     bFilterString <- stepper "" . rumors $ UI.userText filterEntry
@@ -54,7 +55,7 @@ mkSPVPanel = mdo
     -- bDatabase :: Behavior (Database DataItem)
     let update' mkey x = flip update x <$> mkey
     bDatabase <- accumB emptydb $ concatenate <$> unions
-        [ create ("Emil","Example") <$ eCreate
+        [ create "EXAMPLE" <$ eCreate
         , filterJust $ update' <$> bSelection <@> eDataItemIn
         , delete <$> filterJust (bSelection <@ eDelete)
         ]
@@ -90,22 +91,18 @@ mkSPVPanel = mdo
         bDisplayItem = maybe False (const True) <$> bSelection
 
     element deleteBtn # sink UI.enabled bDisplayItem
-    element firstname  # sink UI.enabled bDisplayItem
-    element lastname   # sink UI.enabled bDisplayItem
+    element firstname # sink UI.enabled bDisplayItem
 
     -- GUI layout
     element listBox # set (attr "size") "10" # set style [("width","200px")]
-    let uiDataItem = grid [[string "First Name:", element firstname]
-                          ,[string "Last Name:" , element lastname]]
-    let glue = string " "
+    let uiDataItem = grid [[string "?SPV:", element firstname]]
 
-    grid
-             [ [ row [string "Filter prefix:", element filterEntry], glue ]
-             , [ element listBox, uiDataItem ]
-             , [ row [element createBtn, element deleteBtn], glue ]
-             ]
-
-
+    grid [
+           [ uiDataItem ]
+         , [ element listBox ]
+         , [ row [element createBtn, element deleteBtn] ]
+         , [ row [string "filter:", element filterEntry] ]
+         ]
 
 ------------------------------------------------------------------------------
 -- Database Model
@@ -132,23 +129,19 @@ lookup :: DatabaseKey -> Database a -> Maybe a
 lookup key   (Database _      db0) = Map.lookup                       key      db0
 
 ------------------------------------------------------------------------------
--- Data items that are stored in the data base
+-- What is stored in data base
 
-type DataItem = (String, String)
+type DataItem = String
 
-showDataItem :: (String, String) -> String
-showDataItem (firstname, lastname) = lastname ++ ", " ++ firstname
+showDataItem :: String -> String
+showDataItem x = x
 
 -- | Data item widget, consisting of two text entries
-dataItem
-    :: Behavior (Maybe DataItem)
-    -> UI ((Element, Element), Tidings DataItem)
+dataItem :: Behavior (Maybe DataItem) -> UI (Element, Tidings DataItem)
 dataItem bItem = do
-    entry1 <- UI.entry $ fst . maybe ("","") id <$> bItem
-    entry2 <- UI.entry $ snd . maybe ("","") id <$> bItem
-
-    return ( (getElement entry1, getElement entry2)
-           , (,) <$> UI.userText entry1 <*> UI.userText entry2
+    entry1 <- UI.entry $ maybe "" id <$> bItem
+    return ( getElement  entry1
+           , UI.userText entry1
            )
 
 -- End of file.
