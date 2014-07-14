@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Jul 13 (Sun) 12:06:19 by Harold Carr.
+Last Modified : 2014 Jul 14 (Mon) 06:51:12 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -18,61 +18,97 @@ import           Graphics.UI.Threepenny.Core hiding (delete)
 
 ------------------------------------------------------------------------------
 
-main :: IO ()
-main = startGUI defaultConfig setup
+test :: IO ()
+test = startGUI defaultConfig testSetup
 
-setup :: Window -> UI ()
-setup window = void $ mdo
+testSetup :: Window -> UI ()
+testSetup window = void $ mdo
     return window # set title "CRUD Example (Simple)"
 
+
     -- GUI elements
-    createBtn   <- UI.button #+ [string "Create"]
-    deleteBtn   <- UI.button #+ [string "Delete"]
-    listBox     <- UI.listBox  bListBoxItems bSelection bDisplayDataItem
-    filterEntry <- UI.entry    bFilterString
-    ((firstname, lastname), tDataItem)
-                <- dataItem    bSelectionDataItem
+    createBtnS   <- UI.button #+ [string "Create"]
+    deleteBtnS   <- UI.button #+ [string "Delete"]
+    createBtnP   <- UI.button #+ [string "Create"]
+    deleteBtnP   <- UI.button #+ [string "Delete"]
+    createBtnO   <- UI.button #+ [string "Create"]
+    deleteBtnO   <- UI.button #+ [string "Delete"]
+    listBoxS     <- UI.listBox  bListBoxItemsS bSelectionS bDisplayDataItemS
+    listBoxO     <- UI.listBox  bListBoxItemsS bSelectionS bDisplayDataItemS
+    listBoxP     <- UI.listBox  bListBoxItemsS bSelectionS bDisplayDataItemS
+    filterEntryS <- UI.entry    bFilterStringS
+    filterEntryP <- UI.entry    bFilterStringS
+    filterEntryO <- UI.entry    bFilterStringS
+    ((firstnameS, lastnameS), tDataItemS)
+                 <- dataItem    bSelectionDataItemS
+    ((firstnameP, lastnameP), tDataItemP)
+                 <- dataItem    bSelectionDataItemS
+    ((firstnameO, lastnameO), tDataItemO)
+                 <- dataItem    bSelectionDataItemS
 
     -- GUI layout
-    element listBox # set (attr "size") "10" # set style [("width","200px")]
+    element listBoxS # set (attr "size") "10" # set style [("width","200px")]
+    element listBoxP # set (attr "size") "10" # set style [("width","200px")]
+    element listBoxO # set (attr "size") "10" # set style [("width","200px")]
 
-    let uiDataItem = grid [[string "First Name:", element firstname]
-                          ,[string "Last Name:" , element lastname]]
+    let uiDataItemS = grid [[string "First Name:", element firstnameS]
+                           ,[string "Last Name:" , element lastnameS]]
+        uiDataItemP = grid [[string "First Name:", element firstnameP]
+                           ,[string "Last Name:" , element lastnameP]]
+        uiDataItemO = grid [[string "First Name:", element firstnameO]
+                           ,[string "Last Name:" , element lastnameO]]
+
     let glue = string " "
-    getBody window #+ [grid
-        [[row [string "Filter prefix:", element filterEntry], glue]
-        ,[element listBox, uiDataItem]
-        ,[row [element createBtn, element deleteBtn], glue]
-        ]]
+    getBody window #+
+        [ row [ grid [ [ row [ string "subject:" , element filterEntryS ] ]
+                     , [ element listBoxS ]
+                     , [ element createBtnS ]
+                     , [ element deleteBtnS ]
+                     , [ uiDataItemS ]
+                     ]
+              , glue
+              , grid [ [ row [ string "object:"  , element filterEntryS ] ]
+                     , [ element listBoxP]
+                     , [ element createBtnP ]
+                     , [ element deleteBtnP ]
+                     ]
+              , glue
+              , grid [ [ row [string "predicate:", element filterEntryS ] ]
+                     , [ element listBoxO]
+                     , [ element createBtnO ]
+                     , [ element deleteBtnO ]
+                     ]
+              ]
+          ]
 
     -- events and behaviors
-    bFilterString <- stepper "" . rumors $ UI.userText filterEntry
-    let tFilter = isPrefixOf <$> UI.userText filterEntry
+    bFilterStringS <- stepper "" . rumors $ UI.userText filterEntryS
+    let tFilter = isPrefixOf <$> UI.userText filterEntryS
         bFilter = facts  tFilter
         eFilter = rumors tFilter
 
-    let eSelection  = rumors $ UI.userSelection listBox
-        eDataItemIn = rumors $ tDataItem
-        eCreate     = UI.click createBtn
-        eDelete     = UI.click deleteBtn
+    let eSelection  = rumors $ UI.userSelection listBoxS
+        eDataItemIn = rumors $ tDataItemS
+        eCreate     = UI.click createBtnS
+        eDelete     = UI.click deleteBtnS
 
     -- database
     -- bDatabase :: Behavior (Database DataItem)
     let update' mkey x = flip update x <$> mkey
     bDatabase <- accumB emptydb $ concatenate <$> unions
         [ create ("Emil","Example") <$ eCreate
-        , filterJust $ update' <$> bSelection <@> eDataItemIn
-        , delete <$> filterJust (bSelection <@ eDelete)
+        , filterJust $ update' <$> bSelectionS <@> eDataItemIn
+        , delete <$> filterJust (bSelectionS <@ eDelete)
         ]
 
     -- selection
-    -- bSelection :: Behavior (Maybe DatabaseKey)
-    bSelection <- stepper Nothing $ head <$> unions
+    -- bSelectionS :: Behavior (Maybe DatabaseKey)
+    bSelectionS <- stepper Nothing $ head <$> unions
         [ eSelection
         , Nothing <$ eDelete
         , Just . nextKey <$> bDatabase <@ eCreate
         , (\b s p -> b >>= \a -> if p (s a) then Just a else Nothing)
-            <$> bSelection <*> bShowDataItem <@> eFilter
+            <$> bSelectionS <*> bShowDataItem <@> eFilter
         ]
 
     let bLookup :: Behavior (DatabaseKey -> Maybe DataItem)
@@ -81,23 +117,112 @@ setup window = void $ mdo
         bShowDataItem :: Behavior (DatabaseKey -> String)
         bShowDataItem = (maybe "" showDataItem .) <$> bLookup
 
-        bDisplayDataItem = (UI.string .) <$> bShowDataItem
+        bDisplayDataItemS = (UI.string .) <$> bShowDataItem
 
-        bListBoxItems :: Behavior [DatabaseKey]
-        bListBoxItems = (\p show0 -> filter (p. show0) . keys)
+        bListBoxItemsS :: Behavior [DatabaseKey]
+        bListBoxItemsS = (\p show0 -> filter (p. show0) . keys)
                     <$> bFilter <*> bShowDataItem <*> bDatabase
 
-        bSelectionDataItem :: Behavior (Maybe DataItem)
-        bSelectionDataItem = (=<<) <$> bLookup <*> bSelection
+        bSelectionDataItemS :: Behavior (Maybe DataItem)
+        bSelectionDataItemS = (=<<) <$> bLookup <*> bSelectionS
 
     -- automatically enable / disable editing
     let
         bDisplayItem :: Behavior Bool
-        bDisplayItem = maybe False (const True) <$> bSelection
+        bDisplayItem = maybe False (const True) <$> bSelectionS
 
-    element deleteBtn # sink UI.enabled bDisplayItem
-    element firstname # sink UI.enabled bDisplayItem
-    element lastname  # sink UI.enabled bDisplayItem
+    element deleteBtnS # sink UI.enabled bDisplayItem
+    element deleteBtnP # sink UI.enabled bDisplayItem
+    element deleteBtnO # sink UI.enabled bDisplayItem
+    element firstnameS # sink UI.enabled bDisplayItem
+    element firstnameP # sink UI.enabled bDisplayItem
+    element firstnameO # sink UI.enabled bDisplayItem
+    element lastnameS  # sink UI.enabled bDisplayItem
+    element lastnameP  # sink UI.enabled bDisplayItem
+    element lastnameO  # sink UI.enabled bDisplayItem
+
+------------------------------------------------------------------------------
+
+main :: IO ()
+main = startGUI defaultConfig setup
+
+setup :: Window -> UI ()
+setup window = void $ mdo
+    return window # set title "CRUD Example (Simple)"
+
+    -- GUI elements
+    createBtnS   <- UI.button #+ [string "Create"]
+    deleteBtnS   <- UI.button #+ [string "Delete"]
+    listBoxS     <- UI.listBox  bListBoxItemsS bSelectionS bDisplayDataItemS
+    filterEntryS <- UI.entry    bFilterStringS
+    ((firstname, lastname), tDataItem)
+                 <- dataItem    bSelectionDataItemS
+
+    -- GUI layout
+    element listBoxS # set (attr "size") "10" # set style [("width","200px")]
+
+    let uiDataItem = grid [[string "First Name:", element firstname]
+                          ,[string "Last Name:" , element lastname]]
+    let glue = string " "
+    getBody window #+ [grid
+        [[row [string "Filter prefix:", element filterEntryS], glue]
+        ,[element listBoxS, uiDataItem]
+        ,[row [element createBtnS, element deleteBtnS], glue]
+        ]]
+
+    -- events and behaviors
+    bFilterStringS <- stepper "" . rumors $ UI.userText filterEntryS
+    let tFilter = isPrefixOf <$> UI.userText filterEntryS
+        bFilter = facts  tFilter
+        eFilter = rumors tFilter
+
+    let eSelection  = rumors $ UI.userSelection listBoxS
+        eDataItemIn = rumors $ tDataItem
+        eCreate     = UI.click createBtnS
+        eDelete     = UI.click deleteBtnS
+
+    -- database
+    -- bDatabase :: Behavior (Database DataItem)
+    let update' mkey x = flip update x <$> mkey
+    bDatabase <- accumB emptydb $ concatenate <$> unions
+        [ create ("Emil","Example") <$ eCreate
+        , filterJust $ update' <$> bSelectionS <@> eDataItemIn
+        , delete <$> filterJust (bSelectionS <@ eDelete)
+        ]
+
+    -- selection
+    -- bSelectionS :: Behavior (Maybe DatabaseKey)
+    bSelectionS <- stepper Nothing $ head <$> unions
+        [ eSelection
+        , Nothing <$ eDelete
+        , Just . nextKey <$> bDatabase <@ eCreate
+        , (\b s p -> b >>= \a -> if p (s a) then Just a else Nothing)
+            <$> bSelectionS <*> bShowDataItem <@> eFilter
+        ]
+
+    let bLookup :: Behavior (DatabaseKey -> Maybe DataItem)
+        bLookup = flip lookup <$> bDatabase
+
+        bShowDataItem :: Behavior (DatabaseKey -> String)
+        bShowDataItem = (maybe "" showDataItem .) <$> bLookup
+
+        bDisplayDataItemS = (UI.string .) <$> bShowDataItem
+
+        bListBoxItemsS :: Behavior [DatabaseKey]
+        bListBoxItemsS = (\p show0 -> filter (p. show0) . keys)
+                    <$> bFilter <*> bShowDataItem <*> bDatabase
+
+        bSelectionDataItemS :: Behavior (Maybe DataItem)
+        bSelectionDataItemS = (=<<) <$> bLookup <*> bSelectionS
+
+    -- automatically enable / disable editing
+    let
+        bDisplayItem :: Behavior Bool
+        bDisplayItem = maybe False (const True) <$> bSelectionS
+
+    element deleteBtnS # sink UI.enabled bDisplayItem
+    element firstname  # sink UI.enabled bDisplayItem
+    element lastname   # sink UI.enabled bDisplayItem
 
 ------------------------------------------------------------------------------
 -- Database Model
