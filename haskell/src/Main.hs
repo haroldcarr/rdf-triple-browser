@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Jul 14 (Mon) 08:09:25 by Harold Carr.
+Last Modified : 2014 Jul 14 (Mon) 09:02:11 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -23,15 +23,15 @@ main = startGUI defaultConfig setup
 
 setup :: Window -> UI ()
 setup window = void $ mdo
-    let s    = mkSPVPanel
-        p    = mkSPVPanel
-        v    = mkSPVPanel
+    let s    = mkSPVPanel "?subject"
+        p    = mkSPVPanel "?predicate"
+        v    = mkSPVPanel "?value"
         nbsp = string " "
     getBody window #+ [ row [s, nbsp, p, nbsp, v] ]
     return window # set title "RDF Triple Browser"
 
-mkSPVPanel :: UI Element
-mkSPVPanel = mdo
+mkSPVPanel :: String -> UI Element
+mkSPVPanel name = mdo
     -- GUI elements
     createBtn   <- UI.button #+ [string "Create"]
     deleteBtn   <- UI.button #+ [string "Delete"]
@@ -39,6 +39,8 @@ mkSPVPanel = mdo
     filterEntry <- UI.entry    bFilterString
     (firstname, tDataItem)
                 <- dataItem    bSelectionDataItem
+    let uiDataItem = grid [[string name, element firstname]]
+    element listBox # set (attr "size") "10" # set style [("width","200px")]
 
     -- events and behaviors
     bFilterString <- stepper "" . rumors $ UI.userText filterEntry
@@ -94,9 +96,6 @@ mkSPVPanel = mdo
     element firstname # sink UI.enabled bDisplayItem
 
     -- GUI layout
-    element listBox # set (attr "size") "10" # set style [("width","200px")]
-    let uiDataItem = grid [[string "?SPV:", element firstname]]
-
     grid [
            [ uiDataItem ]
          , [ element listBox ]
