@@ -1,0 +1,12 @@
+Created       : 2014 Jul 16 (Wed) 08:35:29 by Harold Carr.
+Last Modified : 2014 Jul 16 (Wed) 08:35:31 by Harold Carr.
+
+http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
+
+lookupDb
+
+(fromDb, fromDbPush) <- newEvent
+
+register lookupDb (\s ->
+  r <- call sparql
+  fromDbPush r)
