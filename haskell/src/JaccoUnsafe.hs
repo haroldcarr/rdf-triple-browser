@@ -1,4 +1,4 @@
-module Jacco where
+module JaccoUnsafe where
 
 import           Graphics.UI.Threepenny as UI
 import           System.Random
