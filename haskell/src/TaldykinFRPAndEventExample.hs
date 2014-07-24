@@ -1,10 +1,10 @@
 {-
 Created       : 2014 Jul 17 (Thu) 04:21:11 by Max Taldykin.
-Last Modified : 2014 Jul 23 (Wed) 08:19:43 by Harold Carr.
+Last Modified : 2014 Jul 24 (Thu) 10:54:43 by Harold Carr.
 http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
 -}
 
-module Taldykin where
+module TaldykinFRPAndEventExample where
 
 import           Graphics.UI.Threepenny as UI
 
@@ -14,7 +14,7 @@ Like an infinite list of values tagged with their time of occurence: `type Event
 
 `Behavior a` represents time varying value. Like: `type Behavior a = Time -> a`
 
-Event handler is function given event value.  Performs some computation. `type Handler a = a -> IO ()Source`
+Event handler is function given event value.  Performs some computation. `type Handler a = a -> IO ()`
 -}
 
 main :: IO ()

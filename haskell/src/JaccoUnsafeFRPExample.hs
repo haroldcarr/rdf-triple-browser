@@ -1,4 +1,4 @@
-module JaccoUnsafe where
+module JaccoUnsafeFRPExample where
 
 import           Graphics.UI.Threepenny as UI
 import           System.Random
