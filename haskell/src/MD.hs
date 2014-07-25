@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui MissingDollars sample.
-Last Modified : 2014 Jul 24 (Thu) 20:01:24 by Harold Carr.
+Last Modified : 2014 Jul 24 (Thu) 20:21:06 by Harold Carr.
 -}
 
 module MD where
@@ -11,21 +11,27 @@ import           Graphics.UI.Threepenny.Core
 
 main :: IO ()
 main = do
-    frp <- mkLstBoxFRP valuesSupply
+    (subFRP : preFRP : valFRP : _) <- replicateM 3 $ mkLstBoxFRP valuesSupply
     startGUI defaultConfig $ \w -> do
         return w # set title "MD"
-        getBody w #+ [row [ mkLayout frp ] ]
+        getBody w #+ [row [ mkLayout subFRP preFRP valFRP ] ]
         return ()
 
 mkLstBoxFRP :: ([Char] -> IO a) -> IO (Handler a, Behavior a)
 mkLstBoxFRP valuesSupply0 = do
     (eventFillListBox, handlerFillListBox) <- newEvent
-    initialList <- valuesSupply0 ""
+    initialList         <- valuesSupply0 ""
     behaviorFillListBox <- stepper initialList eventFillListBox
     return (handlerFillListBox, behaviorFillListBox)
 
-mkLayout :: (Handler [String], Behavior [String]) -> UI Element
-mkLayout (handlerFillListBox, behaviorFillListBox) = do
+mkLayout ::    (Handler [String], Behavior [String])
+            -> (Handler [String], Behavior [String])
+            -> (Handler [String], Behavior [String])
+            -> UI Element
+mkLayout (hSubFillListBox, bSubFillListBox)
+         (hPreFillListBox, bPreFillListBox)
+         (hValFillListBox, bValFillListBox) =
+  do
     -- input elements
     sparqlEndpointURL <- UI.input  # set (attr "size") "80" # set (attr "type") "text"
     submit            <- UI.button #+ [string "submit"]
@@ -59,19 +65,19 @@ mkLayout (handlerFillListBox, behaviorFillListBox) = do
         v      <- get value currentVal
         updateDisplay sparql s p v
 
-    list <- UI.ul
-    lstBox <- UI.listBox behaviorFillListBox
-                         (pure Nothing)
-                         (pure $ \it -> UI.span # set text it)
-    element lstBox # set (attr "size") "10" # set style [("width","200px")]
+    subList    <- UI.ul
+    subListBox <- UI.listBox bSubFillListBox
+                             (pure Nothing)
+                             (pure $ \it -> UI.span # set text it)
+    element subListBox # set (attr "size") "10" # set style [("width","200px")]
 
-    on UI.selectionChange (getElement lstBox) $ \x -> case x of
+    on UI.selectionChange (getElement subListBox) $ \x -> case x of
         Nothing -> return ()
-        Just ix -> do items <- currentValue behaviorFillListBox
+        Just ix -> do items <- currentValue bSubFillListBox
                       let it = items !! ix
-                      liftIO $ valuesSupply it >>= handlerFillListBox
-                      element list #+ [UI.li # set html it]
-                      UI.setFocus $ getElement lstBox
+                      liftIO $ valuesSupply it >>= hSubFillListBox
+                      element subList #+ [UI.li # set html it]
+                      UI.setFocus $ getElement subListBox
 
 
     grid [ [ row [ element sparqlEndpointURL, element submit ] ]
@@ -81,8 +87,8 @@ mkLayout (handlerFillListBox, behaviorFillListBox) = do
                  ]
            ]
          , [ row [ column [ element bSub
-                          , element lstBox
-                          , element list
+                          , element subListBox
+                          , element subList
                           ]
                  , column [ element bPre
                           ]
