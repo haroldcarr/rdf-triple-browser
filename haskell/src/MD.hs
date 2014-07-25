@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui MissingDollars sample.
-Last Modified : 2014 Jul 24 (Thu) 20:21:06 by Harold Carr.
+Last Modified : 2014 Jul 24 (Thu) 20:47:59 by Harold Carr.
 -}
 
 module MD where
@@ -17,23 +17,15 @@ main = do
         getBody w #+ [row [ mkLayout subFRP preFRP valFRP ] ]
         return ()
 
-mkLstBoxFRP :: ([Char] -> IO a) -> IO (Handler a, Behavior a)
-mkLstBoxFRP valuesSupply0 = do
-    (eventFillListBox, handlerFillListBox) <- newEvent
-    initialList         <- valuesSupply0 ""
-    behaviorFillListBox <- stepper initialList eventFillListBox
-    return (handlerFillListBox, behaviorFillListBox)
-
 mkLayout ::    (Handler [String], Behavior [String])
             -> (Handler [String], Behavior [String])
             -> (Handler [String], Behavior [String])
             -> UI Element
 mkLayout (hSubFillListBox, bSubFillListBox)
          (hPreFillListBox, bPreFillListBox)
-         (hValFillListBox, bValFillListBox) =
-  do
+         (hValFillListBox, bValFillListBox) = do
     -- input elements
-    sparqlEndpointURL <- UI.input  # set (attr "size") "80" # set (attr "type") "text"
+    sparqlEndpointURL <- UI.input  # set (attr "size") "175" # set (attr "type") "text"
     submit            <- UI.button #+ [string "submit"]
     (bSub  : bPre  : bVal  : _)
         <- replicateM 3 $ UI.button #+ [string "+"]
@@ -65,11 +57,44 @@ mkLayout (hSubFillListBox, bSubFillListBox)
         v      <- get value currentVal
         updateDisplay sparql s p v
 
+    (subListBox, subList) <- mkListBox hSubFillListBox bSubFillListBox
+    (preListBox, preList) <- mkListBox hPreFillListBox bPreFillListBox
+    (valListBox, valList) <- mkListBox hValFillListBox bValFillListBox
+
+    grid [ [ row [ element sparqlEndpointURL, element submit ] ]
+         , [ row [ column [ row [ element ddSub, element currentSub ]
+                          , element bSub
+                          , element subListBox
+                          , element subList
+                          ]
+                 , column [ row [ element ddPre, element currentPre ]
+                          , element bPre
+                          , element preListBox
+                          , element preList
+                          ]
+                 , column [ row [ element ddVal, element currentVal ]
+                          , element bVal
+                          , element valListBox
+                          , element valList
+                          ]
+                 ]
+           ]
+         ]
+
+mkLstBoxFRP :: ([Char] -> IO a) -> IO (Handler a, Behavior a)
+mkLstBoxFRP valuesSupply0 = do
+    (eventFillListBox, handlerFillListBox) <- newEvent
+    initialList         <- valuesSupply0 ""
+    behaviorFillListBox <- stepper initialList eventFillListBox
+    return (handlerFillListBox, behaviorFillListBox)
+
+mkListBox :: ([String] -> IO a) -> Behavior [String] -> UI (UI.ListBox String, Element)
+mkListBox hSubFillListBox bSubFillListBox = do
     subList    <- UI.ul
     subListBox <- UI.listBox bSubFillListBox
                              (pure Nothing)
                              (pure $ \it -> UI.span # set text it)
-    element subListBox # set (attr "size") "10" # set style [("width","200px")]
+    element subListBox # set (attr "size") "10" # set style [("width","300px")]
 
     on UI.selectionChange (getElement subListBox) $ \x -> case x of
         Nothing -> return ()
@@ -78,25 +103,7 @@ mkLayout (hSubFillListBox, bSubFillListBox)
                       liftIO $ valuesSupply it >>= hSubFillListBox
                       element subList #+ [UI.li # set html it]
                       UI.setFocus $ getElement subListBox
-
-
-    grid [ [ row [ element sparqlEndpointURL, element submit ] ]
-         , [ row [ element ddSub, element currentSub
-                 , element ddPre, element currentPre
-                 , element ddVal, element currentVal
-                 ]
-           ]
-         , [ row [ column [ element bSub
-                          , element subListBox
-                          , element subList
-                          ]
-                 , column [ element bPre
-                          ]
-                 , column [ element bVal
-                          ]
-                 ]
-           ]
-         ]
+    return (subListBox, subList)
 
 valuesSupply :: String -> IO [String]
 valuesSupply x = do
