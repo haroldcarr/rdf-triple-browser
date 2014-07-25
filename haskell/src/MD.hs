@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui MissingDollars sample.
-Last Modified : 2014 Jul 25 (Fri) 08:35:15 by Harold Carr.
+Last Modified : 2014 Jul 25 (Fri) 08:37:54 by Harold Carr.
 -}
 
 module MD where
@@ -13,7 +13,7 @@ data SPVType = SUB | PRE | VAL
 
 main :: IO ()
 main = do
-    (subFRP : preFRP : valFRP : _) <- replicateM 3 $ mkListBoxFRP
+    (subFRP : preFRP : valFRP : _) <- replicateM 3 mkListBoxFRP
     startGUI defaultConfig $ \w -> do
         return w # set title "MD"
         getBody w #+ [row [ mkLayout subFRP preFRP valFRP ] ]
@@ -134,9 +134,9 @@ mkListBox spvType bFillListBox sel = do
 doRDFQuery :: String -> String -> String -> String -> IO ([String],[String],[String])
 doRDFQuery endpoint s p v = do
     putStrLn endpoint
-    let s' = [ s ++ (show i) | i <- [0..19::Int]]
-    let p' = [ p ++ (show i) | i <- [0..19::Int]]
-    let v' = [ v ++ (show i) | i <- [0..19::Int]]
+    let s' = [ s ++ show i | i <- [0..19::Int]]
+    let p' = [ p ++ show i | i <- [0..19::Int]]
+    let v' = [ v ++ show i | i <- [0..19::Int]]
     return (s',p',v')
 
 -- End of file.
