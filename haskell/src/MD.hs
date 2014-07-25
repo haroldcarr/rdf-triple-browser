@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui MissingDollars sample.
-Last Modified : 2014 Jul 25 (Fri) 07:25:39 by Harold Carr.
+Last Modified : 2014 Jul 25 (Fri) 07:51:56 by Harold Carr.
 -}
 
 module MD where
@@ -9,9 +9,11 @@ import           Control.Monad
 import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core
 
+data SPVType = SUB | PRE | VAL
+
 main :: IO ()
 main = do
-    (subFRP : preFRP : valFRP : _) <- replicateM 3 $ mkLstBoxFRP valuesSupply
+    (subFRP : preFRP : valFRP : _) <- replicateM 3 $ mkListBoxFRP valuesSupply
     startGUI defaultConfig $ \w -> do
         return w # set title "MD"
         getBody w #+ [row [ mkLayout subFRP preFRP valFRP ] ]
@@ -67,9 +69,18 @@ mkLayout (hSubFillListBox, bSubFillListBox)
         updateDisplay sparql "?subject" "?predicate" "?value"
         doQuery
 
-    (subListBox, subList) <- mkListBox hSubFillListBox bSubFillListBox
-    (preListBox, preList) <- mkListBox hPreFillListBox bPreFillListBox
-    (valListBox, valList) <- mkListBox hValFillListBox bValFillListBox
+    let doSelectionQuery (spv, selection) = do {
+        element (case spv of
+                    SUB -> currentSub
+                    PRE -> currentPre
+                    VAL -> currentVal)
+                # set value selection;
+        doQuery
+    }
+
+    subListBox <- mkListBox SUB hSubFillListBox bSubFillListBox doSelectionQuery
+    preListBox <- mkListBox PRE hPreFillListBox bPreFillListBox doSelectionQuery
+    valListBox <- mkListBox VAL hValFillListBox bValFillListBox doSelectionQuery
 
     frm <- UI.frameset #+ [ UI.frame # set (attr "name") "top"
                                      # set (attr "target") "top"
@@ -79,33 +90,33 @@ mkLayout (hSubFillListBox, bSubFillListBox)
          , [ row [ column [ row [ element ddSub, element currentSub ]
                           , element bSub
                           , element subListBox
-                          , element subList
                           ]
                  , column [ row [ element ddPre, element currentPre ]
                           , element bPre
                           , element preListBox
-                          , element preList
                           ]
                  , column [ row [ element ddVal, element currentVal ]
                           , element bVal
                           , element valListBox
-                          , element valList
                           ]
                  ]
            ]
          , [ element frm ]
          ]
 
-mkLstBoxFRP :: ([Char] -> IO a) -> IO (Handler a, Behavior a)
-mkLstBoxFRP valuesSupply0 = do
+mkListBoxFRP :: ([Char] -> IO a) -> IO (Handler a, Behavior a)
+mkListBoxFRP valuesSupply0 = do
     (eventFillListBox, handlerFillListBox) <- newEvent
     initialList         <- valuesSupply0 ""
     behaviorFillListBox <- stepper initialList eventFillListBox
     return (handlerFillListBox, behaviorFillListBox)
 
-mkListBox :: ([String] -> IO a) -> Behavior [String] -> UI (UI.ListBox String, Element)
-mkListBox hFillListBox bFillListBox = do
-    list    <- UI.ul
+mkListBox :: SPVType
+             -> ([String] -> IO a)
+             -> Behavior [String]
+             -> ((SPVType,String) -> UI ())
+             -> UI (UI.ListBox String)
+mkListBox spvType hFillListBox bFillListBox sel = do
     listBox <- UI.listBox bFillListBox
                           (pure Nothing)
                           (pure $ \it -> UI.span # set text it)
@@ -115,14 +126,14 @@ mkListBox hFillListBox bFillListBox = do
         Nothing -> return ()
         Just ix -> do items <- currentValue bFillListBox
                       let it = items !! ix
+                      sel (spvType, it)
                       liftIO $ valuesSupply it >>= hFillListBox
-                      element list #+ [UI.li # set html it]
                       UI.setFocus $ getElement listBox
-    return (listBox, list)
+    return listBox
 
 valuesSupply :: String -> IO [String]
 valuesSupply x = do
     putStrLn $ "YES: " ++ x
-    return [x ++ show i | i <- [0..9::Int]]
+    return [x ++ show i | i <- [0..19::Int]]
 
 -- End of file.
