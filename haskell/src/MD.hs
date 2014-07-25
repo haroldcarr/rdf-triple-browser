@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui MissingDollars sample.
-Last Modified : 2014 Jul 24 (Thu) 21:39:03 by Harold Carr.
+Last Modified : 2014 Jul 25 (Fri) 07:25:39 by Harold Carr.
 -}
 
 module MD where
@@ -41,22 +41,31 @@ mkLayout (hSubFillListBox, bSubFillListBox)
     -- update procedure
     let updateDisplay sp s p v = do {
         element sparqlEndpointURL # set value sp;
-        element currentSub # set value (s ++ sp);
-        element currentPre # set value (p ++ sp);
-        element currentVal # set value (v ++ sp);
+        element currentSub # set value s;
+        element currentPre # set value p;
+        element currentVal # set value v;
         return ()
     }
 
-    -- init values
+    -- initial values
     updateDisplay "enter SPARQL endpoint URL" "?subject" "?predicate" "?value"
+
+    let doQuery = do {
+        sparql <- get value sparqlEndpointURL;
+        s      <- get value currentSub;
+        p      <- get value currentPre;
+        v      <- get value currentVal;
+        liftIO $ valuesSupply s >>= hSubFillListBox;
+        liftIO $ valuesSupply p >>= hPreFillListBox;
+        liftIO $ valuesSupply v >>= hValFillListBox;
+        return ()
+    }
 
     -- submit button
     on UI.click submit $ \_ -> do
         sparql <- get value sparqlEndpointURL
-        s      <- get value currentSub
-        p      <- get value currentPre
-        v      <- get value currentVal
-        updateDisplay sparql s p v
+        updateDisplay sparql "?subject" "?predicate" "?value"
+        doQuery
 
     (subListBox, subList) <- mkListBox hSubFillListBox bSubFillListBox
     (preListBox, preList) <- mkListBox hPreFillListBox bPreFillListBox
@@ -95,21 +104,21 @@ mkLstBoxFRP valuesSupply0 = do
     return (handlerFillListBox, behaviorFillListBox)
 
 mkListBox :: ([String] -> IO a) -> Behavior [String] -> UI (UI.ListBox String, Element)
-mkListBox hSubFillListBox bSubFillListBox = do
-    subList    <- UI.ul
-    subListBox <- UI.listBox bSubFillListBox
-                             (pure Nothing)
-                             (pure $ \it -> UI.span # set text it)
-    element subListBox # set (attr "size") "10" # set style [("width","300px")]
+mkListBox hFillListBox bFillListBox = do
+    list    <- UI.ul
+    listBox <- UI.listBox bFillListBox
+                          (pure Nothing)
+                          (pure $ \it -> UI.span # set text it)
+    element listBox # set (attr "size") "10" # set style [("width","300px")]
 
-    on UI.selectionChange (getElement subListBox) $ \x -> case x of
+    on UI.selectionChange (getElement listBox) $ \x -> case x of
         Nothing -> return ()
-        Just ix -> do items <- currentValue bSubFillListBox
+        Just ix -> do items <- currentValue bFillListBox
                       let it = items !! ix
-                      liftIO $ valuesSupply it >>= hSubFillListBox
-                      element subList #+ [UI.li # set html it]
-                      UI.setFocus $ getElement subListBox
-    return (subListBox, subList)
+                      liftIO $ valuesSupply it >>= hFillListBox
+                      element list #+ [UI.li # set html it]
+                      UI.setFocus $ getElement listBox
+    return (listBox, list)
 
 valuesSupply :: String -> IO [String]
 valuesSupply x = do
