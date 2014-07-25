@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui MissingDollars sample.
-Last Modified : 2014 Jul 24 (Thu) 15:19:58 by Harold Carr.
+Last Modified : 2014 Jul 24 (Thu) 18:45:04 by Harold Carr.
 -}
 
 module MD where
@@ -15,49 +15,48 @@ main = startGUI defaultConfig setup
 setup :: Window -> UI ()
 setup w = void $ do
     return w # set title "MD"
-    layout <- mkLayout
-    getBody w #+ [UI.div #. "wrap" #+ layout]
+    getBody w #+ [row [ mkLayout ] ]
 
-mkLayout :: UI [UI Element]
+mkLayout :: UI Element
 mkLayout = do
-    -- input
-    (rdfSubject : rdfPredicate : rdfValue : _)
-        <- replicateM 3 $ UI.input # set (attr "size") "10" # set (attr "type") "text"
-    -- display
-    (subjectSpan : predicateSpan : valueSpan : concatSpan : _)
-        <- replicateM 4   UI.span
+    -- input elements
+    sparqlEndpointURL <- UI.input # set (attr "size") "80" # set (attr "type") "text"
+    submit <- UI.button #+ [string "submit"]
+
+    (ddSub : ddPre : ddVal : _ )
+        <- replicateM 3 $UI.select # set (attr "width") "10"
+                                   #+ [ UI.option # set html "clear", UI.option # set html "show all"
+                                      , UI.option # set html "<-"   , UI.option # set html "->" ]
+
+    -- display elements
+    (currentSub : currentPre : currentVal : _)
+        <- replicateM 3 $ UI.textarea # set (attr "size") "2"  # set (attr "type") "text"
 
     -- update procedure
-    let updateDisplay s p v = do {
-        element rdfSubject    # set value s;
-        element rdfPredicate  # set value p;
-        element rdfValue      # set value v;
-        element subjectSpan   # set text  s;
-        element predicateSpan # set text  p;
-        element valueSpan     # set text  v;
-        element concatSpan    # set text  (s ++ p ++ v);
+    let updateDisplay _ s p v = do {
+        element currentSub # set value s;
+        element currentPre # set value p;
+        element currentVal # set value v;
         return ()
     }
     -- init values
-    updateDisplay "?subject" "?predicate" "?value"
+    updateDisplay "sparql" "?subject" "?predicate" "?value"
 
-    -- calculate button
-    calculate <- UI.button #+ [string "submit"]
-    on UI.click calculate $ \_ -> do
-        s <- get value rdfSubject
-        p <- get value rdfPredicate
-        v <- get value rdfValue
-        updateDisplay s p v
+    -- submit button
+    on UI.click submit $ \_ -> do
+        sparql <- get value sparqlEndpointURL
+        s      <- get value currentSub
+        p      <- get value currentPre
+        v      <- get value currentVal
+        updateDisplay sparql s p v
 
-    return
-        [ string " rdfSubject: "    , element rdfSubject
-        , string " rdfPredicate: "  , element rdfPredicate
-        , string " rdfValue: "      , element rdfValue
-        , string " subjectSpan: "   , element subjectSpan
-        , string " predicateSpan: " , element predicateSpan
-        , string " valueSpan: "     , element valueSpan
-        , string " concatSpan: "    , element concatSpan
-        , element calculate
-        ]
+
+    grid [ [ row [ element sparqlEndpointURL, element submit ] ]
+         , [ row [ element ddSub, element currentSub
+                 , element ddPre, element currentPre
+                 , element ddVal, element currentVal
+                 ]
+           ]
+         ]
 
 -- End of file.
