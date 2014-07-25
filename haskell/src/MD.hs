@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui MissingDollars sample.
-Last Modified : 2014 Jul 25 (Fri) 07:51:56 by Harold Carr.
+Last Modified : 2014 Jul 25 (Fri) 08:20:12 by Harold Carr.
 -}
 
 module MD where
@@ -57,9 +57,10 @@ mkLayout (hSubFillListBox, bSubFillListBox)
         s      <- get value currentSub;
         p      <- get value currentPre;
         v      <- get value currentVal;
-        liftIO $ valuesSupply s >>= hSubFillListBox;
-        liftIO $ valuesSupply p >>= hPreFillListBox;
-        liftIO $ valuesSupply v >>= hValFillListBox;
+        (sr,pr,vr) <- liftIO $ doRDFQuery sparql s p v;
+        liftIO $ hSubFillListBox sr;
+        liftIO $ hPreFillListBox pr;
+        liftIO $ hValFillListBox vr;
         return ()
     }
 
@@ -127,9 +128,18 @@ mkListBox spvType hFillListBox bFillListBox sel = do
         Just ix -> do items <- currentValue bFillListBox
                       let it = items !! ix
                       sel (spvType, it)
-                      liftIO $ valuesSupply it >>= hFillListBox
+--                      liftIO $ valuesSupply it >>= hFillListBox
                       UI.setFocus $ getElement listBox
     return listBox
+
+------------------------------------------------------------------------------
+
+doRDFQuery :: String -> String -> String -> String -> IO ([String],[String],[String])
+doRDFQuery endpoint s p v = do
+    let s' = [ s ++ (show i) | i <- [0..19::Int]]
+    let p' = [ p ++ (show i) | i <- [0..19::Int]]
+    let v' = [ v ++ (show i) | i <- [0..19::Int]]
+    return (s',p',v')
 
 valuesSupply :: String -> IO [String]
 valuesSupply x = do
