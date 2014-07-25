@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui MissingDollars sample.
-Last Modified : 2014 Jul 24 (Thu) 20:47:59 by Harold Carr.
+Last Modified : 2014 Jul 24 (Thu) 21:39:03 by Harold Carr.
 -}
 
 module MD where
@@ -46,6 +46,7 @@ mkLayout (hSubFillListBox, bSubFillListBox)
         element currentVal # set value (v ++ sp);
         return ()
     }
+
     -- init values
     updateDisplay "enter SPARQL endpoint URL" "?subject" "?predicate" "?value"
 
@@ -60,6 +61,10 @@ mkLayout (hSubFillListBox, bSubFillListBox)
     (subListBox, subList) <- mkListBox hSubFillListBox bSubFillListBox
     (preListBox, preList) <- mkListBox hPreFillListBox bPreFillListBox
     (valListBox, valList) <- mkListBox hValFillListBox bValFillListBox
+
+    frm <- UI.frameset #+ [ UI.frame # set (attr "name") "top"
+                                     # set (attr "target") "top"
+                                     # set (attr "src") "http://haroldcarr.com/" ]
 
     grid [ [ row [ element sparqlEndpointURL, element submit ] ]
          , [ row [ column [ row [ element ddSub, element currentSub ]
@@ -79,6 +84,7 @@ mkLayout (hSubFillListBox, bSubFillListBox)
                           ]
                  ]
            ]
+         , [ element frm ]
          ]
 
 mkLstBoxFRP :: ([Char] -> IO a) -> IO (Handler a, Behavior a)
