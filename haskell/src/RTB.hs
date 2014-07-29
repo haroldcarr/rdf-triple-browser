@@ -1,13 +1,15 @@
 {-
 Created       : by threepenny-gui MissingDollars sample.
-Last Modified : 2014 Jul 25 (Fri) 08:37:54 by Harold Carr.
+Last Modified : 2014 Jul 29 (Tue) 09:20:50 by Harold Carr.
 -}
 
-module MD where
+module RTB where
 
 import           Control.Monad
+import           Data.Text                   as T (Text, unpack)
 import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core
+import           RTBQ
 
 data SPVType = SUB | PRE | VAL
 
@@ -132,11 +134,14 @@ mkListBox spvType bFillListBox sel = do
 ------------------------------------------------------------------------------
 
 doRDFQuery :: String -> String -> String -> String -> IO ([String],[String],[String])
+{-
 doRDFQuery endpoint s p v = do
     putStrLn endpoint
     let s' = [ s ++ show i | i <- [0..19::Int]]
     let p' = [ p ++ show i | i <- [0..19::Int]]
     let v' = [ v ++ show i | i <- [0..19::Int]]
     return (s',p',v')
+-}
+doRDFQuery _ _ _ _ = tt
 
 -- End of file.

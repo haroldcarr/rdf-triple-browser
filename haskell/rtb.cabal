@@ -14,13 +14,17 @@ build-type:          Simple
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     Main
+  exposed-modules:     RTB
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >=4.6 && <4.7
+                       , hsparql >= 0.2.5
+                       , threepenny-gui >= 0.4.2.0
+                       -- maybe not needed in final
+                       , rdf4h >= 1.2.5
+                       -- not sure if needed
                        , containers >= 0.5.0.0
                        , stm >= 2.4.2
-                       , threepenny-gui >= 0.4.2.0
                        , random >= 1.0.1.1
                        -- for testing
                        , HUnit >=1.2 && <1.3
