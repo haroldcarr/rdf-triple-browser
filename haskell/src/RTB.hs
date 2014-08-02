@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui MissingDollars sample.
-Last Modified : 2014 Aug 02 (Sat) 08:36:52 by Harold Carr.
+Last Modified : 2014 Aug 02 (Sat) 09:12:24 by Harold Carr.
 -}
 
 module RTB where
@@ -119,7 +119,7 @@ mkListBox :: SPVType
              -> Behavior [String]
              -> ((SPVType,String) -> UI ())
              -> UI (UI.ListBox String)
-mkListBox spvType bFillListBox sel = do
+mkListBox spvType bFillListBox doSelectionQuery = do
     listBox <- UI.listBox bFillListBox
                           (pure Nothing)
                           (pure $ \it -> UI.span # set text it)
@@ -127,9 +127,9 @@ mkListBox spvType bFillListBox sel = do
 
     on UI.selectionChange (getElement listBox) $ \x -> case x of
         Nothing -> return ()
-        Just ix -> do items <- currentValue bFillListBox
-                      let it = items !! ix
-                      sel (spvType, it)
+        Just i  -> do items <- currentValue bFillListBox
+                      let selection = items !! i
+                      doSelectionQuery (spvType, selection)
                       UI.setFocus $ getElement listBox
     return listBox
 
