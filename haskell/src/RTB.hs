@@ -1,12 +1,11 @@
 {-
 Created       : by threepenny-gui MissingDollars sample.
-Last Modified : 2014 Jul 29 (Tue) 09:20:50 by Harold Carr.
+Last Modified : 2014 Aug 02 (Sat) 08:25:28 by Harold Carr.
 -}
 
 module RTB where
 
 import           Control.Monad
-import           Data.Text                   as T (Text, unpack)
 import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core
 import           RTBQ
