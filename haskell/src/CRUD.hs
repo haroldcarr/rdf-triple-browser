@@ -1,11 +1,11 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Jul 14 (Mon) 09:02:11 by Harold Carr.
+Last Modified : 2014 Aug 02 (Sat) 09:27:02 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
 
-module Main where
+module CRUD where
 
 import           Control.Monad               (void)
 import           Data.List                   (isPrefixOf)
