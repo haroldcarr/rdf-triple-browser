@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui MissingDollars sample.
-Last Modified : 2014 Aug 02 (Sat) 08:25:28 by Harold Carr.
+Last Modified : 2014 Aug 02 (Sat) 08:36:52 by Harold Carr.
 -}
 
 module RTB where
@@ -71,22 +71,25 @@ mkLayout (hSubFillListBox, bSubFillListBox)
         updateDisplay sparql "?subject" "?predicate" "?value"
         doQuery
 
+    frame <- UI.frame # set (attr "name")   "top"
+                      # set (attr "target") "top"
+                      # set (attr "src")    "http://haroldcarr.com/"
+
+    frameset <- UI.frameset #+ [ element frame ]
+
     let doSelectionQuery (spv, selection) = do {
         element (case spv of
                     SUB -> currentSub
                     PRE -> currentPre
                     VAL -> currentVal)
                 # set value selection;
+        element frame # set (attr "src") selection;
         doQuery
     }
 
     subListBox <- mkListBox SUB bSubFillListBox doSelectionQuery
     preListBox <- mkListBox PRE bPreFillListBox doSelectionQuery
     valListBox <- mkListBox VAL bValFillListBox doSelectionQuery
-
-    frm <- UI.frameset #+ [ UI.frame # set (attr "name")   "top"
-                                     # set (attr "target") "top"
-                                     # set (attr "src")    "http://haroldcarr.com/" ]
 
     grid [ [ row [ element sparqlEndpointURL, element submit ] ]
          , [ row [ column [ row [ element ddSub, element currentSub ]
@@ -103,7 +106,7 @@ mkLayout (hSubFillListBox, bSubFillListBox)
                           ]
                  ]
            ]
-         , [ element frm ]
+         , [ element frameset ]
          ]
 
 mkListBoxFRP :: IO (Handler [String], Behavior [String])
