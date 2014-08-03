@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 03 (Sun) 15:10:20 by Harold Carr.
+Last Modified : 2014 Aug 03 (Sun) 15:25:32 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -8,13 +8,11 @@ Last Modified : 2014 Aug 03 (Sun) 15:10:20 by Harold Carr.
 module CRUD2 where
 
 import           Control.Monad               (void)
-import           Data.List                   (isPrefixOf)
 import qualified Data.Map                    as Map
 import           Data.Maybe
-import           Prelude                     hiding (lookup)
-
 import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core hiding (delete)
+import           Prelude                     hiding (lookup)
 
 ------------------------------------------------------------------------------
 
@@ -27,37 +25,30 @@ setup window = void $ mdo
     return window # set title "RDF Triple Browser"
 
 mkSPVPanel :: String -> UI Element
-mkSPVPanel name = mdo
+mkSPVPanel spvType = mdo
     -- GUI elements
-    createBtn   <- UI.button #+ [string "Create"]
-    deleteBtn   <- UI.button #+ [string "Delete"]
+    submitBtn   <- UI.button #+ [string "Submit"]
     listBox     <- UI.listBox  bListBoxItems bSelection bDisplayDataItem
-    (firstname, tDataItem)
+    (spvSelection, _)
                 <- dataItem    bSelectionDataItem
-    let uiDataItem = grid [[string name, element firstname]]
+    let uiDataItem = grid [[string spvType, element spvSelection]]
     element listBox # set (attr "size") "10" # set style [("width","200px")]
 
     -- events and behaviors
     let eSelection  = rumors $ UI.userSelection listBox
-        eDataItemIn = rumors $ tDataItem
-        eCreate     = UI.click createBtn
-        eDelete     = UI.click deleteBtn
+        eSubmit     = UI.click submitBtn
 
     -- database
     -- bDatabase :: Behavior (Database DataItem)
-    let update' mkey x = flip update x <$> mkey
     bDatabase <- accumB emptydb $ concatenate <$> unions
-        [ hcCreate' <$ eCreate
-        , filterJust $ update' <$> bSelection <@> eDataItemIn
-        , delete <$> filterJust (bSelection <@ eDelete)
+        [ hcSubmit' <$ eSubmit
         ]
 
     -- selection
     -- bSelection :: Behavior (Maybe DatabaseKey)
     bSelection <- stepper Nothing $ head <$> unions
         [ eSelection
-        , Nothing <$ eDelete
-        , Just . nextKey <$> bDatabase <@ eCreate
+        , Just . nextKey <$> bDatabase <@ eSubmit
         ]
 
     let bLookup :: Behavior (DatabaseKey -> Maybe DataItem)
@@ -80,14 +71,13 @@ mkSPVPanel name = mdo
         bDisplayItem :: Behavior Bool
         bDisplayItem = maybe False (const True) <$> bSelection
 
-    element deleteBtn # sink UI.enabled bDisplayItem
-    element firstname # sink UI.enabled bDisplayItem
+    element spvSelection # sink UI.enabled bDisplayItem
 
     -- GUI layout
     grid [
            [ uiDataItem ]
          , [ element listBox ]
-         , [ row [element createBtn, element deleteBtn] ]
+         , [ row [element submitBtn] ]
          ]
 
 ------------------------------------------------------------------------------
@@ -102,17 +92,14 @@ emptydb = Database 0 Map.empty
 keys :: Database a -> [DatabaseKey]
 keys    = Map.keys . db
 
-hcCreate :: Database String -> Database String
-hcCreate                      db0 = create "ONE" (create "TWO" (create "THREE" db0))
+hcSubmit :: Database String -> Database String
+hcSubmit                      db0 = create "ONE" (create "TWO" (create "THREE" db0))
 
-hcCreate' :: Database String -> Database String
-hcCreate'    (Database newkey db0) = create "FOO" $ Database newkey     $ Map.map (++ "xx") db0
+hcSubmit' :: Database String -> Database String
+hcSubmit'    (Database newkey db0) = create "FOO" $ Database newkey     $ Map.map (++ "xx") db0
 
 create :: a -> Database a -> Database a
 create x     (Database newkey db0) = Database (newkey+1) $ Map.insert newkey x db0
-
-update :: DatabaseKey -> a -> Database a -> Database a
-update key x (Database newkey db0) = Database newkey     $ Map.insert key    x db0
 
 delete :: DatabaseKey -> Database a -> Database a
 delete key   (Database newkey db0) = Database newkey     $ Map.delete key      db0
