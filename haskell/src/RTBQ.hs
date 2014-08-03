@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 29 (Tue) 07:16:51 by Harold Carr.
-Last Modified : 2014 Aug 02 (Sat) 08:13:03 by Harold Carr.
+Last Modified : 2014 Aug 03 (Sun) 11:57:02 by Harold Carr.
 -}
 
 {-# LANGUAGE OverloadedStrings #-}
@@ -45,7 +45,7 @@ qq2 = sendQuery q
   where
     q = do
         s <- var; p <- var
-        triple s p ((T.pack "Slug Magazine"), (T.pack "en"))
+        triple s p (T.pack "Slug Magazine", T.pack "en")
         return SelectQuery { queryVars = [s, p] }
 
 dbAddress, dbQueryAddress :: String

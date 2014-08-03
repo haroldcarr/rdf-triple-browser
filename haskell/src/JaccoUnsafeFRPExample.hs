@@ -9,14 +9,14 @@ jacco = startGUI defaultConfig setup
 setup :: Window -> UI ()
 setup window =
     do btn  <- UI.button #+ [string "click"]
-       area <- UI.input
+       area0 <- UI.input
 
-       getBody window #+ [element btn, element area]
+       getBody window #+ [element btn, element area0]
 
-       let e = unsafeMapIO (\_ -> sideEffects) (UI.click btn)
+       let e = unsafeMapIO (const sideEffects) (UI.click btn)
        b <- stepper "" e
 
-       return area # sink value b
+       return area0 # sink value b
 
        return ()
 

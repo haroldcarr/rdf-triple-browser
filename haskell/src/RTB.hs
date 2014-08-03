@@ -1,6 +1,10 @@
 {-
-Created       : by threepenny-gui MissingDollars sample.
-Last Modified : 2014 Aug 02 (Sat) 09:12:24 by Harold Carr.
+Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
+Last Modified : 2014 Aug 02 (Sat) 09:44:56 by Harold Carr.
+
+- based on
+  - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
+  - threepenny-gui MissingDollars sample
 -}
 
 module RTB where
