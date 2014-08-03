@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 03 (Sun) 12:42:06 by Harold Carr.
+Last Modified : 2014 Aug 03 (Sun) 14:43:51 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -47,7 +47,7 @@ mkSPVPanel name = mdo
     -- bDatabase :: Behavior (Database DataItem)
     let update' mkey x = flip update x <$> mkey
     bDatabase <- accumB emptydb $ concatenate <$> unions
-        [ create "EXAMPLE" <$ eCreate
+        [ hcCreate <$ eCreate
         , filterJust $ update' <$> bSelection <@> eDataItemIn
         , delete <$> filterJust (bSelection <@ eDelete)
         ]
@@ -101,6 +101,9 @@ emptydb = Database 0 Map.empty
 
 keys :: Database a -> [DatabaseKey]
 keys    = Map.keys . db
+
+hcCreate :: Database String -> Database String
+hcCreate _ = create "ONE" (create "TWO" (create "THREE" emptydb))
 
 create :: a -> Database a -> Database a
 create x     (Database newkey db0) = Database (newkey+1) $ Map.insert newkey x db0
