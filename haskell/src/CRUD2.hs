@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 03 (Sun) 15:25:32 by Harold Carr.
+Last Modified : 2014 Aug 03 (Sun) 15:33:43 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -40,16 +40,11 @@ mkSPVPanel spvType = mdo
 
     -- database
     -- bDatabase :: Behavior (Database DataItem)
-    bDatabase <- accumB emptydb $ concatenate <$> unions
-        [ hcSubmit' <$ eSubmit
-        ]
+    bDatabase <- accumB emptydb $ (hcSubmit' <$ eSubmit)
 
     -- selection
     -- bSelection :: Behavior (Maybe DatabaseKey)
-    bSelection <- stepper Nothing $ head <$> unions
-        [ eSelection
-        , Just . nextKey <$> bDatabase <@ eSubmit
-        ]
+    bSelection <- stepper Nothing $ eSelection
 
     let bLookup :: Behavior (DatabaseKey -> Maybe DataItem)
         bLookup = flip lookup <$> bDatabase
