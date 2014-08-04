@@ -1,13 +1,12 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 03 (Sun) 15:38:10 by Harold Carr.
+Last Modified : 2014 Aug 03 (Sun) 17:40:20 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
 
 module CRUD2 where
 
-import           Control.Monad               (void)
 import qualified Data.Map                    as Map
 import           Data.Maybe
 import qualified Graphics.UI.Threepenny      as UI
@@ -17,20 +16,28 @@ import           Prelude                     hiding (lookup)
 ------------------------------------------------------------------------------
 
 main :: IO ()
-main = startGUI defaultConfig setup
+main = do
+    frp <- mkListBoxFRP
+    startGUI defaultConfig $ \window -> do
+        return window # set title "RDF Triple Browser"
+        getBody window #+ [ mkSPVPanel frp "?subject" ]
+        return ()
 
-setup :: Window -> UI ()
-setup window = void $ mdo
-    getBody window #+ [ mkSPVPanel "?subject" ]
-    return window # set title "RDF Triple Browser"
 
-mkSPVPanel :: String -> UI Element
-mkSPVPanel spvType = mdo
+mkListBoxFRP :: IO (Handler [String], Behavior [String])
+mkListBoxFRP = do
+    (eventFillListBox, handlerFillListBox) <- newEvent
+    behaviorFillListBox <- stepper [] eventFillListBox
+    return (handlerFillListBox, behaviorFillListBox)
+
+mkSPVPanel :: (Handler [String], Behavior [String])
+              -> String
+              -> UI Element
+mkSPVPanel (hFillListBox, bFillListBox) spvType = mdo
     -- GUI elements
-    submitBtn   <- UI.button #+ [string "Submit"]
-    listBox     <- UI.listBox  bListBoxItems bSelection bDisplayDataItem
-    (spvSelection, _)
-                <- dataItem    bSelectionDataItem
+    submitBtn         <- UI.button #+ [string "Submit"]
+    listBox           <- UI.listBox  bListBoxItems bSelection bDisplayDataItem
+    (spvSelection, _) <- dataItem    bSelectionDataItem
     let uiDataItem = grid [[string spvType, element spvSelection]]
     element listBox # set (attr "size") "10" # set style [("width","200px")]
 
