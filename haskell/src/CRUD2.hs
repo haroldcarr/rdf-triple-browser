@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 03 (Sun) 15:33:43 by Harold Carr.
+Last Modified : 2014 Aug 03 (Sun) 15:38:10 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -11,7 +11,7 @@ import           Control.Monad               (void)
 import qualified Data.Map                    as Map
 import           Data.Maybe
 import qualified Graphics.UI.Threepenny      as UI
-import           Graphics.UI.Threepenny.Core hiding (delete)
+import           Graphics.UI.Threepenny.Core
 import           Prelude                     hiding (lookup)
 
 ------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ mkSPVPanel spvType = mdo
 
     -- database
     -- bDatabase :: Behavior (Database DataItem)
-    bDatabase <- accumB emptydb $ (hcSubmit' <$ eSubmit)
+    bDatabase <- accumB emptydb $ (hcSubmit <$ eSubmit)
 
     -- selection
     -- bSelection :: Behavior (Maybe DatabaseKey)
@@ -60,13 +60,6 @@ mkSPVPanel spvType = mdo
 
         bSelectionDataItem :: Behavior (Maybe DataItem)
         bSelectionDataItem = (=<<) <$> bLookup <*> bSelection
-
-    -- automatically enable / disable editing
-    let
-        bDisplayItem :: Behavior Bool
-        bDisplayItem = maybe False (const True) <$> bSelection
-
-    element spvSelection # sink UI.enabled bDisplayItem
 
     -- GUI layout
     grid [
@@ -88,16 +81,10 @@ keys :: Database a -> [DatabaseKey]
 keys    = Map.keys . db
 
 hcSubmit :: Database String -> Database String
-hcSubmit                      db0 = create "ONE" (create "TWO" (create "THREE" db0))
-
-hcSubmit' :: Database String -> Database String
-hcSubmit'    (Database newkey db0) = create "FOO" $ Database newkey     $ Map.map (++ "xx") db0
+hcSubmit    (Database newkey db0) = create "FOO" $ Database newkey     $ Map.map (++ "xx") db0
 
 create :: a -> Database a -> Database a
 create x     (Database newkey db0) = Database (newkey+1) $ Map.insert newkey x db0
-
-delete :: DatabaseKey -> Database a -> Database a
-delete key   (Database newkey db0) = Database newkey     $ Map.delete key      db0
 
 lookup :: DatabaseKey -> Database a -> Maybe a
 lookup key   (Database _      db0) = Map.lookup                       key      db0
