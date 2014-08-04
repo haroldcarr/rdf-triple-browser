@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 03 (Sun) 18:11:45 by Harold Carr.
+Last Modified : 2014 Aug 03 (Sun) 19:43:26 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -45,10 +45,6 @@ mkSPVPanel (hFillListBox, bFillListBox) spvType = mdo
     let eSelection  = rumors $ UI.userSelection listBox
         eSubmit     = UI.click submitBtn
 
-    let dq = do {
-        hFillListBox ["one","two","three"];
-        return ()
-    }
     -- database
     -- bDatabase :: Behavior (Database DataItem)
     bDatabase <- accumB emptydb $ (hcSubmit <$ eSubmit)
