@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 03 (Sun) 17:40:20 by Harold Carr.
+Last Modified : 2014 Aug 03 (Sun) 18:11:45 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -12,6 +12,7 @@ import           Data.Maybe
 import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core
 import           Prelude                     hiding (lookup)
+import           System.Random
 
 ------------------------------------------------------------------------------
 
@@ -22,7 +23,6 @@ main = do
         return window # set title "RDF Triple Browser"
         getBody window #+ [ mkSPVPanel frp "?subject" ]
         return ()
-
 
 mkListBoxFRP :: IO (Handler [String], Behavior [String])
 mkListBoxFRP = do
@@ -45,6 +45,10 @@ mkSPVPanel (hFillListBox, bFillListBox) spvType = mdo
     let eSelection  = rumors $ UI.userSelection listBox
         eSubmit     = UI.click submitBtn
 
+    let dq = do {
+        hFillListBox ["one","two","three"];
+        return ()
+    }
     -- database
     -- bDatabase :: Behavior (Database DataItem)
     bDatabase <- accumB emptydb $ (hcSubmit <$ eSubmit)
@@ -88,7 +92,7 @@ keys :: Database a -> [DatabaseKey]
 keys    = Map.keys . db
 
 hcSubmit :: Database String -> Database String
-hcSubmit    (Database newkey db0) = create "FOO" $ Database newkey     $ Map.map (++ "xx") db0
+hcSubmit     (Database newkey db0) = create "FOO" $ Database newkey     $ Map.map (++ "xx") db0
 
 create :: a -> Database a -> Database a
 create x     (Database newkey db0) = Database (newkey+1) $ Map.insert newkey x db0
@@ -111,5 +115,12 @@ dataItem bItem = do
     return ( getElement  entry1
            , UI.userText entry1
            )
+
+------------------------------------------------------------------------------
+
+sideEffects :: IO String
+sideEffects = do
+    x <- randomRIO (0,10) :: IO Int
+    return (show x)
 
 -- End of file.
