@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 04 (Mon) 20:18:05 by Harold Carr.
+Last Modified : 2014 Aug 04 (Mon) 21:13:28 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -9,11 +9,13 @@ module CRUD2 where
 
 import qualified Data.Map                    as Map
 import           Data.Maybe
+import           Data.RDF.Types              (Node (..))
+import qualified Data.Text                   as T (pack)
+import           Database.HSparql.Connection
 import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core
 import           Prelude                     hiding (lookup)
 import           RTBQ
-import           System.Random
 
 ------------------------------------------------------------------------------
 
@@ -30,7 +32,7 @@ mkListBoxFRP = do
     (eventFillListBox, handlerFillListBox) <- newEvent
     return (eventFillListBox, handlerFillListBox)
 
-mkSPVPanel :: (Event [String], Handler [String])
+mkSPVPanel :: (Event [(String,BindingValue)], Handler [(String,BindingValue)])
               -> String
               -> UI Element
 mkSPVPanel (eFillListBox, hFillListBox) spvType = mdo
@@ -40,7 +42,7 @@ mkSPVPanel (eFillListBox, hFillListBox) spvType = mdo
     listBox           <- UI.listBox  bListBoxItems bSelection bDisplayDataItem
     spvSelection      <- dataItem    bSelectionDataItem
     let uiDataItem = grid [[string spvType, element spvSelection]]
-    element listBox # set (attr "size") "10" # set style [("width","800px")]
+    element listBox # set (attr "size") "20" # set style [("width","800px")]
 
     -- events and behaviors
     let eSelection    = rumors $ UI.userSelection listBox
@@ -48,7 +50,7 @@ mkSPVPanel (eFillListBox, hFillListBox) spvType = mdo
 
     -- submit button
     on UI.click doItBtn $ \_ -> do
-        (r,_,_) <- liftIO $ doRDFQuery;
+        (r,_,_) <- liftIO doRDFQuery;
         liftIO $ hFillListBox r;
         return ()
 
@@ -61,7 +63,7 @@ mkSPVPanel (eFillListBox, hFillListBox) spvType = mdo
 
     -- selection
     -- bSelection :: Behavior (Maybe DatabaseKey)
-    bSelection <- stepper Nothing $ eSelection
+    bSelection <- stepper Nothing eSelection
 
     let bLookup :: Behavior (DatabaseKey -> Maybe DataItem)
         bLookup = flip lookup <$> bDatabase
@@ -72,7 +74,7 @@ mkSPVPanel (eFillListBox, hFillListBox) spvType = mdo
         bDisplayDataItem = (UI.string .) <$> bShowDataItem
 
         bListBoxItems :: Behavior [DatabaseKey]
-        bListBoxItems = (\show0 -> filter ((const True) . show0) . keys)
+        bListBoxItems = (\show0 -> filter (const True . show0) . keys)
                     <$> bShowDataItem <*> bDatabase
 
         bSelectionDataItem :: Behavior (Maybe DataItem)
@@ -98,11 +100,11 @@ emptydb = Database 0 Map.empty
 keys :: Database a -> [DatabaseKey]
 keys    = Map.keys . db
 
-hcSubmit :: Database String -> Database String
-hcSubmit     (Database newkey db0) = create "FOO" $ Database newkey     $ Map.map (++ "xx") db0
+hcSubmit :: Database DataItem -> Database DataItem
+hcSubmit     (Database newkey db0) = Database newkey $ Map.map (\(x,y) -> (x ++ "xx", y)) db0
 
-hcEFill :: [String] -> Database String -> Database String
-hcEFill     ss _ = foldr create  emptydb ss
+hcEFill :: [(String,BindingValue)] -> Database DataItem -> Database DataItem
+hcEFill    ss _ = foldr create  emptydb ss
 
 create :: a -> Database a -> Database a
 create x     (Database newkey db0) = Database (newkey+1) $ Map.insert newkey x db0
@@ -113,26 +115,24 @@ lookup key   (Database _      db0) = Map.lookup                       key      d
 ------------------------------------------------------------------------------
 -- What is stored in data base
 
-type DataItem = String
+type DataItem = (String, BindingValue)
 
-showDataItem :: String -> String
-showDataItem x = x
+showDataItem :: DataItem -> String
+showDataItem (x,_) = x
 
 -- | Data item widget
 dataItem :: Behavior (Maybe DataItem) -> UI Element
 dataItem bItem = do
-    entry1 <- UI.entry $ maybe "" id <$> bItem
+    entry1 <- UI.entry $ fst . fromMaybe ("",Bound $ UNode (T.pack "foo")) <$> bItem -- TODO something other than Bound as "empty"
     element entry1 # set style [("width", "800px")]
     return $ getElement  entry1
 
 ------------------------------------------------------------------------------
 
-sideEffects :: IO String
-sideEffects = do
-    x <- randomRIO (0,10) :: IO Int
-    return (show x)
-
-doRDFQuery :: IO ([String],[String],[String])
-doRDFQuery = tt
+doRDFQuery :: IO ( [(String, BindingValue)]
+                 , [(String, BindingValue)]
+                 , [(String, BindingValue)]
+                 )
+doRDFQuery = ttt
 
 -- End of file.

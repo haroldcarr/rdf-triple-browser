@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 29 (Tue) 07:16:51 by Harold Carr.
-Last Modified : 2014 Aug 03 (Sun) 11:57:02 by Harold Carr.
+Last Modified : 2014 Aug 04 (Mon) 21:05:24 by Harold Carr.
 -}
 
 {-# LANGUAGE OverloadedStrings #-}
@@ -56,11 +56,23 @@ sendQuery  :: Query SelectQuery -> IO (Maybe [[BindingValue]])
 sendQuery  = selectQuery dbQueryAddress
 
 
-tt :: IO ([String], [String], [String])
+tt  :: IO ( [String]
+          , [String]
+          , [String]
+          )
 tt = do
     qr <- qAll
     let strs = [ map extract lbv | lbv <- fromJust qr ]
     return (nub $ map (!!0) strs, nub $ map (!!1) strs, nub $ map (!!2) strs)
+
+ttt :: IO ( [(String, BindingValue)]
+          , [(String, BindingValue)]
+          , [(String, BindingValue)]
+          )
+ttt = do
+    qr <- qAll
+    let pairs = [ map (\l -> (extract l, l)) lbv | lbv <- fromJust qr ]
+    return (nub $ map (!!0) pairs, nub $ map (!!1) pairs, nub $ map (!!2) pairs)
 
 -- LNode (PlainLL (T.pack "Slug Magazine") (T.pack "en"))
 
