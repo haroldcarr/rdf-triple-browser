@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 04 (Mon) 19:59:03 by Harold Carr.
+Last Modified : 2014 Aug 04 (Mon) 20:18:05 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -25,38 +25,32 @@ main = do
         getBody window #+ [ mkSPVPanel frp "?subject" ]
         return ()
 
-mkListBoxFRP :: IO (Event [a], Handler [a], Behavior [a])
+mkListBoxFRP :: IO (Event [a], Handler [a])
 mkListBoxFRP = do
     (eventFillListBox, handlerFillListBox) <- newEvent
-    behaviorFillListBox <- stepper [] eventFillListBox
-    return (eventFillListBox, handlerFillListBox, behaviorFillListBox)
+    return (eventFillListBox, handlerFillListBox)
 
-mkSPVPanel :: (Event [String], Handler [String], Behavior [String])
+mkSPVPanel :: (Event [String], Handler [String])
               -> String
               -> UI Element
-mkSPVPanel (eFillListBox, hFillListBox, bFillListBox) spvType = mdo
+mkSPVPanel (eFillListBox, hFillListBox) spvType = mdo
     -- GUI elements
     doItBtn           <- UI.button #+ [string "Do It!"]
     addToListBoxBtn   <- UI.button #+ [string "Add To List Box"]
     listBox           <- UI.listBox  bListBoxItems bSelection bDisplayDataItem
-    (spvSelection, _) <- dataItem    bSelectionDataItem
+    spvSelection      <- dataItem    bSelectionDataItem
     let uiDataItem = grid [[string spvType, element spvSelection]]
-    element listBox # set (attr "size") "10" # set style [("width","200px")]
+    element listBox # set (attr "size") "10" # set style [("width","800px")]
 
     -- events and behaviors
     let eSelection    = rumors $ UI.userSelection listBox
         eAddToListBox = UI.click addToListBoxBtn
 
-    let doQuery = do {
+    -- submit button
+    on UI.click doItBtn $ \_ -> do
         (r,_,_) <- liftIO $ doRDFQuery;
         liftIO $ hFillListBox r;
         return ()
-    }
-
-    -- submit button
-    on UI.click doItBtn $ \_ -> do
-        doQuery
-
 
     -- database
     -- bDatabase :: Behavior (Database DataItem)
@@ -124,13 +118,12 @@ type DataItem = String
 showDataItem :: String -> String
 showDataItem x = x
 
--- | Data item widget, consisting of two text entries
-dataItem :: Behavior (Maybe DataItem) -> UI (Element, Tidings DataItem)
+-- | Data item widget
+dataItem :: Behavior (Maybe DataItem) -> UI Element
 dataItem bItem = do
     entry1 <- UI.entry $ maybe "" id <$> bItem
-    return ( getElement  entry1
-           , UI.userText entry1
-           )
+    element entry1 # set style [("width", "800px")]
+    return $ getElement  entry1
 
 ------------------------------------------------------------------------------
 
