@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 03 (Sun) 19:43:26 by Harold Carr.
+Last Modified : 2014 Aug 04 (Mon) 19:30:31 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -24,30 +24,45 @@ main = do
         getBody window #+ [ mkSPVPanel frp "?subject" ]
         return ()
 
-mkListBoxFRP :: IO (Handler [String], Behavior [String])
+mkListBoxFRP :: IO (Event [a], Handler [a], Behavior [a])
 mkListBoxFRP = do
     (eventFillListBox, handlerFillListBox) <- newEvent
     behaviorFillListBox <- stepper [] eventFillListBox
-    return (handlerFillListBox, behaviorFillListBox)
+    return (eventFillListBox, handlerFillListBox, behaviorFillListBox)
 
-mkSPVPanel :: (Handler [String], Behavior [String])
+mkSPVPanel :: (Event [String], Handler [String], Behavior [String])
               -> String
               -> UI Element
-mkSPVPanel (hFillListBox, bFillListBox) spvType = mdo
+mkSPVPanel (eFillListBox, hFillListBox, bFillListBox) spvType = mdo
     -- GUI elements
-    submitBtn         <- UI.button #+ [string "Submit"]
+    doItBtn           <- UI.button #+ [string "Do It!"]
+    addToListBoxBtn   <- UI.button #+ [string "Add To List Box"]
     listBox           <- UI.listBox  bListBoxItems bSelection bDisplayDataItem
     (spvSelection, _) <- dataItem    bSelectionDataItem
     let uiDataItem = grid [[string spvType, element spvSelection]]
     element listBox # set (attr "size") "10" # set style [("width","200px")]
 
     -- events and behaviors
-    let eSelection  = rumors $ UI.userSelection listBox
-        eSubmit     = UI.click submitBtn
+    let eSelection    = rumors $ UI.userSelection listBox
+        eAddToListBox = UI.click addToListBoxBtn
+
+    let doQuery = do {
+        r <- liftIO $ sideEffects;
+        liftIO $ hFillListBox [r];
+        return ()
+    }
+
+    -- submit button
+    on UI.click doItBtn $ \_ -> do
+        doQuery
+
 
     -- database
     -- bDatabase :: Behavior (Database DataItem)
-    bDatabase <- accumB emptydb $ (hcSubmit <$ eSubmit)
+    bDatabase <- accumB emptydb $ concatenate <$> unions
+        [ hcSubmit <$ eAddToListBox
+        , hcEFill <$> eFillListBox
+        ]
 
     -- selection
     -- bSelection :: Behavior (Maybe DatabaseKey)
@@ -72,7 +87,8 @@ mkSPVPanel (hFillListBox, bFillListBox) spvType = mdo
     grid [
            [ uiDataItem ]
          , [ element listBox ]
-         , [ row [element submitBtn] ]
+         , [ element addToListBoxBtn]
+         , [ element doItBtn ]
          ]
 
 ------------------------------------------------------------------------------
@@ -89,6 +105,9 @@ keys    = Map.keys . db
 
 hcSubmit :: Database String -> Database String
 hcSubmit     (Database newkey db0) = create "FOO" $ Database newkey     $ Map.map (++ "xx") db0
+
+hcEFill :: [String] -> Database String -> Database String
+hcEFill     (s:_) _ = create s emptydb
 
 create :: a -> Database a -> Database a
 create x     (Database newkey db0) = Database (newkey+1) $ Map.insert newkey x db0
