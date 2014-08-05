@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 04 (Mon) 19:30:31 by Harold Carr.
+Last Modified : 2014 Aug 04 (Mon) 19:59:03 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -12,6 +12,7 @@ import           Data.Maybe
 import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core
 import           Prelude                     hiding (lookup)
+import           RTBQ
 import           System.Random
 
 ------------------------------------------------------------------------------
@@ -47,8 +48,8 @@ mkSPVPanel (eFillListBox, hFillListBox, bFillListBox) spvType = mdo
         eAddToListBox = UI.click addToListBoxBtn
 
     let doQuery = do {
-        r <- liftIO $ sideEffects;
-        liftIO $ hFillListBox [r];
+        (r,_,_) <- liftIO $ doRDFQuery;
+        liftIO $ hFillListBox r;
         return ()
     }
 
@@ -107,7 +108,7 @@ hcSubmit :: Database String -> Database String
 hcSubmit     (Database newkey db0) = create "FOO" $ Database newkey     $ Map.map (++ "xx") db0
 
 hcEFill :: [String] -> Database String -> Database String
-hcEFill     (s:_) _ = create s emptydb
+hcEFill     ss _ = foldr create  emptydb ss
 
 create :: a -> Database a -> Database a
 create x     (Database newkey db0) = Database (newkey+1) $ Map.insert newkey x db0
@@ -137,5 +138,8 @@ sideEffects :: IO String
 sideEffects = do
     x <- randomRIO (0,10) :: IO Int
     return (show x)
+
+doRDFQuery :: IO ([String],[String],[String])
+doRDFQuery = tt
 
 -- End of file.
