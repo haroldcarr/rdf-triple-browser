@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 04 (Mon) 21:13:28 by Harold Carr.
+Last Modified : 2014 Aug 08 (Fri) 17:33:59 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -21,16 +21,11 @@ import           RTBQ
 
 main :: IO ()
 main = do
-    frp <- mkListBoxFRP
+    eh <- newEvent
     startGUI defaultConfig $ \window -> do
         return window # set title "RDF Triple Browser"
-        getBody window #+ [ mkSPVPanel frp "?subject" ]
+        getBody window #+ [ mkSPVPanel eh "?subject" ]
         return ()
-
-mkListBoxFRP :: IO (Event [a], Handler [a])
-mkListBoxFRP = do
-    (eventFillListBox, handlerFillListBox) <- newEvent
-    return (eventFillListBox, handlerFillListBox)
 
 mkSPVPanel :: (Event [(String,BindingValue)], Handler [(String,BindingValue)])
               -> String
