@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 08 (Fri) 17:33:59 by Harold Carr.
+Last Modified : 2014 Aug 09 (Sat) 13:08:36 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -30,93 +30,93 @@ main = do
 mkSPVPanel :: (Event [(String,BindingValue)], Handler [(String,BindingValue)])
               -> String
               -> UI Element
-mkSPVPanel (eFillListBox, hFillListBox) spvType = mdo
+mkSPVPanel (eFillLB, hFillLB) spvType = mdo
     -- GUI elements
-    doItBtn           <- UI.button #+ [string "Do It!"]
-    addToListBoxBtn   <- UI.button #+ [string "Add To List Box"]
-    listBox           <- UI.listBox  bListBoxItems bSelection bDisplayDataItem
-    spvSelection      <- dataItem    bSelectionDataItem
-    let uiDataItem = grid [[string spvType, element spvSelection]]
+    doItBtn     <- UI.button #+ [string "Do It!"]
+    addToLBBtn  <- UI.button #+ [string "Add To List Box"]
+    listBox     <- UI.listBox  bLBItems bLBSelection bDisplayDI
+    lbSelection <- dataItem    bLBSelectionDI
+    let uiDI = grid [[string spvType, element lbSelection]]
     element listBox # set (attr "size") "20" # set style [("width","800px")]
 
     -- events and behaviors
-    let eSelection    = rumors $ UI.userSelection listBox
-        eAddToListBox = UI.click addToListBoxBtn
+    let eLBSelection = rumors $ UI.userSelection listBox
+        eAddToLB     = UI.click addToLBBtn
 
     -- submit button
     on UI.click doItBtn $ \_ -> do
         (r,_,_) <- liftIO doRDFQuery;
-        liftIO $ hFillListBox r;
+        liftIO $ hFillLB r;
         return ()
 
     -- database
-    -- bDatabase :: Behavior (Database DataItem)
-    bDatabase <- accumB emptydb $ concatenate <$> unions
-        [ hcSubmit <$ eAddToListBox
-        , hcEFill <$> eFillListBox
+    -- bDB :: Behavior (DB DI)
+    bDB <- accumB emptydb $ concatenate <$> unions
+        [ dbSubmit <$ eAddToLB
+        , dbFill <$> eFillLB
         ]
 
     -- selection
-    -- bSelection :: Behavior (Maybe DatabaseKey)
-    bSelection <- stepper Nothing eSelection
+    -- bLBSelection :: Behavior (Maybe DBKey)
+    bLBSelection <- stepper Nothing eLBSelection
 
-    let bLookup :: Behavior (DatabaseKey -> Maybe DataItem)
-        bLookup = flip lookup <$> bDatabase
+    let bLookup :: Behavior (DBKey -> Maybe DI)
+        bLookup = flip lookup <$> bDB
 
-        bShowDataItem :: Behavior (DatabaseKey -> String)
-        bShowDataItem = (maybe "" showDataItem .) <$> bLookup
+        bShowDI :: Behavior (DBKey -> String)
+        bShowDI = (maybe "" showDI .) <$> bLookup
 
-        bDisplayDataItem = (UI.string .) <$> bShowDataItem
+        bDisplayDI = (UI.string .) <$> bShowDI
 
-        bListBoxItems :: Behavior [DatabaseKey]
-        bListBoxItems = (\show0 -> filter (const True . show0) . keys)
-                    <$> bShowDataItem <*> bDatabase
+        bLBItems :: Behavior [DBKey]
+        bLBItems = (\show0 -> filter (const True . show0) . keys)
+                    <$> bShowDI <*> bDB
 
-        bSelectionDataItem :: Behavior (Maybe DataItem)
-        bSelectionDataItem = (=<<) <$> bLookup <*> bSelection
+        bLBSelectionDI :: Behavior (Maybe DI)
+        bLBSelectionDI = (=<<) <$> bLookup <*> bLBSelection
 
     -- GUI layout
     grid [
-           [ uiDataItem ]
+           [ uiDI ]
          , [ element listBox ]
-         , [ element addToListBoxBtn]
+         , [ element addToLBBtn]
          , [ element doItBtn ]
          ]
 
 ------------------------------------------------------------------------------
--- Database Model
+-- DB Model
 
-type DatabaseKey = Int
-data Database a  = Database { nextKey :: !Int, db :: Map.Map DatabaseKey a }
+type DBKey = Int
+data DB a  = DB { nextKey :: !Int, db :: Map.Map DBKey a }
 
-emptydb :: Database a
-emptydb = Database 0 Map.empty
+emptydb :: DB a
+emptydb = DB 0 Map.empty
 
-keys :: Database a -> [DatabaseKey]
+keys :: DB a -> [DBKey]
 keys    = Map.keys . db
 
-hcSubmit :: Database DataItem -> Database DataItem
-hcSubmit     (Database newkey db0) = Database newkey $ Map.map (\(x,y) -> (x ++ "xx", y)) db0
+dbSubmit :: DB DI -> DB DI
+dbSubmit     (DB newkey db0) = DB newkey $ Map.map (\(x,y) -> (x ++ "xx", y)) db0
 
-hcEFill :: [(String,BindingValue)] -> Database DataItem -> Database DataItem
-hcEFill    ss _ = foldr create  emptydb ss
+dbFill :: [(String,BindingValue)] -> DB DI -> DB DI
+dbFill    ss _ = foldr create  emptydb ss
 
-create :: a -> Database a -> Database a
-create x     (Database newkey db0) = Database (newkey+1) $ Map.insert newkey x db0
+create :: a -> DB a -> DB a
+create x     (DB newkey db0) = DB (newkey+1) $ Map.insert newkey x db0
 
-lookup :: DatabaseKey -> Database a -> Maybe a
-lookup key   (Database _      db0) = Map.lookup                       key      db0
+lookup :: DBKey -> DB a -> Maybe a
+lookup key   (DB _      db0) = Map.lookup                       key      db0
 
 ------------------------------------------------------------------------------
 -- What is stored in data base
 
-type DataItem = (String, BindingValue)
+type DI = (String, BindingValue)
 
-showDataItem :: DataItem -> String
-showDataItem (x,_) = x
+showDI :: DI -> String
+showDI (x,_) = x
 
 -- | Data item widget
-dataItem :: Behavior (Maybe DataItem) -> UI Element
+dataItem :: Behavior (Maybe DI) -> UI Element
 dataItem bItem = do
     entry1 <- UI.entry $ fst . fromMaybe ("",Bound $ UNode (T.pack "foo")) <$> bItem -- TODO something other than Bound as "empty"
     element entry1 # set style [("width", "800px")]

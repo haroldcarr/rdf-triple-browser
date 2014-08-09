@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 04:21:11 by Max Taldykin.
-Last Modified : 2014 Jul 24 (Thu) 10:54:43 by Harold Carr.
+Last Modified : 2014 Aug 09 (Sat) 08:07:32 by Harold Carr.
 http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
 -}
 
@@ -20,12 +20,12 @@ Event handler is function given event value.  Performs some computation. `type H
 main :: IO ()
 main = do
     -- newEvent :: IO (Event a, Handler a)
-    (eventFillListBox, handlerFillListBox) <- newEvent
+    (eFillLB, hFillLB) <- newEvent
     -- valuesSupply :: String -> IO [String]
     initialList <- valuesSupply ""
     -- stepper :: MonadIO m => a -> Event a -> m (Behavior a)
     -- Construct time-varying function from initial value and stream of new values.
-    behaviorFillListBox <- stepper initialList eventFillListBox
+    bFillLB <- stepper initialList eFillLB
 
     startGUI defaultConfig $ \win -> do
         list <- ul
@@ -33,7 +33,7 @@ main = do
         --                  -> Behavior (Maybe a)         -- selected item
         --                  -> Behavior (a -> UI Element) -- display for an item
         --                  -> UI (ListBox a)             -- created ListBox
-        lstBox <- listBox behaviorFillListBox
+        lstBox <- listBox bFillLB
                           (pure Nothing)
                           (pure $ \it -> UI.span # set text it)
         element lstBox # set (attr "size") "10" # set style [("width","200px")]
@@ -46,9 +46,9 @@ main = do
         on selectionChange (getElement lstBox) $ \x -> case x of
             Nothing -> return ()
             Just ix -> do -- currentValue :: MonadIO m => Behavior a -> m a
-                          items <- currentValue behaviorFillListBox
+                          items <- currentValue bFillLB
                           let it = items !! ix
-                          liftIO $ valuesSupply it >>= handlerFillListBox
+                          liftIO $ valuesSupply it >>= hFillLB
                           element list #+ [li # set html it]
                           setFocus $ getElement lstBox
 

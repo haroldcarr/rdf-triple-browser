@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 24 (Thu) 09:37:09 by Harold Carr.
-Last Modified : 2014 Aug 08 (Fri) 20:08:32 by Harold Carr.
+Last Modified : 2014 Aug 09 (Sat) 14:16:32 by Harold Carr.
 -}
 
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -17,60 +17,87 @@ import           Data.Text.Lazy                    as L
 
 ------------------------------------------------------------------------------
 
-ui       = uStar'
-behavior = uDoubleCircle'
-event    = uDiamond'
-handler  = uTriangle'
-fun      = uRectangle'
-mfun     = uDoubleOctagon'
+ui       = uStar          $ uFixedSize [Width 1.5]
+behavior = uDoubleCircle  $ uFixedSize [Width 1.5]
+event    = uDiamond       $ uFixedSize [Width 1.5, Height 1.5]
+handler  = uTriangle      $ uFixedSize [Width 1.5]
+fun      = uRectangle     []
+mfun     = uDoubleOctagon $ uFixedSize [Width 1.5, Height 1.5]
 
 ------------------------------------------------------------------------------
 
-doItBtn = ui "doItBtn" "doItBtn"
-doItClk = event "doItClk" "doItClk"
-doRDFQuery = mfun "doRDFQuery" "doRDFQuery"
-bDataBase = behavior "bDataBase" "bDataBase"
-bListBoxItems = behavior "bListBoxItems" "bListBoxItems"
+eFillLB        = event       "eFillLB"            "eFillLB\n[(Time,a)]"
+hFillLB        = handler     "hFillLB"            "hFillLB\na -> IO ()"
+listBox        = ui          "listBox"            "listBox\nUI (ListBox a)"
+doItBtn        = ui          "doItBtn"            "doItBtn\nUI Element"
+lbSelection    = ui          "lbSelection"        "lbSelection\n UI Element"
+eLBSelection   = event       "eLBSelection"       "eLBSelection"
 
-bSelection = behavior "bSelection" "bSelection"
-eSelection = event "eSelection" "eSelection"
+eDoItClk       = event       "eDoItClk"           "eDoItClk\nElement -> Event"
+doRDFQuery     = mfun        "doRDFQuery"         "doRDFQuery\nIO ..."
 
-bLookup      = behavior "bLookup" "bLookup"
-bShowDataItem = behavior "bShowDataItem" "bShowDataItem"
-bDisplayDataItem = behavior "bDisplayDataItem" "bDisplayDataItem"
+accumB         = behavior    "accumB"             "accumB\nMonadIO m => a\n-> Event (a -> a)\n-> m (Behavior a)"
+emptydb        = uRectangle' "emptydb"            "emptydb\nDB a"
+dbFill         = fun         "dbFill"             "dbFill\na -> DB DI -> DB DI"
+bDB            = behavior    "bDB"                "bDB\nBehavior\n(DB DI)"
+
+stepper        = fun         "stepper"            "stepper"
+bLBSelection   = behavior    "bLBSelection"       "bLBSelection\nBehavior\n(Maybe DBKey)"
+
+bLookup        = behavior    "bLookup"            "bLookup\nBehavior\n(DBKey -> Maybe DI)"
+bShowDI        = behavior    "bShowDI"            "bShowDI\nBehavior\n(DBKey -> String)"
+bDisplayDI     = behavior    "bDisplayDI"         "bDisplayDI\nString -> UI Element"
+
+bLBItems       = behavior    "bLBItems"           "bLBItems\nBehavior\n[DBKey]"
+
+bLBSelectionDI = behavior    "bLBSelectionDI"     "bLBSelectionDI\nBehavior\n(Maybe DI)"
+
+keys           = fun         "keys"               "keys"
 
 crud2 :: G.DotGraph L.Text
 crud2 = digraph (Str "crud2") $ do
 
     graphAttrs [RankDir FromLeft]
-    doItBtn; doItClk; doRDFQuery; handlerFillListBox; eventFillListBox; bDataBase; bListBoxItems; listBox;
-    eSelection; bSelection;
-    bLookup; bShowDataItem; bDisplayDataItem;
+    listBox; eFillLB; hFillLB; doItBtn; lbSelection; eLBSelection; eDoItClk; doRDFQuery;
+    accumB; emptydb; dbFill; bDB;
+    stepper; bLBSelection; bLookup; bShowDI; bDisplayDI; bLBItems; bLBSelectionDI; keys;
 
-    "doItBtn" --> "doItClk"
-    "doItClk" --> "doRDFQuery"
-    "doRDFQuery" --> "handlerFillListBox"
-    "handlerFillListBox" --> "eventFillListBox"
-    "eventFillListBox" --> "bDataBase"
-    "bDataBase" --> "bListBoxItems"
-    edge "bListBoxItems" "listBox" [textLabel "1"]
+    edge "bLBItems"     "listBox" [textLabel "1"]
+    edge "bLBSelection" "listBox" [textLabel "2"]
+    edge "bDisplayDI"   "listBox" [textLabel "3"]
 
-    "eSelection" --> "bSelection"
-    edge "bSelection" "listBox" [textLabel "2"]
+    "bLBSelectionDI" --> "lbSelection"
 
-    "bLookup" --> "bShowDataItem"
-    "bShowDataItem" --> "bDisplayDataItem"
-    edge "bDisplayDataItem" "listBox" [textLabel "3"]
+    "doItBtn" --> "eDoItClk"
+
+    "listBox"      --> "eLBSelection"
+    "eLBSelection" --> "stepper"
+    "stepper"      --> "bLBSelection"
+
+    "eDoItClk"   --> "doRDFQuery"
+    "doRDFQuery" --> "hFillLB"
+    "hFillLB"    --> "eFillLB"
+    "emptydb"    --> "accumB"
+    "eFillLB"    --> "dbFill"
+    "dbFill"     --> "accumB"
+    "accumB"     --> "bDB"
+
+    "bDB"     --> "bLookup"
+    "bLookup" --> "bShowDI"
+    "bShowDI" --> "bDisplayDI"
+
+    "bDB"     --> "keys"
+    "keys"    --> "bShowDI"
+    "bShowDI" --> "bLBItems"
+
+    "bLBSelection" --> "bLookup"
+    "bLookup"      --> "bLBSelectionDI"
 
 ------------------------------------------------------------------------------
 
-bangBang, behaviorFillListBox, currentValue, eventFillListBox, handlerFillListBox, listBox, selectionChange, valuesSupply :: Dot L.Text
 bangBang            = uRectangle'    "bangBang"                     "!!"
-behaviorFillListBox = behavior       "behaviorFillListBox"          "behaviorFillListBox\nm (Behavior a)"
+bFillLB             = behavior       "bFillLB"                      "bFillLB\nm (Behavior a)"
 currentValue        = uCircle'       "currentValue"                 "currentValue\nm a"
-eventFillListBox    = event          "eventFillListBox"             "eventFillListBox\n[(Time,a)]"
-handlerFillListBox  = handler        "handlerFillListBox"           "handlerFillListBox\na -> IO ()"
-listBox             = ui             "listBox"                      "listBox\nUI (ListBox a)"
 selectionChange     = uCircle'       "selectionChange"              "selectionChange\nEvent (Maybe Int)"
 valuesSupply        = uCircle'       "valuesSupply"                 "valuesSupply\nIO [String]"
 
@@ -78,17 +105,17 @@ taldykin :: G.DotGraph L.Text
 taldykin = digraph (Str "taldykin") $ do
 
     graphAttrs [RankDir FromLeft]
-    selectionChange; eventFillListBox; handlerFillListBox; behaviorFillListBox; listBox; valuesSupply; currentValue; bangBang;
+    selectionChange; eFillLB; hFillLB; bFillLB; listBox; valuesSupply; currentValue; bangBang;
 
-    "handlerFillListBox"  --> "eventFillListBox"
-    "eventFillListBox"    --> "behaviorFillListBox"
-    "behaviorFillListBox" --> "listBox"
-    "behaviorFillListBox" --> "currentValue"
+    "hFillLB"             --> "eFillLB"
+    "eFillLB"             --> "bFillLB"
+    "bFillLB"             --> "listBox"
+    "bFillLB"             --> "currentValue"
     edge "selectionChange"    "currentValue"         [textLabel "causes"]
     "selectionChange"     --> "bangBang"
     "currentValue"        --> "bangBang"
     "bangBang"            --> "valuesSupply"
-    "valuesSupply"        --> "handlerFillListBox"
+    "valuesSupply"        --> "hFillLB"
     "listBox"             --> "selectionChange"
 
 ------------------------------------------------------------------------------
