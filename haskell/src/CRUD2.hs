@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 09 (Sat) 13:08:36 by Harold Carr.
+Last Modified : 2014 Aug 10 (Sun) 11:32:27 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -69,8 +69,7 @@ mkSPVPanel (eFillLB, hFillLB) spvType = mdo
         bDisplayDI = (UI.string .) <$> bShowDI
 
         bLBItems :: Behavior [DBKey]
-        bLBItems = (\show0 -> filter (const True . show0) . keys)
-                    <$> bShowDI <*> bDB
+        bLBItems = keys <$> bDB
 
         bLBSelectionDI :: Behavior (Maybe DI)
         bLBSelectionDI = (=<<) <$> bLookup <*> bLBSelection

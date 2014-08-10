@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 24 (Thu) 09:37:09 by Harold Carr.
-Last Modified : 2014 Aug 09 (Sat) 14:16:32 by Harold Carr.
+Last Modified : 2014 Aug 10 (Sun) 11:35:25 by Harold Carr.
 -}
 
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -68,30 +68,29 @@ crud2 = digraph (Str "crud2") $ do
 
     "bLBSelectionDI" --> "lbSelection"
 
-    "doItBtn" --> "eDoItClk"
+    "doItBtn"        --> "eDoItClk"
 
-    "listBox"      --> "eLBSelection"
-    "eLBSelection" --> "stepper"
-    "stepper"      --> "bLBSelection"
+    "listBox"        --> "eLBSelection"
+    "eLBSelection"   --> "stepper"
+    "stepper"        --> "bLBSelection"
 
-    "eDoItClk"   --> "doRDFQuery"
-    "doRDFQuery" --> "hFillLB"
-    "hFillLB"    --> "eFillLB"
-    "emptydb"    --> "accumB"
-    "eFillLB"    --> "dbFill"
-    "dbFill"     --> "accumB"
-    "accumB"     --> "bDB"
+    "eDoItClk"       --> "doRDFQuery"
+    "doRDFQuery"     --> "hFillLB"
+    "hFillLB"        --> "eFillLB"
+    "emptydb"        --> "accumB"
+    "eFillLB"        --> "dbFill"
+    "dbFill"         --> "accumB"
+    "accumB"         --> "bDB"
 
-    "bDB"     --> "bLookup"
-    "bLookup" --> "bShowDI"
-    "bShowDI" --> "bDisplayDI"
+    "bDB"            --> "bLookup"
+    "bLookup"        --> "bShowDI"
+    "bShowDI"        --> "bDisplayDI"
 
-    "bDB"     --> "keys"
-    "keys"    --> "bShowDI"
-    "bShowDI" --> "bLBItems"
+    "bDB"            --> "keys"
+    "keys"           --> "bLBItems"
 
-    "bLBSelection" --> "bLookup"
-    "bLookup"      --> "bLBSelectionDI"
+    "bLBSelection"   --> "bLookup"
+    "bLookup"        --> "bLBSelectionDI"
 
 ------------------------------------------------------------------------------
 
