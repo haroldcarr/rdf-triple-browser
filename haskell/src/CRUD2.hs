@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 10 (Sun) 11:32:27 by Harold Carr.
+Last Modified : 2014 Aug 10 (Sun) 11:53:32 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -21,16 +21,14 @@ import           RTBQ
 
 main :: IO ()
 main = do
-    eh <- newEvent
     startGUI defaultConfig $ \window -> do
         return window # set title "RDF Triple Browser"
-        getBody window #+ [ mkSPVPanel eh "?subject" ]
+        getBody window #+ [ mkSPVPanel "?subject" ]
         return ()
 
-mkSPVPanel :: (Event [(String,BindingValue)], Handler [(String,BindingValue)])
-              -> String
+mkSPVPanel :: String
               -> UI Element
-mkSPVPanel (eFillLB, hFillLB) spvType = mdo
+mkSPVPanel spvType = mdo
     -- GUI elements
     doItBtn     <- UI.button #+ [string "Do It!"]
     addToLBBtn  <- UI.button #+ [string "Add To List Box"]
@@ -43,7 +41,7 @@ mkSPVPanel (eFillLB, hFillLB) spvType = mdo
     let eLBSelection = rumors $ UI.userSelection listBox
         eAddToLB     = UI.click addToLBBtn
 
-    -- submit button
+    (eFillLB, hFillLB) <- liftIO newEvent
     on UI.click doItBtn $ \_ -> do
         (r,_,_) <- liftIO doRDFQuery;
         liftIO $ hFillLB r;

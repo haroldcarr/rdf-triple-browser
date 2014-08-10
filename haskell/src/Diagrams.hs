@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 24 (Thu) 09:37:09 by Harold Carr.
-Last Modified : 2014 Aug 10 (Sun) 11:35:25 by Harold Carr.
+Last Modified : 2014 Aug 10 (Sun) 13:00:14 by Harold Carr.
 -}
 
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -26,54 +26,64 @@ mfun     = uDoubleOctagon $ uFixedSize [Width 1.5, Height 1.5]
 
 ------------------------------------------------------------------------------
 
-eFillLB        = event       "eFillLB"            "eFillLB\n[(Time,a)]"
-hFillLB        = handler     "hFillLB"            "hFillLB\na -> IO ()"
-listBox        = ui          "listBox"            "listBox\nUI (ListBox a)"
-doItBtn        = ui          "doItBtn"            "doItBtn\nUI Element"
-lbSelection    = ui          "lbSelection"        "lbSelection\n UI Element"
-eLBSelection   = event       "eLBSelection"       "eLBSelection"
+doItBtn        = ui          "doItBtn"            "doItBtn ::\nUI Element"
+listBox        = ui          "listBox"            "listBox ::\nUI (ListBox a)"
+lbSelection    = ui          "lbSelection"        "lbSelection ::\n UI Element"
+userSelection  = fun         "userSelection"      "userSelection ::\nListBox a ->\nTidings (Maybe a)"
+rumors         = fun         "rumors"             "rumors ::\nTidings -> \nEvent a"
+eLBSelection   = event       "eLBSelection"       "eLBSelection ::\nEvent a"
 
-eDoItClk       = event       "eDoItClk"           "eDoItClk\nElement -> Event"
-doRDFQuery     = mfun        "doRDFQuery"         "doRDFQuery\nIO ..."
+eFillLB        = event       "eFillLB"            "eFillLB ::\n[(Time,a)]"
+hFillLB        = handler     "hFillLB"            "hFillLB ::\na -> IO ()"
+on             = fun         "on"                 "on ::\n(element -> Event a)\n-> element\n-> (a -> UI void)\n-> UI ()"
+click          = fun         "click"              "click ::\nElement\n-> Event ()"
+eDoItClk       = event       "eDoItClk"           "eDoItClk ::\na -> UI void"
+doRDFQuery     = mfun        "doRDFQuery"         "doRDFQuery ::\nIO ..."
 
-accumB         = behavior    "accumB"             "accumB\nMonadIO m => a\n-> Event (a -> a)\n-> m (Behavior a)"
-emptydb        = uRectangle' "emptydb"            "emptydb\nDB a"
-dbFill         = fun         "dbFill"             "dbFill\na -> DB DI -> DB DI"
-bDB            = behavior    "bDB"                "bDB\nBehavior\n(DB DI)"
+accumB         = behavior    "accumB"             "accumB ::\nMonadIO m =>\na\n-> Event (a -> a)\n-> m (Behavior a)"
+emptydb        = uRectangle' "emptydb"            "emptydb ::\nDB a"
+dbFill         = fun         "dbFill"             "dbFill ::\na -> DB DI -> DB DI"
+bDB            = behavior    "bDB"                "bDB ::\nBehavior\n(DB DI)"
 
-stepper        = fun         "stepper"            "stepper"
-bLBSelection   = behavior    "bLBSelection"       "bLBSelection\nBehavior\n(Maybe DBKey)"
+nothing        = uRectangle' "nothing"            "Nothing"
+stepper        = fun         "stepper"            "stepper ::\nMonadIO m =>\na\n-> Event a\n-> m (Behavior a)"
+bLBSelection   = behavior    "bLBSelection"       "bLBSelection ::\nBehavior\n(Maybe DBKey)"
 
-bLookup        = behavior    "bLookup"            "bLookup\nBehavior\n(DBKey -> Maybe DI)"
-bShowDI        = behavior    "bShowDI"            "bShowDI\nBehavior\n(DBKey -> String)"
-bDisplayDI     = behavior    "bDisplayDI"         "bDisplayDI\nString -> UI Element"
+bLookup        = behavior    "bLookup"            "bLookup ::\nBehavior\n(DBKey -> Maybe DI)"
+bShowDI        = behavior    "bShowDI"            "bShowDI ::\nBehavior\n(DBKey -> String)"
+bDisplayDI     = behavior    "bDisplayDI"         "bDisplayDI ::\nString -> UI Element"
 
-bLBItems       = behavior    "bLBItems"           "bLBItems\nBehavior\n[DBKey]"
+bLBItems       = behavior    "bLBItems"           "bLBItems ::\nBehavior\n[DBKey]"
 
-bLBSelectionDI = behavior    "bLBSelectionDI"     "bLBSelectionDI\nBehavior\n(Maybe DI)"
+bLBSelectionDI = behavior    "bLBSelectionDI"     "bLBSelectionDI ::\nBehavior\n(Maybe DI)"
 
-keys           = fun         "keys"               "keys"
+keys           = fun         "keys"               "keys ::\nMap k a -> [k]"
 
 crud2 :: G.DotGraph L.Text
 crud2 = digraph (Str "crud2") $ do
 
     graphAttrs [RankDir FromLeft]
-    listBox; eFillLB; hFillLB; doItBtn; lbSelection; eLBSelection; eDoItClk; doRDFQuery;
+    listBox; eFillLB; hFillLB; doItBtn; lbSelection; eLBSelection; userSelection; rumors;
+    on; click; eDoItClk; doRDFQuery;
     accumB; emptydb; dbFill; bDB;
-    stepper; bLBSelection; bLookup; bShowDI; bDisplayDI; bLBItems; bLBSelectionDI; keys;
+    nothing; stepper; bLBSelection; bLookup; bShowDI; bDisplayDI; bLBItems; bLBSelectionDI; keys;
 
-    edge "bLBItems"     "listBox" [textLabel "1"]
-    edge "bLBSelection" "listBox" [textLabel "2"]
-    edge "bDisplayDI"   "listBox" [textLabel "3"]
+    edge "bLBItems"      "listBox" [textLabel "1. Behavior [a] -- list of items"]
+    edge "bLBSelection"  "listBox" [textLabel "2. Behavior (Maybe a) -- selected item"]
+    edge "bDisplayDI"    "listBox" [textLabel "3. Behavior (a -> UI Element) -- display for an item"]
 
     "bLBSelectionDI" --> "lbSelection"
 
-    "doItBtn"        --> "eDoItClk"
-
-    "listBox"        --> "eLBSelection"
+    "listBox"        --> "userSelection"
+    "userSelection"  --> "rumors"
+    "rumors"         --> "eLBSelection"
     "eLBSelection"   --> "stepper"
+    "nothing"        --> "stepper"
     "stepper"        --> "bLBSelection"
 
+    edge "click"         "on" [textLabel "1."]
+    edge "doItBtn"       "on" [textLabel "2."]
+    edge "eDoItClk"      "on" [textLabel "3."]
     "eDoItClk"       --> "doRDFQuery"
     "doRDFQuery"     --> "hFillLB"
     "hFillLB"        --> "eFillLB"
