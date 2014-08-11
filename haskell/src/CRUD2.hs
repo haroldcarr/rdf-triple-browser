@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 10 (Sun) 17:56:18 by Harold Carr.
+Last Modified : 2014 Aug 10 (Sun) 19:55:37 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -46,7 +46,7 @@ mkSPVPanel spvType = mdo
     (eFillLB, hFillLB) <- liftIO newEvent
 
     let query :: (Maybe DBKey) -> UI ()
-        query a = do (r,_,_) <- liftIO $ doRDFQuery a
+        query a = do (r,_,_) <- liftIO $ doRDFQuery a bDB
                      liftIO $ hFillLB r
                      return ()
 
@@ -127,13 +127,15 @@ dataItem bItem = do
 ------------------------------------------------------------------------------
 
 doRDFQuery :: Maybe DBKey
+              -> Behavior (DB DI)
               -> IO ( [(String, BindingValue)]
                     , [(String, BindingValue)]
                     , [(String, BindingValue)]
                     )
-doRDFQuery a = do
+doRDFQuery a bdb = do
+    db0 <- currentValue bdb
     case a of
-        (Just k) -> putStrLn (show k)
+        (Just k) -> putStrLn (show (lookup k db0))
         _        -> putStrLn "something else"
     ttt
 

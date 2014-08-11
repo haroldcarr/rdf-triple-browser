@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 29 (Tue) 07:16:51 by Harold Carr.
-Last Modified : 2014 Aug 04 (Mon) 21:05:24 by Harold Carr.
+Last Modified : 2014 Aug 11 (Mon) 09:41:41 by Harold Carr.
 -}
 
 {-# LANGUAGE OverloadedStrings #-}
@@ -48,6 +48,20 @@ qq2 = sendQuery q
         triple s p (T.pack "Slug Magazine", T.pack "en")
         return SelectQuery { queryVars = [s, p] }
 
+test :: IO (Maybe [[BindingValue]])
+test = sendQuery q
+  where
+    q = do
+        svar <- var
+        pvar <- var
+        ovar <- var
+        let sval = iriRef "http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah"
+            pval = iriRef "http://xmlns.com/foaf/0.1/name"
+            oval = (T.pack "Slug Magazine", T.pack "en")
+        -- let t = Term $ NumericLiteralTerm 3 -- not exported
+        triple sval pvar oval
+        return SelectQuery { queryVars = [pvar] }
+
 dbAddress, dbQueryAddress :: String
 dbAddress         = "http://localhost:3030/ds/"
 dbQueryAddress    = dbAddress ++ "query"
@@ -81,9 +95,9 @@ extract (Bound v) = T.unpack $ case v of
     UNode x             -> x
     BNode x             -> x
 --    BNodeGen x          -> show x
-    LNode (PlainL x)    -> x
+    LNode (PlainL  x)   -> x
     LNode (PlainLL x _) -> x
-    LNode (TypedL x _)  -> x
+    LNode (TypedL  x _) -> x
 extract _ = error "TODO"
 
 -- End of file.
