@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 10 (Sun) 17:08:40 by Harold Carr.
+Last Modified : 2014 Aug 10 (Sun) 17:56:18 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -40,15 +40,19 @@ mkSPVPanel spvType = mdo
     -- events and behaviors
     let eLBSelection :: Event (Maybe DBKey)
         eLBSelection = rumors $ UI.userSelection listBox
-        eAddToLB :: Event ()
+        eAddToLB     :: Event ()
         eAddToLB     = UI.click addToLBBtn
 
     (eFillLB, hFillLB) <- liftIO newEvent
 
-    on UI.click doItBtn $ \_ -> do
-        (r,_,_) <- liftIO doRDFQuery;
-        liftIO $ hFillLB r;
-        return ()
+    let query :: (Maybe DBKey) -> UI ()
+        query a = do (r,_,_) <- liftIO $ doRDFQuery a
+                     liftIO $ hFillLB r
+                     return ()
+
+    on UI.click doItBtn $ \_ -> query Nothing
+
+    onEvent eLBSelection query -- probably not the way to get the selection to the query
 
     -- database
     let dbFill :: [(String,BindingValue)] -> DB DI -> DB DI
@@ -122,10 +126,15 @@ dataItem bItem = do
 
 ------------------------------------------------------------------------------
 
-doRDFQuery :: IO ( [(String, BindingValue)]
-                 , [(String, BindingValue)]
-                 , [(String, BindingValue)]
-                 )
-doRDFQuery = ttt
+doRDFQuery :: Maybe DBKey
+              -> IO ( [(String, BindingValue)]
+                    , [(String, BindingValue)]
+                    , [(String, BindingValue)]
+                    )
+doRDFQuery a = do
+    case a of
+        (Just k) -> putStrLn (show k)
+        _        -> putStrLn "something else"
+    ttt
 
 -- End of file.
