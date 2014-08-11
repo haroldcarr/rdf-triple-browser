@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 24 (Thu) 09:37:09 by Harold Carr.
-Last Modified : 2014 Aug 10 (Sun) 13:00:14 by Harold Carr.
+Last Modified : 2014 Aug 10 (Sun) 16:22:00 by Harold Carr.
 -}
 
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -31,7 +31,7 @@ listBox        = ui          "listBox"            "listBox ::\nUI (ListBox a)"
 lbSelection    = ui          "lbSelection"        "lbSelection ::\n UI Element"
 userSelection  = fun         "userSelection"      "userSelection ::\nListBox a ->\nTidings (Maybe a)"
 rumors         = fun         "rumors"             "rumors ::\nTidings -> \nEvent a"
-eLBSelection   = event       "eLBSelection"       "eLBSelection ::\nEvent a"
+eLBSelection   = event       "eLBSelection"       "eLBSelection ::\nEvent (Mabye DBKey)"
 
 eFillLB        = event       "eFillLB"            "eFillLB ::\n[(Time,a)]"
 hFillLB        = handler     "hFillLB"            "hFillLB ::\na -> IO ()"
@@ -50,8 +50,7 @@ stepper        = fun         "stepper"            "stepper ::\nMonadIO m =>\na\n
 bLBSelection   = behavior    "bLBSelection"       "bLBSelection ::\nBehavior\n(Maybe DBKey)"
 
 bLookup        = behavior    "bLookup"            "bLookup ::\nBehavior\n(DBKey -> Maybe DI)"
-bShowDI        = behavior    "bShowDI"            "bShowDI ::\nBehavior\n(DBKey -> String)"
-bDisplayDI     = behavior    "bDisplayDI"         "bDisplayDI ::\nString -> UI Element"
+bDisplayDI     = behavior    "bDisplayDI"         "bDisplayDI ::\nBehavior\n(DBKey -> UI Element)"
 
 bLBItems       = behavior    "bLBItems"           "bLBItems ::\nBehavior\n[DBKey]"
 
@@ -66,7 +65,7 @@ crud2 = digraph (Str "crud2") $ do
     listBox; eFillLB; hFillLB; doItBtn; lbSelection; eLBSelection; userSelection; rumors;
     on; click; eDoItClk; doRDFQuery;
     accumB; emptydb; dbFill; bDB;
-    nothing; stepper; bLBSelection; bLookup; bShowDI; bDisplayDI; bLBItems; bLBSelectionDI; keys;
+    nothing; stepper; bLBSelection; bLookup; bDisplayDI; bLBItems; bLBSelectionDI; keys;
 
     edge "bLBItems"      "listBox" [textLabel "1. Behavior [a] -- list of items"]
     edge "bLBSelection"  "listBox" [textLabel "2. Behavior (Maybe a) -- selected item"]
@@ -93,8 +92,7 @@ crud2 = digraph (Str "crud2") $ do
     "accumB"         --> "bDB"
 
     "bDB"            --> "bLookup"
-    "bLookup"        --> "bShowDI"
-    "bShowDI"        --> "bDisplayDI"
+    "bLookup"        --> "bDisplayDI"
 
     "bDB"            --> "keys"
     "keys"           --> "bLBItems"
@@ -131,8 +129,9 @@ taldykin = digraph (Str "taldykin") $ do
 
 main :: IO ()
 main =
-    doDots [ ("taldykin" , taldykin)
-           , ("crud2"    , crud2)
-           ]
+    doDots' Fdp -- TwoPi -- Fdp
+            [ ("taldykin" , taldykin)
+            , ("crud2"    , crud2)
+            ]
 
 -- End of file.

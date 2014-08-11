@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 10 (Sun) 11:53:32 by Harold Carr.
+Last Modified : 2014 Aug 10 (Sun) 17:08:40 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -38,20 +38,29 @@ mkSPVPanel spvType = mdo
     element listBox # set (attr "size") "20" # set style [("width","800px")]
 
     -- events and behaviors
-    let eLBSelection = rumors $ UI.userSelection listBox
+    let eLBSelection :: Event (Maybe DBKey)
+        eLBSelection = rumors $ UI.userSelection listBox
+        eAddToLB :: Event ()
         eAddToLB     = UI.click addToLBBtn
 
     (eFillLB, hFillLB) <- liftIO newEvent
+
     on UI.click doItBtn $ \_ -> do
         (r,_,_) <- liftIO doRDFQuery;
         liftIO $ hFillLB r;
         return ()
 
     -- database
+    let dbFill :: [(String,BindingValue)] -> DB DI -> DB DI
+        dbFill ss _ = foldr create  emptydb ss
+
+        dbAddToLB :: DB DI -> DB DI
+        dbAddToLB (DB newkey db0) = DB newkey $ Map.map (\(x,y) -> (x ++ "xx", y)) db0
+
     -- bDB :: Behavior (DB DI)
     bDB <- accumB emptydb $ concatenate <$> unions
-        [ dbSubmit <$ eAddToLB
-        , dbFill <$> eFillLB
+        [ dbFill    <$> eFillLB
+        , dbAddToLB <$  eAddToLB
         ]
 
     -- selection
@@ -61,10 +70,8 @@ mkSPVPanel spvType = mdo
     let bLookup :: Behavior (DBKey -> Maybe DI)
         bLookup = flip lookup <$> bDB
 
-        bShowDI :: Behavior (DBKey -> String)
-        bShowDI = (maybe "" showDI .) <$> bLookup
-
-        bDisplayDI = (UI.string .) <$> bShowDI
+        bDisplayDI :: Behavior (DBKey -> UI Element)
+        bDisplayDI = (UI.string .) <$> (maybe "" showDI .) <$> bLookup
 
         bLBItems :: Behavior [DBKey]
         bLBItems = keys <$> bDB
@@ -91,12 +98,6 @@ emptydb = DB 0 Map.empty
 
 keys :: DB a -> [DBKey]
 keys    = Map.keys . db
-
-dbSubmit :: DB DI -> DB DI
-dbSubmit     (DB newkey db0) = DB newkey $ Map.map (\(x,y) -> (x ++ "xx", y)) db0
-
-dbFill :: [(String,BindingValue)] -> DB DI -> DB DI
-dbFill    ss _ = foldr create  emptydb ss
 
 create :: a -> DB a -> DB a
 create x     (DB newkey db0) = DB (newkey+1) $ Map.insert newkey x db0
