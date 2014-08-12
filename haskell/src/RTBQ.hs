@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 29 (Tue) 07:16:51 by Harold Carr.
-Last Modified : 2014 Aug 12 (Tue) 08:27:46 by Harold Carr.
+Last Modified : 2014 Aug 12 (Tue) 16:26:18 by Harold Carr.
 -}
 
 {-# LANGUAGE OverloadedStrings #-}
@@ -48,33 +48,34 @@ qq2 = sendQuery q
         triple s p (T.pack "Slug Magazine", T.pack "en")
         return SelectQuery { queryVars = [s, p] }
 
-test :: IO (Maybe [[BindingValue]])
-test = sendQuery q
+{-
+This change enables programmatic construction of triples from existing Node values
+and where variables are not known in advance.
+Here is an example of usage (tested with jena-fuseki-1.0.0 as the SPARQL server):
+-}
+callTest :: IO (Maybe [[BindingValue]])
+callTest = test (False, UNode (T.pack "http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah"))
+                (True , UNode (T.pack "http://xmlns.com/foaf/0.1/name"))
+                (True , LNode (PlainLL (T.pack "Slug Magazine") (T.pack "en")))
+
+test :: (Bool, Node) -> (Bool, Node) -> (Bool, Node) -> IO (Maybe [[BindingValue]])
+test (isSVar, sval) (isPVar, pval) (isOVar, oval) = sendQuery q
   where
     q = do
         svar <- var
         pvar <- var
         ovar <- var
-            -- values or variable markers would be passed to a function
-        let sval   = UNode (T.pack "http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah")
-            pval   = UNode (T.pack "http://xmlns.com/foaf/0.1/name")
-            oval   = LNode (PlainLL (T.pack "Slug Magazine") (T.pack "en"))
-            isSVar = False -- would use isUNode/isLNode here (from Data.RDF.Types)
-            isPVar = True
-            isOVar = True
-            varZip = zip [svar, pvar, ovar] [isSVar, isPVar, isOVar]
         triple (if isSVar then Var' svar else RDFNode sval)
                (if isPVar then Var' pvar else RDFNode pval)
                (if isOVar then Var' ovar else RDFNode oval)
-        return SelectQuery { queryVars = map fst $ filter snd varZip }
+        return SelectQuery { queryVars = map fst $ filter snd (zip [svar, pvar, ovar] [isSVar, isPVar, isOVar]) }
 
 dbAddress, dbQueryAddress :: String
-dbAddress         = "http://localhost:3030/ds/"
-dbQueryAddress    = dbAddress ++ "query"
+dbAddress      = "http://localhost:3030/ds/"
+dbQueryAddress = dbAddress ++ "query"
 
 sendQuery  :: Query SelectQuery -> IO (Maybe [[BindingValue]])
 sendQuery  = selectQuery dbQueryAddress
-
 
 tt  :: IO ( [String]
           , [String]
@@ -84,6 +85,25 @@ tt = do
     qr <- qAll
     let strs = [ map extract lbv | lbv <- fromJust qr ]
     return (nub $ map (!!0) strs, nub $ map (!!1) strs, nub $ map (!!2) strs)
+
+ttwv :: (String, BindingValue)
+        -> IO ( [(String, BindingValue)]
+              , [(String, BindingValue)]
+              , [(String, BindingValue)]
+              )
+ttwv v@(_, Bound n) = do
+    qr <- sendQuery q
+    let pairs = [ map (\l -> (extract l, l)) lbv | lbv <- fromJust qr ]
+    return ([v], nub $ map (!!0) pairs, nub $ map (!!1) pairs)
+  where
+    q = do
+        svar <- var
+        pvar <- var
+        ovar <- var
+        triple (RDFNode n)
+               (Var' pvar)
+               (Var' ovar)
+        return SelectQuery { queryVars = [ pvar, ovar ] }
 
 ttt :: IO ( [(String, BindingValue)]
           , [(String, BindingValue)]
