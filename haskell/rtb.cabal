@@ -18,7 +18,7 @@ library
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >=4.6 && <4.7
-                       , hsparql >= 0.2.5
+                       , hsparql
                        , threepenny-gui >= 0.4.2.0
                        -- maybe not needed in final
                        , rdf4h >= 1.2.5

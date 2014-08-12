@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 29 (Tue) 07:16:51 by Harold Carr.
-Last Modified : 2014 Aug 11 (Mon) 09:41:41 by Harold Carr.
+Last Modified : 2014 Aug 12 (Tue) 08:27:46 by Harold Carr.
 -}
 
 {-# LANGUAGE OverloadedStrings #-}
@@ -55,12 +55,18 @@ test = sendQuery q
         svar <- var
         pvar <- var
         ovar <- var
-        let sval = iriRef "http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah"
-            pval = iriRef "http://xmlns.com/foaf/0.1/name"
-            oval = (T.pack "Slug Magazine", T.pack "en")
-        -- let t = Term $ NumericLiteralTerm 3 -- not exported
-        triple sval pvar oval
-        return SelectQuery { queryVars = [pvar] }
+            -- values or variable markers would be passed to a function
+        let sval   = UNode (T.pack "http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah")
+            pval   = UNode (T.pack "http://xmlns.com/foaf/0.1/name")
+            oval   = LNode (PlainLL (T.pack "Slug Magazine") (T.pack "en"))
+            isSVar = False -- would use isUNode/isLNode here (from Data.RDF.Types)
+            isPVar = True
+            isOVar = True
+            varZip = zip [svar, pvar, ovar] [isSVar, isPVar, isOVar]
+        triple (if isSVar then Var' svar else RDFNode sval)
+               (if isPVar then Var' pvar else RDFNode pval)
+               (if isOVar then Var' ovar else RDFNode oval)
+        return SelectQuery { queryVars = map fst $ filter snd varZip }
 
 dbAddress, dbQueryAddress :: String
 dbAddress         = "http://localhost:3030/ds/"
