@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 12 (Tue) 17:53:21 by Harold Carr.
+Last Modified : 2014 Aug 12 (Tue) 19:48:28 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -29,6 +29,18 @@ main =
 mkSPVPanel :: String
               -> UI Element
 mkSPVPanel spvType = mdo
+    let decide db = if dbSize db > 1
+                       then "?"
+                       else case lookup 0 db of
+                                Just (s,_) -> s
+                                Nothing    -> error "NOT SUPPOSED TO HAPPEN"
+
+        dataItem :: Behavior (Maybe DI) -> UI Element
+        dataItem bItem = do
+            entry1 <- UI.entry $ decide <$> bDB
+            element entry1 # set style [("width", "400px")]
+            return $ getElement  entry1
+
     -- GUI elements
     doItBtn     <- UI.button #+ [string "Do It!"]
     addToLBBtn  <- UI.button #+ [string "Add To List Box"]
@@ -100,6 +112,9 @@ data DB a  = DB { nextKey :: !Int, db :: Map.Map DBKey a }
 emptydb :: DB a
 emptydb = DB 0 Map.empty
 
+dbSize :: DB a -> Int
+dbSize = Map.size . db
+
 keys :: DB a -> [DBKey]
 keys    = Map.keys . db
 
@@ -116,13 +131,6 @@ type DI = (String, BindingValue)
 
 showDI :: DI -> String
 showDI (x,_) = x
-
--- | Data item widget
-dataItem :: Behavior (Maybe DI) -> UI Element
-dataItem bItem = do
-    entry1 <- UI.entry $ fst . fromMaybe ("",Bound $ UNode (T.pack "foo")) <$> bItem -- TODO something other than Bound/UNode as "empty"
-    element entry1 # set style [("width", "400px")]
-    return $ getElement  entry1
 
 ------------------------------------------------------------------------------
 
