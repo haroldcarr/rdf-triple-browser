@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 12 (Tue) 16:21:21 by Harold Carr.
+Last Modified : 2014 Aug 12 (Tue) 17:53:21 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -20,7 +20,7 @@ import           RTBQ
 ------------------------------------------------------------------------------
 
 main :: IO ()
-main = do
+main =
     startGUI defaultConfig $ \window -> do
         return window # set title "RDF Triple Browser"
         getBody window #+ [ mkSPVPanel "?subject" ]
@@ -34,8 +34,7 @@ mkSPVPanel spvType = mdo
     addToLBBtn  <- UI.button #+ [string "Add To List Box"]
     listBox     <- UI.listBox  bLBItems bLBSelection bDisplayDI
     lbSelection <- dataItem    bLBSelectionDI
-    lbSelection2<- dataItem2   bLBSelectionDI
-    let uiDI = grid [[string spvType, element lbSelection, string "FOO", element lbSelection2]]
+    let uiDI = grid [[string spvType, element lbSelection]]
     element listBox # set (attr "size") "20" # set style [("width","800px")]
 
     -- events and behaviors
@@ -46,15 +45,14 @@ mkSPVPanel spvType = mdo
 
     (eFillLB, hFillLB) <- liftIO newEvent
 
-    let query :: (Maybe DBKey) -> (Maybe DI) -> UI ()
-        query mk mdi = do (r,_,_) <- liftIO $ doRDFQuery mk mdi bDB
-                          liftIO $ hFillLB r
-                          return ()
+    let query :: Maybe DBKey -> UI ()
+        query mk = do (r,_,_) <- liftIO $ doRDFQuery mk bDB
+                      liftIO $ hFillLB r
+                      return ()
 
-    on UI.click doItBtn $ \_ -> query Nothing Nothing
+    on UI.click doItBtn $ \_ -> query Nothing
 
-    onEvent eLBSelection $ \mk ->
-        (currentValue bLBSelectionDI) >>= \v -> query mk v -- probably not the way to get the selection to the query
+    onEvent eLBSelection query -- probably not the way to get the selection to the query
 
     -- database
     let dbFill                    :: [(String,BindingValue)] -> DB DI -> DB DI
@@ -126,32 +124,24 @@ dataItem bItem = do
     element entry1 # set style [("width", "400px")]
     return $ getElement  entry1
 
-dataItem2 :: Behavior (Maybe DI) -> UI Element
-dataItem2 bItem = do
-    entry1 <- UI.entry $ (++ "-TWO") . fst . fromMaybe ("",Bound $ UNode (T.pack "foo")) <$> bItem
-    element entry1 # set style [("width", "400px")]
-    return $ getElement  entry1
-
 ------------------------------------------------------------------------------
 
 doRDFQuery :: Maybe DBKey
-              -> Maybe DI
               -> Behavior (DB DI)
               -> IO ( [(String, BindingValue)]
                     , [(String, BindingValue)]
                     , [(String, BindingValue)]
                     )
-doRDFQuery mk mdi bdb = do
+doRDFQuery mk bdb = do
     putStrLn ""
-    putStrLn ("MK : " ++ (show mk))
-    putStrLn ("MDI: " ++ (show mdi))
-    db0 <- (currentValue bdb)
+    putStrLn ("MK : " ++ show mk)
+    db0 <- currentValue bdb
     case mk of
         (Just k) -> do let v = lookup k db0
-                       putStrLn ("DBValue: " ++ (show v))
+                       putStrLn ("DBValue: " ++ show v)
                        case v of
                            Just b -> do rrr <- ttwv b
-                                        putStrLn (show rrr)
+                                        print rrr
                                         return rrr
                            Nothing             -> ttt
         _        -> do putStrLn "key is NOTHING"
