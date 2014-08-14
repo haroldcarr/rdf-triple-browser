@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 13 (Wed) 20:00:49 by Harold Carr.
+Last Modified : 2014 Aug 14 (Thu) 07:53:35 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -13,9 +13,6 @@ module RTB where
 
 import           Control.Monad               (replicateM)
 import qualified Data.Map                    as Map
-import           Data.Maybe
-import           Data.RDF.Types              (Node (..))
-import qualified Data.Text                   as T (pack)
 import           Database.HSparql.Connection
 import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core
@@ -70,7 +67,7 @@ mkLayout  = mdo
     }
 
     -- initial values
-    updateDisplay "enter SPARQL endpoint URL" "?subject" "?predicate" "?object"
+    updateDisplay "http://localhost:3030/ds/query" "?subject" "?predicate" "?object"
 
     -- querying
 
@@ -117,21 +114,38 @@ mkLayout  = mdo
 
 mkListBox :: SPOType
              -> ((SPOType,String) -> UI ())
-             -> UI (UI.ListBox String, Handler [String])
-mkListBox spoType doSelectionQuery = do
+             -> UI (UI.ListBox DBKey, Handler [(String, BindingValue)])
+mkListBox spoType doSelectionQuery = mdo
     (eFillLB, hFillLB) <- liftIO newEvent
-    bFillLB <- stepper [] eFillLB
-    listBox <- UI.listBox bFillLB
+    listBox <- UI.listBox bLBItems
                           (pure Nothing)
-                          (pure $ \it -> UI.span # set text it)
+                          bDisplayDI
     element listBox # set (attr "size") "10" # set style [("width","300px")]
+
+    let dbFill                    :: [(String,BindingValue)] -> DB DI -> DB DI
+        dbFill    ss _            = foldr dbCreate  dbEmpty ss
+
+    -- bDB :: Behavior (DB DI)
+    bDB <- accumB dbEmpty $ concatenate <$> unions
+        [ dbFill    <$> eFillLB
+        ]
 
     on UI.selectionChange (getElement listBox) $ \x -> case x of
         Nothing -> return ()
-        Just i  -> do items <- currentValue bFillLB
-                      let selection = items !! i
-                      doSelectionQuery (spoType, selection)
+        Just i  -> do db0 <- currentValue bDB
+                      let (Just (s,_)) = dbLookup i db0
+                      doSelectionQuery (spoType, s)
                       UI.setFocus $ getElement listBox
+
+    let bLookup :: Behavior (DBKey -> Maybe DI)
+        bLookup = flip dbLookup <$> bDB
+
+        bDisplayDI :: Behavior (DBKey -> UI Element)
+        bDisplayDI = (UI.string .) <$> (maybe "" showDI .) <$> bLookup
+
+        bLBItems :: Behavior [DBKey]
+        bLBItems = dbKeys <$> bDB
+
     return (listBox, hFillLB)
 
 ------------------------------------------------------------------------------
@@ -165,7 +179,11 @@ showDI (x,_) = x
 
 ------------------------------------------------------------------------------
 
-doRDFQuery :: String -> String -> String -> String -> IO ([String],[String],[String])
-doRDFQuery _ _ _ _ = tt
+doRDFQuery :: String -> String -> String -> String
+              -> IO ( [(String, BindingValue)]
+                    , [(String, BindingValue)]
+                    , [(String, BindingValue)]
+                    )
+doRDFQuery url _ _ _ = ttt url
 
 -- End of file.
