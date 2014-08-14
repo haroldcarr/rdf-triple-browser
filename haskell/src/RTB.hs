@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 13 (Wed) 19:41:28 by Harold Carr.
+Last Modified : 2014 Aug 13 (Wed) 19:48:58 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -44,6 +44,18 @@ mkLayout  = mdo
     (preLB, hPreFillLB) <- mkListBox PRE doSelectionQuery
     (objLB, hObjFillLB) <- mkListBox OBJ doSelectionQuery
 
+    frame <- UI.frame # set (attr "name")   "top"
+                      # set (attr "target") "top"
+                      # set (attr "src")    "http://haroldcarr.com/"
+
+    frameset <- UI.frameset #+ [ element frame ]
+
+    -- submit button
+    on UI.click submitBtn $ \_ -> do
+        sparql <- get value sparqlEndpointURL
+        updateDisplay sparql "?subject" "?predicate" "?object"
+        doQuery
+
     -- update procedure
     let updateDisplay sp s p v = do {
         element sparqlEndpointURL # set value sp;
@@ -56,29 +68,20 @@ mkLayout  = mdo
     -- initial values
     updateDisplay "enter SPARQL endpoint URL" "?subject" "?predicate" "?object"
 
+    -- querying
+
     let doQuery = do {
-        sparql <- get value sparqlEndpointURL;
-        s      <- get value currentSub;
-        p      <- get value currentPre;
-        v      <- get value currentObj;
+        sparql     <- get value sparqlEndpointURL;
+        s          <- get value currentSub;
+        p          <- get value currentPre;
+        v          <- get value currentObj;
         (sr,pr,vr) <- liftIO $ doRDFQuery sparql s p v;
+        -- These are the MAGIC steps.  A Handler feeds events to their corresponding Event (from newEvent)
         liftIO $ hSubFillLB sr;
         liftIO $ hPreFillLB pr;
         liftIO $ hObjFillLB vr;
         return ()
     }
-
-    -- submit button
-    on UI.click submitBtn $ \_ -> do
-        sparql <- get value sparqlEndpointURL
-        updateDisplay sparql "?subject" "?predicate" "?object"
-        doQuery
-
-    frame <- UI.frame # set (attr "name")   "top"
-                      # set (attr "target") "top"
-                      # set (attr "src")    "http://haroldcarr.com/"
-
-    frameset <- UI.frameset #+ [ element frame ]
 
     let doSelectionQuery (spo, selection) = do {
         element (case spo of
