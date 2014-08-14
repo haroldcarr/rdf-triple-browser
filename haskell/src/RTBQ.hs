@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 29 (Tue) 07:16:51 by Harold Carr.
-Last Modified : 2014 Aug 13 (Wed) 17:45:43 by Harold Carr.
+Last Modified : 2014 Aug 13 (Wed) 17:55:19 by Harold Carr.
 -}
 
 {-# LANGUAGE OverloadedStrings #-}
@@ -19,6 +19,10 @@ This change enables programmatic construction of triples from existing Node valu
 and where variables are not known in advance.
 Here is an example of usage (tested with jena-fuseki-1.0.0 as the SPARQL server):
 -}
+
+endPoint :: String
+endPoint = "http://localhost:3030/ds/query"
+
 callTest :: IO (Maybe [[BindingValue]])
 callTest = test (False, UNode (T.pack "http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah"))
                 (True , UNode (T.pack "http://xmlns.com/foaf/0.1/name"))
@@ -73,6 +77,14 @@ qAll url = selectQuery url q
         s <- var; p <- var; o <- var
         triple s p o
         return SelectQuery { queryVars = [s, p, o] }
+
+tt :: IO ( [String]
+         , [String]
+         , [String]
+         )
+tt = do
+  (a,b,c) <- ttt endPoint
+  return (map fst a, map fst b, map fst c)
 
 -- LNode (PlainLL (T.pack "Slug Magazine") (T.pack "en"))
 
