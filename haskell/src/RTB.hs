@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 13 (Wed) 19:48:58 by Harold Carr.
+Last Modified : 2014 Aug 13 (Wed) 20:00:49 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -11,7 +11,12 @@ Last Modified : 2014 Aug 13 (Wed) 19:48:58 by Harold Carr.
 
 module RTB where
 
-import           Control.Monad
+import           Control.Monad               (replicateM)
+import qualified Data.Map                    as Map
+import           Data.Maybe
+import           Data.RDF.Types              (Node (..))
+import qualified Data.Text                   as T (pack)
+import           Database.HSparql.Connection
 import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core
 import           RTBQ
@@ -29,12 +34,11 @@ mkLayout  = mdo
     -- input elements
     sparqlEndpointURL <- UI.input  # set (attr "size") "175" # set (attr "type") "text"
     submitBtn         <- UI.button #+ [string "submit"]
-    (bSub  : bPre  : bObj  : _)
+    (xpdBtnSub  : xpdBtnPre  : xpdBtnObj  : _)
         <- replicateM 3 $ UI.button #+ [string "+"]
 
-    (ddSub : ddPre : ddObj : _ )
-        <- replicateM 3 $ UI.select # set (attr "width") "10"
-                                    #+ map (\x -> UI.option # set html x) ["clear", "show all", "<-", "->" ]
+    (clrSub : clrPre : clrObj : _ )
+        <- replicateM 3 $ UI.button #+ [string "*"]
 
     -- display elements
     (currentSub : currentPre : currentObj : _)
@@ -94,16 +98,16 @@ mkLayout  = mdo
     }
 
     grid [ [ row [ element sparqlEndpointURL, element submitBtn ] ]
-         , [ row [ column [ row [ element ddSub, element currentSub ]
-                          , element bSub
+         , [ row [ column [ row [ element clrSub, element currentSub ]
+                          , element xpdBtnSub
                           , element subLB
                           ]
-                 , column [ row [ element ddPre, element currentPre ]
-                          , element bPre
+                 , column [ row [ element clrPre, element currentPre ]
+                          , element xpdBtnPre
                           , element preLB
                           ]
-                 , column [ row [ element ddObj, element currentObj ]
-                          , element bObj
+                 , column [ row [ element clrObj, element currentObj ]
+                          , element xpdBtnObj
                           , element objLB
                           ]
                  ]
@@ -129,6 +133,35 @@ mkListBox spoType doSelectionQuery = do
                       doSelectionQuery (spoType, selection)
                       UI.setFocus $ getElement listBox
     return (listBox, hFillLB)
+
+------------------------------------------------------------------------------
+-- DB Model
+
+type DBKey = Int
+data DB a  = DB { nextKey :: !Int, db :: Map.Map DBKey a }
+
+dbEmpty  :: DB a
+dbEmpty  = DB 0 Map.empty
+
+dbSize   :: DB a -> Int
+dbSize   = Map.size . db
+
+dbKeys   :: DB a -> [DBKey]
+dbKeys   = Map.keys . db
+
+dbCreate :: a -> DB a -> DB a
+dbCreate x     (DB newkey db0) = DB (newkey+1) $ Map.insert newkey x db0
+
+dbLookup :: DBKey -> DB a -> Maybe a
+dbLookup key   (DB _      db0) = Map.lookup                       key      db0
+
+------------------------------------------------------------------------------
+-- What is stored in data base
+
+type DI = (String, BindingValue)
+
+showDI :: DI -> String
+showDI (x,_) = x
 
 ------------------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 13 (Wed) 18:23:19 by Harold Carr.
+Last Modified : 2014 Aug 13 (Wed) 20:20:29 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -22,13 +22,13 @@ main :: IO ()
 main =
     startGUI defaultConfig $ \window -> do
         return window # set title "RDF Triple Browser"
-        getBody window #+ [ mkSPVPanel "?subject" ]
+        getBody window #+ [ mkSPOPanel "?subject" ]
         return ()
 
-mkSPVPanel :: String -> UI Element
-mkSPVPanel spvType = mdo
+mkSPOPanel :: String -> UI Element
+mkSPOPanel spoType = mdo
     let bad = ("NOT SUPPOSED TO HAPPEN", Bound (UNode (T.pack "BAD")))
-        decide db0 | dbSize db0 > 1 = spvType
+        decide db0 | dbSize db0 > 1 = spoType
                    | otherwise      = fst $ fromMaybe bad (dbLookup 0 db0)
 
         dataItem :: Behavior (Maybe DI) -> UI Element
