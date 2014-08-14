@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 13 (Wed) 17:39:02 by Harold Carr.
+Last Modified : 2014 Aug 13 (Wed) 18:23:19 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -42,15 +42,13 @@ mkSPVPanel spvType = mdo
                                    # set (attr "value") "http://localhost:3030/ds/query"
     submitBtn   <- UI.button #+ [string "Do It!"]
     addToLBBtn  <- UI.button #+ [string "Add To List Box"]
+    clearBtn    <- UI.button #+ [string "*"]
     lbSelection <- dataItem    bLBSelectionDI
     listBox     <- UI.listBox  bLBItems bLBSelection bDisplayDI
     element listBox # set (attr "size") "20" # set style [("width","800px")]
 
     -- events and behaviors
-    let eSubmit      :: Event ()
-        eSubmit      = UI.click submitBtn
-
-        eAddToLB     :: Event ()
+    let eAddToLB     :: Event ()
         eAddToLB     = UI.click addToLBBtn
 
         eLBSelection :: Event (Maybe DBKey)
@@ -64,9 +62,13 @@ mkSPVPanel spvType = mdo
             liftIO $ hFillLB r
             return ()
 
-    onEvent eSubmit $ \_ -> do
-        sparql <- get value sparqlEndpointURL
-        query sparql Nothing
+        queryNothing :: () -> UI ()
+        queryNothing _ = do
+            sparql <- get value sparqlEndpointURL
+            query sparql Nothing
+
+    on UI.click submitBtn queryNothing
+    on UI.click clearBtn  queryNothing
 
     onEvent eLBSelection $ \mk -> do
         sparql <- get value sparqlEndpointURL
@@ -103,7 +105,7 @@ mkSPVPanel spvType = mdo
 
     -- GUI layout
     grid [ [ row [ element sparqlEndpointURL, element submitBtn, element addToLBBtn ] ]
-         , [ element lbSelection ]
+         , [ row [ element clearBtn, element lbSelection ] ]
          , [ element listBox ]
          ]
 
