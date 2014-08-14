@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 13 (Wed) 19:30:53 by Harold Carr.
+Last Modified : 2014 Aug 13 (Wed) 19:41:28 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -16,7 +16,7 @@ import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core
 import           RTBQ
 
-data SPVType = SUB | PRE | VAL
+data SPOType = SUB | PRE | OBJ
 
 main :: IO ()
 main = startGUI defaultConfig $ \w -> do
@@ -28,50 +28,50 @@ mkLayout :: UI Element
 mkLayout  = mdo
     -- input elements
     sparqlEndpointURL <- UI.input  # set (attr "size") "175" # set (attr "type") "text"
-    submit            <- UI.button #+ [string "submit"]
-    (bSub  : bPre  : bVal  : _)
+    submitBtn         <- UI.button #+ [string "submit"]
+    (bSub  : bPre  : bObj  : _)
         <- replicateM 3 $ UI.button #+ [string "+"]
 
-    (ddSub : ddPre : ddVal : _ )
+    (ddSub : ddPre : ddObj : _ )
         <- replicateM 3 $ UI.select # set (attr "width") "10"
                                     #+ map (\x -> UI.option # set html x) ["clear", "show all", "<-", "->" ]
 
     -- display elements
-    (currentSub : currentPre : currentVal : _)
+    (currentSub : currentPre : currentObj : _)
         <- replicateM 3 $ UI.input # set (attr "size") "40" # set (attr "type") "text"
 
-    (subListBox, hSubFillListBox) <- mkListBox SUB doSelectionQuery
-    (preListBox, hPreFillListBox) <- mkListBox PRE doSelectionQuery
-    (valListBox, hValFillListBox) <- mkListBox VAL doSelectionQuery
+    (subLB, hSubFillLB) <- mkListBox SUB doSelectionQuery
+    (preLB, hPreFillLB) <- mkListBox PRE doSelectionQuery
+    (objLB, hObjFillLB) <- mkListBox OBJ doSelectionQuery
 
     -- update procedure
     let updateDisplay sp s p v = do {
         element sparqlEndpointURL # set value sp;
         element currentSub # set value s;
         element currentPre # set value p;
-        element currentVal # set value v;
+        element currentObj # set value v;
         return ()
     }
 
     -- initial values
-    updateDisplay "enter SPARQL endpoint URL" "?subject" "?predicate" "?value"
+    updateDisplay "enter SPARQL endpoint URL" "?subject" "?predicate" "?object"
 
     let doQuery = do {
         sparql <- get value sparqlEndpointURL;
         s      <- get value currentSub;
         p      <- get value currentPre;
-        v      <- get value currentVal;
+        v      <- get value currentObj;
         (sr,pr,vr) <- liftIO $ doRDFQuery sparql s p v;
-        liftIO $ hSubFillListBox sr;
-        liftIO $ hPreFillListBox pr;
-        liftIO $ hValFillListBox vr;
+        liftIO $ hSubFillLB sr;
+        liftIO $ hPreFillLB pr;
+        liftIO $ hObjFillLB vr;
         return ()
     }
 
     -- submit button
-    on UI.click submit $ \_ -> do
+    on UI.click submitBtn $ \_ -> do
         sparql <- get value sparqlEndpointURL
-        updateDisplay sparql "?subject" "?predicate" "?value"
+        updateDisplay sparql "?subject" "?predicate" "?object"
         doQuery
 
     frame <- UI.frame # set (attr "name")   "top"
@@ -80,52 +80,52 @@ mkLayout  = mdo
 
     frameset <- UI.frameset #+ [ element frame ]
 
-    let doSelectionQuery (spv, selection) = do {
-        element (case spv of
+    let doSelectionQuery (spo, selection) = do {
+        element (case spo of
                     SUB -> currentSub
                     PRE -> currentPre
-                    VAL -> currentVal)
+                    OBJ -> currentObj)
                 # set value selection;
         element frame # set (attr "src") selection;
         doQuery
     }
 
-    grid [ [ row [ element sparqlEndpointURL, element submit ] ]
+    grid [ [ row [ element sparqlEndpointURL, element submitBtn ] ]
          , [ row [ column [ row [ element ddSub, element currentSub ]
                           , element bSub
-                          , element subListBox
+                          , element subLB
                           ]
                  , column [ row [ element ddPre, element currentPre ]
                           , element bPre
-                          , element preListBox
+                          , element preLB
                           ]
-                 , column [ row [ element ddVal, element currentVal ]
-                          , element bVal
-                          , element valListBox
+                 , column [ row [ element ddObj, element currentObj ]
+                          , element bObj
+                          , element objLB
                           ]
                  ]
            ]
          , [ element frameset ]
          ]
 
-mkListBox :: SPVType
-             -> ((SPVType,String) -> UI ())
+mkListBox :: SPOType
+             -> ((SPOType,String) -> UI ())
              -> UI (UI.ListBox String, Handler [String])
-mkListBox spvType doSelectionQuery = do
-    (eventFillListBox, handlerFillListBox) <- liftIO newEvent
-    behaviorFillListBox <- stepper [] eventFillListBox
-    listBox <- UI.listBox behaviorFillListBox
+mkListBox spoType doSelectionQuery = do
+    (eFillLB, hFillLB) <- liftIO newEvent
+    bFillLB <- stepper [] eFillLB
+    listBox <- UI.listBox bFillLB
                           (pure Nothing)
                           (pure $ \it -> UI.span # set text it)
     element listBox # set (attr "size") "10" # set style [("width","300px")]
 
     on UI.selectionChange (getElement listBox) $ \x -> case x of
         Nothing -> return ()
-        Just i  -> do items <- currentValue behaviorFillListBox
+        Just i  -> do items <- currentValue bFillLB
                       let selection = items !! i
-                      doSelectionQuery (spvType, selection)
+                      doSelectionQuery (spoType, selection)
                       UI.setFocus $ getElement listBox
-    return (listBox, handlerFillListBox)
+    return (listBox, hFillLB)
 
 ------------------------------------------------------------------------------
 
