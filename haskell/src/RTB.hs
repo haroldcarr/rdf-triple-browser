@@ -1,11 +1,13 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 02 (Sat) 09:44:56 by Harold Carr.
+Last Modified : 2014 Aug 13 (Wed) 19:30:53 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
   - threepenny-gui MissingDollars sample
 -}
+
+{-# LANGUAGE RecursiveDo #-}
 
 module RTB where
 
@@ -17,20 +19,13 @@ import           RTBQ
 data SPVType = SUB | PRE | VAL
 
 main :: IO ()
-main = do
-    (subFRP : preFRP : valFRP : _) <- replicateM 3 mkListBoxFRP
-    startGUI defaultConfig $ \w -> do
-        return w # set title "MD"
-        getBody w #+ [row [ mkLayout subFRP preFRP valFRP ] ]
-        return ()
+main = startGUI defaultConfig $ \w -> do
+    return w # set title "RDF Triple Browser"
+    getBody w #+ [ mkLayout ]
+    return ()
 
-mkLayout ::    (Handler [String], Behavior [String])
-            -> (Handler [String], Behavior [String])
-            -> (Handler [String], Behavior [String])
-            -> UI Element
-mkLayout (hSubFillListBox, bSubFillListBox)
-         (hPreFillListBox, bPreFillListBox)
-         (hValFillListBox, bValFillListBox) = do
+mkLayout :: UI Element
+mkLayout  = mdo
     -- input elements
     sparqlEndpointURL <- UI.input  # set (attr "size") "175" # set (attr "type") "text"
     submit            <- UI.button #+ [string "submit"]
@@ -44,6 +39,10 @@ mkLayout (hSubFillListBox, bSubFillListBox)
     -- display elements
     (currentSub : currentPre : currentVal : _)
         <- replicateM 3 $ UI.input # set (attr "size") "40" # set (attr "type") "text"
+
+    (subListBox, hSubFillListBox) <- mkListBox SUB doSelectionQuery
+    (preListBox, hPreFillListBox) <- mkListBox PRE doSelectionQuery
+    (valListBox, hValFillListBox) <- mkListBox VAL doSelectionQuery
 
     -- update procedure
     let updateDisplay sp s p v = do {
@@ -91,10 +90,6 @@ mkLayout (hSubFillListBox, bSubFillListBox)
         doQuery
     }
 
-    subListBox <- mkListBox SUB bSubFillListBox doSelectionQuery
-    preListBox <- mkListBox PRE bPreFillListBox doSelectionQuery
-    valListBox <- mkListBox VAL bValFillListBox doSelectionQuery
-
     grid [ [ row [ element sparqlEndpointURL, element submit ] ]
          , [ row [ column [ row [ element ddSub, element currentSub ]
                           , element bSub
@@ -113,41 +108,28 @@ mkLayout (hSubFillListBox, bSubFillListBox)
          , [ element frameset ]
          ]
 
-mkListBoxFRP :: IO (Handler [String], Behavior [String])
-mkListBoxFRP = do
-    (eventFillListBox, handlerFillListBox) <- newEvent
-    behaviorFillListBox <- stepper [] eventFillListBox
-    return (handlerFillListBox, behaviorFillListBox)
-
 mkListBox :: SPVType
-             -> Behavior [String]
              -> ((SPVType,String) -> UI ())
-             -> UI (UI.ListBox String)
-mkListBox spvType bFillListBox doSelectionQuery = do
-    listBox <- UI.listBox bFillListBox
+             -> UI (UI.ListBox String, Handler [String])
+mkListBox spvType doSelectionQuery = do
+    (eventFillListBox, handlerFillListBox) <- liftIO newEvent
+    behaviorFillListBox <- stepper [] eventFillListBox
+    listBox <- UI.listBox behaviorFillListBox
                           (pure Nothing)
                           (pure $ \it -> UI.span # set text it)
     element listBox # set (attr "size") "10" # set style [("width","300px")]
 
     on UI.selectionChange (getElement listBox) $ \x -> case x of
         Nothing -> return ()
-        Just i  -> do items <- currentValue bFillListBox
+        Just i  -> do items <- currentValue behaviorFillListBox
                       let selection = items !! i
                       doSelectionQuery (spvType, selection)
                       UI.setFocus $ getElement listBox
-    return listBox
+    return (listBox, handlerFillListBox)
 
 ------------------------------------------------------------------------------
 
 doRDFQuery :: String -> String -> String -> String -> IO ([String],[String],[String])
-{-
-doRDFQuery endpoint s p v = do
-    putStrLn endpoint
-    let s' = [ s ++ show i | i <- [0..19::Int]]
-    let p' = [ p ++ show i | i <- [0..19::Int]]
-    let v' = [ v ++ show i | i <- [0..19::Int]]
-    return (s',p',v')
--}
 doRDFQuery _ _ _ _ = tt
 
 -- End of file.
