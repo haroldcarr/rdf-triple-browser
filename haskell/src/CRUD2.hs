@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 12 (Tue) 20:06:08 by Harold Carr.
+Last Modified : 2014 Aug 13 (Wed) 17:39:02 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -28,39 +28,49 @@ main =
 mkSPVPanel :: String -> UI Element
 mkSPVPanel spvType = mdo
     let bad = ("NOT SUPPOSED TO HAPPEN", Bound (UNode (T.pack "BAD")))
-        decide db | dbSize db > 1 = spvType
-                  | otherwise     = fst $ fromMaybe bad (dbLookup 0 db)
+        decide db0 | dbSize db0 > 1 = spvType
+                   | otherwise      = fst $ fromMaybe bad (dbLookup 0 db0)
 
         dataItem :: Behavior (Maybe DI) -> UI Element
-        dataItem bItem = do
+        dataItem _ = do
             entry1 <- UI.entry $ decide <$> bDB
             element entry1 # set style [("width", "800px")]
             return $ getElement  entry1
 
     -- GUI elements
-    doItBtn     <- UI.button #+ [string "Do It!"]
+    sparqlEndpointURL <- UI.input  # set (attr "size") "175" # set (attr "type") "text"
+                                   # set (attr "value") "http://localhost:3030/ds/query"
+    submitBtn   <- UI.button #+ [string "Do It!"]
     addToLBBtn  <- UI.button #+ [string "Add To List Box"]
-    listBox     <- UI.listBox  bLBItems bLBSelection bDisplayDI
     lbSelection <- dataItem    bLBSelectionDI
-    let uiDI = grid [[element lbSelection]]
+    listBox     <- UI.listBox  bLBItems bLBSelection bDisplayDI
     element listBox # set (attr "size") "20" # set style [("width","800px")]
 
     -- events and behaviors
-    let eLBSelection :: Event (Maybe DBKey)
-        eLBSelection = rumors $ UI.userSelection listBox
+    let eSubmit      :: Event ()
+        eSubmit      = UI.click submitBtn
+
         eAddToLB     :: Event ()
         eAddToLB     = UI.click addToLBBtn
 
+        eLBSelection :: Event (Maybe DBKey)
+        eLBSelection = rumors $ UI.userSelection listBox
+
     (eFillLB, hFillLB) <- liftIO newEvent
 
-    let query :: Maybe DBKey -> UI ()
-        query mk = do (r,_,_) <- liftIO $ doRDFQuery mk bDB
-                      liftIO $ hFillLB r
-                      return ()
+    let query :: String -> Maybe DBKey -> UI ()
+        query url mk = do
+            (r,_,_) <- liftIO $ doRDFQuery url mk bDB
+            liftIO $ hFillLB r
+            return ()
 
-    on UI.click doItBtn $ \_ -> query Nothing
+    onEvent eSubmit $ \_ -> do
+        sparql <- get value sparqlEndpointURL
+        query sparql Nothing
 
-    onEvent eLBSelection query -- probably not the way to get the selection to the query
+    onEvent eLBSelection $ \mk -> do
+        sparql <- get value sparqlEndpointURL
+        query sparql mk
 
     -- database
     let dbFill                    :: [(String,BindingValue)] -> DB DI -> DB DI
@@ -92,11 +102,9 @@ mkSPVPanel spvType = mdo
         bLBSelectionDI = (=<<) <$> bLookup <*> bLBSelection
 
     -- GUI layout
-    grid [
-           [ uiDI ]
+    grid [ [ row [ element sparqlEndpointURL, element submitBtn, element addToLBBtn ] ]
+         , [ element lbSelection ]
          , [ element listBox ]
-         , [ element addToLBBtn]
-         , [ element doItBtn ]
          ]
 
 ------------------------------------------------------------------------------
@@ -130,25 +138,27 @@ showDI (x,_) = x
 
 ------------------------------------------------------------------------------
 
-doRDFQuery :: Maybe DBKey
+doRDFQuery :: String
+              -> Maybe DBKey
               -> Behavior (DB DI)
               -> IO ( [(String, BindingValue)]
                     , [(String, BindingValue)]
                     , [(String, BindingValue)]
                     )
-doRDFQuery mk bdb = do
+doRDFQuery url mk bdb = do
     putStrLn ""
+    putStrLn url
     putStrLn ("MK : " ++ show mk)
     db0 <- currentValue bdb
     case mk of
         (Just k) -> do let v = dbLookup k db0
                        putStrLn ("DBValue: " ++ show v)
                        case v of
-                           Just b -> do rrr <- ttwv b
+                           Just b -> do rrr <- ttwv url b
                                         print rrr
                                         return rrr
-                           Nothing             -> ttt
+                           Nothing             -> ttt url
         _        -> do putStrLn "key is NOTHING"
-                       ttt
+                       ttt url
 
 -- End of file.

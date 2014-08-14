@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 29 (Tue) 07:16:51 by Harold Carr.
-Last Modified : 2014 Aug 12 (Tue) 16:26:18 by Harold Carr.
+Last Modified : 2014 Aug 13 (Wed) 17:45:43 by Harold Carr.
 -}
 
 {-# LANGUAGE OverloadedStrings #-}
@@ -14,40 +14,6 @@ import           Data.Text                       as T (pack, unpack)
 import           Database.HSparql.Connection
 import           Database.HSparql.QueryGenerator
 
-qAll :: IO (Maybe [[BindingValue]])
-qAll = sendQuery q
-  where
-    q = do
-        s <- var; p <- var; o <- var
-        triple s p o
-        return SelectQuery { queryVars = [s, p, o] }
-
-qBook1 :: IO (Maybe [[BindingValue]])
-qBook1 = sendQuery q
-  where
-    q = do
-        dc <- prefix "dc" (iriRef "http://purl.org/dc/elements/1.1/")
-        ex <- prefix "ex" (iriRef "http://example/")
-        x  <- var
-        triple (ex .:. "book1")  (dc .:. "title") (T.pack "A new book")
-        return SelectQuery { queryVars = [x] }
-
-qq1 :: IO (Maybe [[BindingValue]])
-qq1 = sendQuery q
-  where
-    q = do
-        p <- var; o <- var
-        triple (iriRef (T.pack "http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah")) p o
-        return SelectQuery { queryVars = [p, o] }
-
-qq2 :: IO (Maybe [[BindingValue]])
-qq2 = sendQuery q
-  where
-    q = do
-        s <- var; p <- var
-        triple s p (T.pack "Slug Magazine", T.pack "en")
-        return SelectQuery { queryVars = [s, p] }
-
 {-
 This change enables programmatic construction of triples from existing Node values
 and where variables are not known in advance.
@@ -59,7 +25,7 @@ callTest = test (False, UNode (T.pack "http://openhc.org/data/event/Slug_Magazin
                 (True , LNode (PlainLL (T.pack "Slug Magazine") (T.pack "en")))
 
 test :: (Bool, Node) -> (Bool, Node) -> (Bool, Node) -> IO (Maybe [[BindingValue]])
-test (isSVar, sval) (isPVar, pval) (isOVar, oval) = sendQuery q
+test (isSVar, sval) (isPVar, pval) (isOVar, oval) = selectQuery "http://localhost:3030/ds/query" q
   where
     q = do
         svar <- var
@@ -70,29 +36,14 @@ test (isSVar, sval) (isPVar, pval) (isOVar, oval) = sendQuery q
                (if isOVar then Var' ovar else RDFNode oval)
         return SelectQuery { queryVars = map fst $ filter snd (zip [svar, pvar, ovar] [isSVar, isPVar, isOVar]) }
 
-dbAddress, dbQueryAddress :: String
-dbAddress      = "http://localhost:3030/ds/"
-dbQueryAddress = dbAddress ++ "query"
-
-sendQuery  :: Query SelectQuery -> IO (Maybe [[BindingValue]])
-sendQuery  = selectQuery dbQueryAddress
-
-tt  :: IO ( [String]
-          , [String]
-          , [String]
-          )
-tt = do
-    qr <- qAll
-    let strs = [ map extract lbv | lbv <- fromJust qr ]
-    return (nub $ map (!!0) strs, nub $ map (!!1) strs, nub $ map (!!2) strs)
-
-ttwv :: (String, BindingValue)
+ttwv :: String
+        -> (String, BindingValue)
         -> IO ( [(String, BindingValue)]
               , [(String, BindingValue)]
               , [(String, BindingValue)]
               )
-ttwv v@(_, Bound n) = do
-    qr <- sendQuery q
+ttwv url v@(_, Bound n) = do
+    qr <- selectQuery url q
     let pairs = [ map (\l -> (extract l, l)) lbv | lbv <- fromJust qr ]
     return ([v], nub $ map (!!0) pairs, nub $ map (!!1) pairs)
   where
@@ -105,14 +56,23 @@ ttwv v@(_, Bound n) = do
                (Var' ovar)
         return SelectQuery { queryVars = [ pvar, ovar ] }
 
-ttt :: IO ( [(String, BindingValue)]
-          , [(String, BindingValue)]
-          , [(String, BindingValue)]
-          )
-ttt = do
-    qr <- qAll
+ttt :: String
+       -> IO ( [(String, BindingValue)]
+             , [(String, BindingValue)]
+             , [(String, BindingValue)]
+             )
+ttt url = do
+    qr <- qAll url
     let pairs = [ map (\l -> (extract l, l)) lbv | lbv <- fromJust qr ]
     return (nub $ map (!!0) pairs, nub $ map (!!1) pairs, nub $ map (!!2) pairs)
+
+qAll :: String -> IO (Maybe [[BindingValue]])
+qAll url = selectQuery url q
+  where
+    q = do
+        s <- var; p <- var; o <- var
+        triple s p o
+        return SelectQuery { queryVars = [s, p, o] }
 
 -- LNode (PlainLL (T.pack "Slug Magazine") (T.pack "en"))
 
