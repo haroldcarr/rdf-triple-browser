@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 14 (Thu) 07:53:35 by Harold Carr.
+Last Modified : 2014 Aug 14 (Thu) 19:24:28 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -11,7 +11,6 @@ Last Modified : 2014 Aug 14 (Thu) 07:53:35 by Harold Carr.
 
 module RTB where
 
-import           Control.Monad               (replicateM)
 import qualified Data.Map                    as Map
 import           Database.HSparql.Connection
 import qualified Graphics.UI.Threepenny      as UI
@@ -31,19 +30,11 @@ mkLayout  = mdo
     -- input elements
     sparqlEndpointURL <- UI.input  # set (attr "size") "175" # set (attr "type") "text"
     submitBtn         <- UI.button #+ [string "submit"]
-    (xpdBtnSub  : xpdBtnPre  : xpdBtnObj  : _)
-        <- replicateM 3 $ UI.button #+ [string "+"]
-
-    (clrSub : clrPre : clrObj : _ )
-        <- replicateM 3 $ UI.button #+ [string "*"]
 
     -- display elements
-    (currentSub : currentPre : currentObj : _)
-        <- replicateM 3 $ UI.input # set (attr "size") "40" # set (attr "type") "text"
-
-    (subLB, hSubFillLB) <- mkListBox SUB doSelectionQuery
-    (preLB, hPreFillLB) <- mkListBox PRE doSelectionQuery
-    (objLB, hObjFillLB) <- mkListBox OBJ doSelectionQuery
+    (currentSub, subLayout, hSubFillLB) <- mkSPO SUB doSelectionQuery
+    (currentPre, preLayout, hPreFillLB) <- mkSPO PRE doSelectionQuery
+    (currentObj, objLayout, hObjFillLB) <- mkSPO OBJ doSelectionQuery
 
     frame <- UI.frame # set (attr "name")   "top"
                       # set (attr "target") "top"
@@ -95,35 +86,29 @@ mkLayout  = mdo
     }
 
     grid [ [ row [ element sparqlEndpointURL, element submitBtn ] ]
-         , [ row [ column [ row [ element clrSub, element currentSub ]
-                          , element xpdBtnSub
-                          , element subLB
-                          ]
-                 , column [ row [ element clrPre, element currentPre ]
-                          , element xpdBtnPre
-                          , element preLB
-                          ]
-                 , column [ row [ element clrObj, element currentObj ]
-                          , element xpdBtnObj
-                          , element objLB
-                          ]
-                 ]
-           ]
+         , [ row [ element subLayout, element preLayout, element objLayout ] ]
          , [ element frameset ]
          ]
 
-mkListBox :: SPOType
-             -> ((SPOType,String) -> UI ())
-             -> UI (UI.ListBox DBKey, Handler [(String, BindingValue)])
-mkListBox spoType doSelectionQuery = mdo
-    (eFillLB, hFillLB) <- liftIO newEvent
+mkSPO :: SPOType
+         -> ((SPOType, String) -> UI ())
+         -> UI ( UI.Element
+               , UI.Element
+               , Handler [(String, BindingValue)]
+               )
+mkSPO spoType doSelectionQuery = mdo
+    clrBtn  <- UI.button #+ [string "*"]
+    current <- UI.input  # set (attr "size") "40" # set (attr "type") "text"
+    xpdBtn  <- UI.button #+ [string "+"]
     listBox <- UI.listBox bLBItems
                           (pure Nothing)
                           bDisplayDI
     element listBox # set (attr "size") "10" # set style [("width","300px")]
 
-    let dbFill                    :: [(String,BindingValue)] -> DB DI -> DB DI
-        dbFill    ss _            = foldr dbCreate  dbEmpty ss
+    let dbFill      :: [(String,BindingValue)] -> DB DI -> DB DI
+        dbFill ss _ = foldr dbCreate  dbEmpty ss
+
+    (eFillLB, hFillLB) <- liftIO newEvent
 
     -- bDB :: Behavior (DB DI)
     bDB <- accumB dbEmpty $ concatenate <$> unions
@@ -146,7 +131,12 @@ mkListBox spoType doSelectionQuery = mdo
         bLBItems :: Behavior [DBKey]
         bLBItems = dbKeys <$> bDB
 
-    return (listBox, hFillLB)
+    layout <- column [ row [ element clrBtn, element current ]
+                     , element xpdBtn
+                     , element listBox
+                     ]
+
+    return (current, layout, hFillLB)
 
 ------------------------------------------------------------------------------
 -- DB Model
