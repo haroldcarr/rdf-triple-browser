@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 13 (Wed) 20:20:29 by Harold Carr.
+Last Modified : 2014 Aug 14 (Thu) 21:35:21 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -12,9 +12,13 @@ import           Data.Maybe
 import           Data.RDF.Types              (Node (..))
 import qualified Data.Text                   as T (pack)
 import           Database.HSparql.Connection
+import           Debug.Trace
 import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core
 import           RTBQ
+
+hcDebug :: c -> String -> c
+hcDebug = flip trace
 
 ------------------------------------------------------------------------------
 
@@ -28,6 +32,7 @@ main =
 mkSPOPanel :: String -> UI Element
 mkSPOPanel spoType = mdo
     let bad = ("NOT SUPPOSED TO HAPPEN", Bound (UNode (T.pack "BAD")))
+        decide :: DB DI -> String
         decide db0 | dbSize db0 > 1 = spoType
                    | otherwise      = fst $ fromMaybe bad (dbLookup 0 db0)
 
@@ -89,7 +94,7 @@ mkSPOPanel spoType = mdo
 
     -- selection
     -- bLBSelection :: Behavior (Maybe DBKey)
-    bLBSelection <- stepper Nothing eLBSelection
+    bLBSelection <- stepper Nothing eLBSelection `hcDebug` "stepper"
 
     let bLookup :: Behavior (DBKey -> Maybe DI)
         bLookup = flip dbLookup <$> bDB

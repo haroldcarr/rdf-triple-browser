@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 14 (Thu) 19:24:28 by Harold Carr.
+Last Modified : 2014 Aug 14 (Thu) 22:27:11 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -12,12 +12,24 @@ Last Modified : 2014 Aug 14 (Thu) 19:24:28 by Harold Carr.
 module RTB where
 
 import qualified Data.Map                    as Map
+import           Data.Maybe                  (fromMaybe)
+import           Data.RDF.Types              (Node (..))
+import qualified Data.Text                   as T (pack)
 import           Database.HSparql.Connection
+import           Debug.Trace
 import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core
 import           RTBQ
 
+hcDebug :: c -> String -> c
+hcDebug = flip trace
+
 data SPOType = SUB | PRE | OBJ
+
+instance Show SPOType where
+    show SUB = "?subject"
+    show PRE = "?predicate"
+    show OBJ = "?object"
 
 main :: IO ()
 main = startGUI defaultConfig $ \w -> do
@@ -29,12 +41,13 @@ mkLayout :: UI Element
 mkLayout  = mdo
     -- input elements
     sparqlEndpointURL <- UI.input  # set (attr "size") "175" # set (attr "type") "text"
+                                   # set (attr "value") endPoint
     submitBtn         <- UI.button #+ [string "submit"]
 
     -- display elements
-    (currentSub, subLayout, hSubFillLB) <- mkSPO SUB doSelectionQuery
-    (currentPre, preLayout, hPreFillLB) <- mkSPO PRE doSelectionQuery
-    (currentObj, objLayout, hObjFillLB) <- mkSPO OBJ doSelectionQuery
+    (_, subLayout, hSubFillLB) <- mkSPOPanel SUB
+    (_, preLayout, hPreFillLB) <- mkSPOPanel PRE
+    (_, objLayout, hObjFillLB) <- mkSPOPanel OBJ
 
     frame <- UI.frame # set (attr "name")   "top"
                       # set (attr "target") "top"
@@ -44,30 +57,14 @@ mkLayout  = mdo
 
     -- submit button
     on UI.click submitBtn $ \_ -> do
-        sparql <- get value sparqlEndpointURL
-        updateDisplay sparql "?subject" "?predicate" "?object"
         doQuery
-
-    -- update procedure
-    let updateDisplay sp s p v = do {
-        element sparqlEndpointURL # set value sp;
-        element currentSub # set value s;
-        element currentPre # set value p;
-        element currentObj # set value v;
-        return ()
-    }
-
-    -- initial values
-    updateDisplay "http://localhost:3030/ds/query" "?subject" "?predicate" "?object"
 
     -- querying
 
     let doQuery = do {
         sparql     <- get value sparqlEndpointURL;
-        s          <- get value currentSub;
-        p          <- get value currentPre;
-        v          <- get value currentObj;
-        (sr,pr,vr) <- liftIO $ doRDFQuery sparql s p v;
+        liftIO $ putStrLn ("doQuery " ++ sparql);
+        (sr,pr,vr) <- liftIO $ doRDFQuery1 sparql (show SUB) (show PRE) (show OBJ);
         -- These are the MAGIC steps.  A Handler feeds events to their corresponding Event (from newEvent)
         liftIO $ hSubFillLB sr;
         liftIO $ hPreFillLB pr;
@@ -75,55 +72,72 @@ mkLayout  = mdo
         return ()
     }
 
-    let doSelectionQuery (spo, selection) = do {
-        element (case spo of
-                    SUB -> currentSub
-                    PRE -> currentPre
-                    OBJ -> currentObj)
-                # set value selection;
-        element frame # set (attr "src") selection;
-        doQuery
-    }
-
     grid [ [ row [ element sparqlEndpointURL, element submitBtn ] ]
          , [ row [ element subLayout, element preLayout, element objLayout ] ]
          , [ element frameset ]
          ]
 
-mkSPO :: SPOType
-         -> ((SPOType, String) -> UI ())
-         -> UI ( UI.Element
-               , UI.Element
-               , Handler [(String, BindingValue)]
-               )
-mkSPO spoType doSelectionQuery = mdo
-    clrBtn  <- UI.button #+ [string "*"]
-    current <- UI.input  # set (attr "size") "40" # set (attr "type") "text"
-    xpdBtn  <- UI.button #+ [string "+"]
-    listBox <- UI.listBox bLBItems
-                          (pure Nothing)
-                          bDisplayDI
+mkSPOPanel :: SPOType
+--           -> ((SPOType, String) -> UI ())
+           -> UI ( UI.Element
+                 , UI.Element
+                 , Handler [(String, BindingValue)]
+                 )
+mkSPOPanel spoType = mdo
+    let bad = ("NOT SUPPOSED TO HAPPEN", Bound (UNode (T.pack "BAD")))
+        decide :: DB DI -> String
+        decide db0 | dbSize db0 > 1 = show spoType
+                   | otherwise      = fst $ fromMaybe bad (dbLookup 0 db0) `hcDebug` "decide"
+
+        dataItem :: Behavior (Maybe DI) -> UI Element
+        dataItem _ = do
+            liftIO (putStrLn "YES")
+            entry1 <- UI.entry $ decide <$> bDB
+            element entry1 # set style [("width", "300px")]
+            return $ getElement  entry1
+
+    -- GUI elements
+    clrBtn      <- UI.button #+ [string "*"]
+    xpdBtn      <- UI.button #+ [string "+"]
+    lbSelection <- dataItem    bLBSelectionDI
+    listBox     <- UI.listBox  bLBItems bLBSelection bDisplayDI
     element listBox # set (attr "size") "10" # set style [("width","300px")]
+
+    let eLBSelection :: Event (Maybe DBKey)
+        eLBSelection = rumors $ UI.userSelection listBox
+
+    (eFillLB, hFillLB) <- liftIO newEvent
+
+    let query :: String -> Maybe DBKey -> UI ()
+        query a b  = do
+            liftIO $ putStrLn ("query " ++ show a ++ " " ++ show b)
+            (s,p,o) <- liftIO $ doRDFQuery2 endPoint (Just 1) bDB
+            liftIO $ hFillLB (case spoType of SUB -> s; PRE -> p; OBJ -> o)
+            return ()
+
+        queryNothing :: () -> UI ()
+        queryNothing _ = do
+            query endPoint Nothing
+
+    on UI.click clrBtn queryNothing
+
+    onEvent eLBSelection $ \mk -> do
+        query endPoint mk
 
     let dbFill      :: [(String,BindingValue)] -> DB DI -> DB DI
         dbFill ss _ = foldr dbCreate  dbEmpty ss
-
-    (eFillLB, hFillLB) <- liftIO newEvent
 
     -- bDB :: Behavior (DB DI)
     bDB <- accumB dbEmpty $ concatenate <$> unions
         [ dbFill    <$> eFillLB
         ]
 
-    on UI.selectionChange (getElement listBox) $ \x -> case x of
-        Nothing -> return ()
-        Just i  -> do db0 <- currentValue bDB
-                      let (Just (s,_)) = dbLookup i db0
-                      doSelectionQuery (spoType, s)
-                      UI.setFocus $ getElement listBox
+    -- selection
+    -- bLBSelection :: Behavior (Maybe DBKey)
+    bLBSelection <- stepper Nothing eLBSelection `hcDebug` "stepper"
 
     let bLookup :: Behavior (DBKey -> Maybe DI)
-        bLookup = flip dbLookup <$> bDB
+        bLookup = flip dbLookup <$> bDB `hcDebug` "bLookup"
 
         bDisplayDI :: Behavior (DBKey -> UI Element)
         bDisplayDI = (UI.string .) <$> (maybe "" showDI .) <$> bLookup
@@ -131,12 +145,15 @@ mkSPO spoType doSelectionQuery = mdo
         bLBItems :: Behavior [DBKey]
         bLBItems = dbKeys <$> bDB
 
-    layout <- column [ row [ element clrBtn, element current ]
-                     , element xpdBtn
+        bLBSelectionDI :: Behavior (Maybe DI)
+        bLBSelectionDI = (=<<) <$> bLookup <*> bLBSelection `hcDebug` "bLBSelection"
+
+    layout <- column [ element lbSelection
+                     , row [ element clrBtn, element xpdBtn ]
                      , element listBox
                      ]
 
-    return (current, layout, hFillLB)
+    return (lbSelection, layout, hFillLB)
 
 ------------------------------------------------------------------------------
 -- DB Model
@@ -157,7 +174,7 @@ dbCreate :: a -> DB a -> DB a
 dbCreate x     (DB newkey db0) = DB (newkey+1) $ Map.insert newkey x db0
 
 dbLookup :: DBKey -> DB a -> Maybe a
-dbLookup key   (DB _      db0) = Map.lookup                       key      db0
+dbLookup key   (DB _      db0) = Map.lookup                       key      db0 `hcDebug` ("dbLookup " ++ (show key))
 
 ------------------------------------------------------------------------------
 -- What is stored in data base
@@ -169,11 +186,33 @@ showDI (x,_) = x
 
 ------------------------------------------------------------------------------
 
-doRDFQuery :: String -> String -> String -> String
+doRDFQuery1 :: String -> String -> String -> String
               -> IO ( [(String, BindingValue)]
                     , [(String, BindingValue)]
                     , [(String, BindingValue)]
                     )
-doRDFQuery url _ _ _ = ttt url
+doRDFQuery1 url _ _ _ = ttt url
 
+doRDFQuery2 :: String
+              -> Maybe DBKey
+              -> Behavior (DB DI)
+              -> IO ( [(String, BindingValue)]
+                    , [(String, BindingValue)]
+                    , [(String, BindingValue)]
+                    )
+doRDFQuery2 url mk bdb = do
+    putStrLn ""
+    putStrLn url
+    putStrLn ("MK : " ++ show mk)
+    db0 <- currentValue bdb
+    case mk of
+        (Just k) -> do let v = dbLookup k db0
+                       putStrLn ("DBValue: " ++ show v)
+                       case v of
+                           Just b -> do rrr <- ttwv url b
+                                        print rrr
+                                        return rrr
+                           Nothing             -> ttt url
+        _        -> do putStrLn "key is NOTHING"
+                       ttt url
 -- End of file.

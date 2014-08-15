@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 29 (Tue) 07:16:51 by Harold Carr.
-Last Modified : 2014 Aug 13 (Wed) 17:55:19 by Harold Carr.
+Last Modified : 2014 Aug 14 (Thu) 20:28:25 by Harold Carr.
 -}
 
 {-# LANGUAGE OverloadedStrings #-}
@@ -47,6 +47,7 @@ ttwv :: String
               , [(String, BindingValue)]
               )
 ttwv url v@(_, Bound n) = do
+    putStrLn ("ttwv: " ++ url ++ " " ++ show v)
     qr <- selectQuery url q
     let pairs = [ map (\l -> (extract l, l)) lbv | lbv <- fromJust qr ]
     return ([v], nub $ map (!!0) pairs, nub $ map (!!1) pairs)
