@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 14 (Thu) 22:27:11 by Harold Carr.
+Last Modified : 2014 Aug 15 (Fri) 08:36:46 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -109,9 +109,9 @@ mkSPOPanel spoType = mdo
     (eFillLB, hFillLB) <- liftIO newEvent
 
     let query :: String -> Maybe DBKey -> UI ()
-        query a b  = do
-            liftIO $ putStrLn ("query " ++ show a ++ " " ++ show b)
-            (s,p,o) <- liftIO $ doRDFQuery2 endPoint (Just 1) bDB
+        query url mk  = do
+            liftIO $ putStrLn ("query " ++ show url ++ " " ++ show mk)
+            (s,p,o) <- liftIO $ doRDFQuery2 endPoint mk bDB
             liftIO $ hFillLB (case spoType of SUB -> s; PRE -> p; OBJ -> o)
             return ()
 
@@ -119,9 +119,12 @@ mkSPOPanel spoType = mdo
         queryNothing _ = do
             query endPoint Nothing
 
-    on UI.click clrBtn queryNothing
+    on UI.click clrBtn $ \_ -> do
+        liftIO $ putStrLn "UI.click clrBtn"
+        queryNothing ()
 
     onEvent eLBSelection $ \mk -> do
+        liftIO $ putStrLn "onEvent eLBSelection"
         query endPoint mk
 
     let dbFill      :: [(String,BindingValue)] -> DB DI -> DB DI
