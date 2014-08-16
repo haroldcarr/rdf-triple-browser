@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 15 (Fri) 21:27:05 by Harold Carr.
+Last Modified : 2014 Aug 15 (Fri) 22:12:31 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -31,13 +31,6 @@ instance Show SPOType where
     show PRE = "?predicate"
     show OBJ = "?object"
 
-aNode                :: Node
-aNode                =  UNode (T.pack "A DUMMY NODE")
-aBoundNode           :: BindingValue
-aBoundNode           =  Bound aNode
-aStringBoundNodePair :: (String, BindingValue)
-aStringBoundNodePair =  ("NOT SUPPOSED TO HAPPEN", aBoundNode)
-
 main :: IO ()
 main = startGUI defaultConfig $ \w -> do
     return w # set title "RDF Triple Browser"
@@ -66,7 +59,7 @@ mkLayout  = mdo
 
     on UI.click submitBtn $ \_ -> do
         liftIO $ putStrLn "submit"
-        query (True, aBoundNode) (True, aBoundNode) (True, aBoundNode)
+        query aTrueBoundNodePair aTrueBoundNodePair aTrueBoundNodePair
         return ()
 
     on UI.click subClrBtn   $ \_  -> slt SUB Nothing True
@@ -89,29 +82,31 @@ mkLayout  = mdo
             liftIO $ hObjFillLB o'
             return ()
 
-        trueABoundNode  = (True , aBoundNode)
         sndLookup n db0 = (False, snd (fromJust $ dbLookup n db0))
 
         varOrSelection :: DB DI -> (Bool, BindingValue)
         varOrSelection db0 =
-            if (dbSize db0) == 1
+            if dbSize db0 == 1
                 then sndLookup 0 db0
-                else trueABoundNode
+                else aTrueBoundNodePair
 
-        slt :: SPOType -> (Maybe DBKey) -> Bool -> UI ()
+        slt :: SPOType -> Maybe DBKey -> Bool -> UI ()
         slt spoType mk isClk = do
             liftIO $ putStrLn ("slt " ++ show spoType ++ " " ++ show mk)
             s <- currentValue bSubDB
             p <- currentValue bPreDB
             o <- currentValue bObjDB
-            let tval     = trueABoundNode
-                fval db0 = sndLookup (fromJust mk) db0
+            let tval     = aTrueBoundNodePair
+                fval     = sndLookup (fromJust mk)
                 pick b x = if b then
                                 if isClk then tval else fval x
                                 else varOrSelection x
             query (pick (spoType == SUB) s)
                   (pick (spoType == PRE) p)
                   (pick (spoType == OBJ) o)
+
+        aTrueBoundNodePair   :: (Bool, BindingValue)
+        aTrueBoundNodePair   =  (True, aBoundNode)
 
     -- layout
     grid [ [ row [ element sparqlEndpointURL, element submitBtn ] ]
@@ -130,7 +125,7 @@ mkSPOPanel :: SPOType
 mkSPOPanel spoType = mdo
     let decide :: DB DI -> String
         decide db0 | dbSize db0 > 1 = show spoType
-                   | otherwise      = fst $ fromMaybe aStringBoundNodePair (dbLookup 0 db0) `hcDebug` ("decide " ++ (show spoType))
+                   | otherwise      = fst $ fromMaybe aStringBoundNodePair (dbLookup 0 db0) `hcDebug` ("decide " ++ show spoType)
 
         dataItem :: Behavior (Maybe DI) -> UI Element
         dataItem _ = do
@@ -172,12 +167,18 @@ mkSPOPanel spoType = mdo
         bLBSelectionDI :: Behavior (Maybe DI)
         bLBSelectionDI = (=<<) <$> bLookup <*> bLBSelection `hcDebug` "bLBSelection"
 
+        aStringBoundNodePair :: (String, BindingValue)
+        aStringBoundNodePair =  ("NOT SUPPOSED TO HAPPEN", aBoundNode)
+
     layout <- column [ element lbSelection
                      , row [ element clrBtn, element xpdBtn ]
                      , element listBox
                      ]
 
     return (clrBtn, layout, eLBSelection, bDB, hFillLB)
+
+aBoundNode           :: BindingValue
+aBoundNode           =  Bound (UNode (T.pack "A DUMMY NODE"))
 
 ------------------------------------------------------------------------------
 -- DB Model
@@ -198,7 +199,7 @@ dbCreate :: a -> DB a -> DB a
 dbCreate x     (DB newkey db0) = DB (newkey+1) $ Map.insert newkey x db0
 
 dbLookup :: DBKey -> DB a -> Maybe a
-dbLookup key   (DB _      db0) =                 Map.lookup    key   db0 `hcDebug` ("dbLookup " ++ (show key))
+dbLookup key   (DB _      db0) =                 Map.lookup    key   db0 `hcDebug` ("dbLookup " ++ show key)
 
 ------------------------------------------------------------------------------
 -- What is stored in data base
