@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 16 (Sat) 12:43:36 by Harold Carr.
+Last Modified : 2014 Aug 16 (Sat) 15:01:21 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -96,12 +96,11 @@ mkLayout  = mdo
 
         sndLookup n db0 = (False, snd (fromJust $ dbLookup n db0))
 
-        varOrSelection :: SPOType -> String -> DB DI -> (Bool, BindingValue)
-        varOrSelection spoType lbSel db0 =
-            case spoType of
-                SUB -> if lbSel == show SUB then aTrueBoundNodePair else sndLookup 0 db0
-                PRE -> if lbSel == show PRE then aTrueBoundNodePair else sndLookup 0 db0
-                OBJ -> if lbSel == show OBJ then aTrueBoundNodePair else sndLookup 0 db0
+        varOrSelection :: String -> DB DI -> (Bool, BindingValue)
+        varOrSelection lbSel db0 =
+            if lbSel == show SUB || lbSel == show PRE || lbSel == show OBJ
+                then aTrueBoundNodePair
+                else sndLookup 0 db0
 
         slt :: SPOType -> Maybe DBKey -> Bool -> UI ()
         slt spoType mk isClk = do
@@ -125,7 +124,7 @@ mkLayout  = mdo
                 fval     = sndLookup (fromJust mk)
                 pick spo lbSel db0 = if spoType == spo then
                                          if isClk then tval else fval db0
-                                         else varOrSelection spo lbSel db0
+                                         else varOrSelection lbSel db0
             query (pick SUB sLBSel sDB)
                   (pick PRE pLBSel pDB)
                   (pick OBJ oLBSel oDB)
