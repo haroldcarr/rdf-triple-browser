@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 16 (Sat) 15:23:52 by Harold Carr.
+Last Modified : 2014 Aug 16 (Sat) 16:43:57 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -114,7 +114,7 @@ mkLayout  = mdo
                 else sndLookup 0 db0
 
         slt :: SPOType -> Maybe DBKey -> Bool -> UI ()
-        slt spoType mk isClk = do
+        slt spoType mk isClear = do
             liftIO $ putStrLn ("slt " ++ show spoType ++ " " ++ show mk)
             [sDB   , pDB   , oDB   ] <- mapM currentValue [bSubDB        , bPreDB        , bObjDB        ]
             [sLBSel, pLBSel, oLBSel] <- mapM (get value)  [subLBSelection, preLBSelection, objLBSelection]
@@ -127,7 +127,7 @@ mkLayout  = mdo
             let tval     = aTrueBoundNodePair
                 fval     = sndLookup (fromJust mk)
                 pick spo lbSel db0 = if spoType == spo then
-                                         if isClk then tval else fval db0
+                                         if isClear then tval else fval db0
                                          else varOrSelection lbSel db0
             query (pick SUB sLBSel sDB)
                   (pick PRE pLBSel pDB)
@@ -155,23 +155,41 @@ mkSPOPanel spoType = mdo
     lbSelection <- UI.input  # set (attr "size") "40" # set (attr "type") "text"
                              # set value (show spoType)
     clrBtn      <- UI.button #+ [string "*"]
-    xpdBtn      <- UI.button #+ [string "+"]
+    xpdBtn      <- UI.button #+ [string "+"] # set value "+"
     listBox     <- UI.listBox  bLBItems bLBSelection bDisplayDI
     element listBox # set (attr "size") "10" # set style [("width","300px")]
 
-    let eLBSelection :: Event (Maybe DBKey)
+    let eXpdBtn      :: Event ()
+        eXpdBtn      = UI.click xpdBtn
+
+        eLBSelection :: Event (Maybe DBKey)
         eLBSelection = rumors $ UI.userSelection listBox
+
+    onEvent eXpdBtn $ \_ -> do
+        current <- get value xpdBtn
+        let next = if current == "+" then "-" else "+"
+        element xpdBtn # set text next # set value next `hcDebug` ("onEvent eXpdBtn c " ++ current ++ " n " ++ next)
 
     (eFillLB, hFillLB) <- liftIO newEvent
 
     -- bDB :: Behavior (DB DI)
-    bDB <- accumB dbEmpty $ dbFill <$> eFillLB
+    bDB <- accumB dbEmpty $ concatenate <$> unions
+        [ dbFill  <$> eFillLB
+        , dbFill' <$  eXpdBtn
+        ]
 
     -- bLBSelection :: Behavior (Maybe DBKey)
     bLBSelection <- stepper Nothing eLBSelection `hcDebug` "stepper"
 
     let dbFill         :: [(String,BindingValue)] -> DB DI -> DB DI
-        dbFill ss _    = foldr dbCreate  dbEmpty ss
+        dbFill ss _    = foldr dbCreate dbEmpty ss
+
+        dbFill' :: DB DI -> DB DI
+        dbFill' d@(DB newkey db0) =
+            let (s1,bn) = fromJust (dbLookup 0 d)
+                (s2,_ ) = extract bn
+                xpd     = length s1 == length s2
+            in DB newkey $ Map.map (\(s,b) -> ((if xpd then "lengthen" else "shorten") ++ s,b)) db0
 
         bLookup        :: Behavior (DBKey -> Maybe DI)
         bLookup        = flip dbLookup <$> bDB `hcDebug` "bLookup"
