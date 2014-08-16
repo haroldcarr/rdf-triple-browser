@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 15 (Fri) 21:03:47 by Harold Carr.
+Last Modified : 2014 Aug 15 (Fri) 21:27:05 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -24,7 +24,7 @@ import           RTBQ
 hcDebug :: c -> String -> c
 hcDebug = flip trace
 
-data SPOType = SUB | PRE | OBJ
+data SPOType = SUB | PRE | OBJ deriving Eq
 
 instance Show SPOType where
     show SUB = "?subject"
@@ -83,31 +83,35 @@ mkLayout  = mdo
             sparql <- get value sparqlEndpointURL;
             liftIO $ putStrLn ("query " ++ show sparql ++ " " ++ show s ++" " ++ show p ++ " " ++ show o)
             (s',p',o') <- liftIO $ test'' sparql s p o
-            -- These are the MAGIC steps.  A Handler feeds events to their corresponding Event (from newEvent)
+            -- These are the MAGIC steps.  A Handler feeds events to its corresponding Event (from newEvent)
             liftIO $ hSubFillLB s'
             liftIO $ hPreFillLB p'
             liftIO $ hObjFillLB o'
             return ()
 
+        trueABoundNode  = (True , aBoundNode)
+        sndLookup n db0 = (False, snd (fromJust $ dbLookup n db0))
+
         varOrSelection :: DB DI -> (Bool, BindingValue)
         varOrSelection db0 =
             if (dbSize db0) == 1
-                then (False, snd (fromJust $ dbLookup 0 db0))
-                else (True , aBoundNode)
+                then sndLookup 0 db0
+                else trueABoundNode
 
+        slt :: SPOType -> (Maybe DBKey) -> Bool -> UI ()
         slt spoType mk isClk = do
             liftIO $ putStrLn ("slt " ++ show spoType ++ " " ++ show mk)
             s <- currentValue bSubDB
             p <- currentValue bPreDB
             o <- currentValue bObjDB
-            let tval   = (True, aBoundNode)
-                fval x = (False, snd (fromJust $ dbLookup (fromJust mk) x))
-            query (case spoType of; SUB -> if isClk then tval else fval s;
-                                    _   -> varOrSelection s)
-                  (case spoType of; PRE -> if isClk then tval else fval p;
-                                    _   -> varOrSelection p)
-                  (case spoType of; OBJ -> if isClk then tval else fval o;
-                                    _   -> varOrSelection o)
+            let tval     = trueABoundNode
+                fval db0 = sndLookup (fromJust mk) db0
+                pick b x = if b then
+                                if isClk then tval else fval x
+                                else varOrSelection x
+            query (pick (spoType == SUB) s)
+                  (pick (spoType == PRE) p)
+                  (pick (spoType == OBJ) o)
 
     -- layout
     grid [ [ row [ element sparqlEndpointURL, element submitBtn ] ]
