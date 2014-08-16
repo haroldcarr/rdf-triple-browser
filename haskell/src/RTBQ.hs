@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 29 (Tue) 07:16:51 by Harold Carr.
-Last Modified : 2014 Aug 14 (Thu) 20:28:25 by Harold Carr.
+Last Modified : 2014 Aug 15 (Fri) 17:10:25 by Harold Carr.
 -}
 
 {-# LANGUAGE OverloadedStrings #-}
@@ -24,12 +24,13 @@ endPoint :: String
 endPoint = "http://localhost:3030/ds/query"
 
 callTest :: IO (Maybe [[BindingValue]])
-callTest = test (False, UNode (T.pack "http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah"))
+callTest = test endPoint
+                (False, UNode (T.pack "http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah"))
                 (True , UNode (T.pack "http://xmlns.com/foaf/0.1/name"))
-                (True , LNode (PlainLL (T.pack "Slug Magazine") (T.pack "en")))
+                (True, LNode (PlainLL (T.pack "Slug Magazine") (T.pack "en")))
 
-test :: (Bool, Node) -> (Bool, Node) -> (Bool, Node) -> IO (Maybe [[BindingValue]])
-test (isSVar, sval) (isPVar, pval) (isOVar, oval) = selectQuery "http://localhost:3030/ds/query" q
+test :: String -> (Bool, Node) -> (Bool, Node) -> (Bool, Node) -> IO (Maybe [[BindingValue]])
+test url (isSVar, sval) (isPVar, pval) (isOVar, oval) = selectQuery url q
   where
     q = do
         svar <- var
@@ -38,7 +39,32 @@ test (isSVar, sval) (isPVar, pval) (isOVar, oval) = selectQuery "http://localhos
         triple (if isSVar then Var' svar else RDFNode sval)
                (if isPVar then Var' pvar else RDFNode pval)
                (if isOVar then Var' ovar else RDFNode oval)
-        return SelectQuery { queryVars = map fst $ filter snd (zip [svar, pvar, ovar] [isSVar, isPVar, isOVar]) }
+--        return SelectQuery { queryVars = map fst $ filter snd (zip [svar, pvar, ovar] [isSVar, isPVar, isOVar]) }
+        return SelectQuery { queryVars = [svar, pvar, ovar] }
+
+callTest' :: IO ( [(String, BindingValue)]
+                , [(String, BindingValue)]
+                , [(String, BindingValue)]
+                )
+callTest' = test' endPoint
+                  (False, UNode (T.pack "http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah"))
+                  (True , UNode (T.pack "http://xmlns.com/foaf/0.1/name"))
+                  (True , LNode (PlainLL (T.pack "Slug Magazine") (T.pack "en")))
+
+test' :: String -> (Bool, Node) -> (Bool, Node) -> (Bool, Node) -> IO ( [(String, BindingValue)]
+                                                                      , [(String, BindingValue)]
+                                                                      , [(String, BindingValue)]
+                                                                      )
+test' url s@(isSVar,sn) p@(isPVar,pn) o@(isOVar,on) = testing $ test url s p o
+  where
+    testing qr = do
+        qr' <- qr
+        let pairs = [ map extract lbv | lbv <- fromJust qr' ]
+        return ( ite pairs isSVar 0 sn
+               , ite pairs isPVar 1 pn
+               , ite pairs isOVar 2 on
+               )
+    ite pairs i t e = if i then nub $ map (!!t) pairs else [extract $ Bound e]
 
 ttwv :: String
         -> (String, BindingValue)
@@ -49,7 +75,7 @@ ttwv :: String
 ttwv url v@(_, Bound n) = do
     putStrLn ("ttwv: " ++ url ++ " " ++ show v)
     qr <- selectQuery url q
-    let pairs = [ map (\l -> (extract l, l)) lbv | lbv <- fromJust qr ]
+    let pairs = [ map extract lbv | lbv <- fromJust qr ]
     return ([v], nub $ map (!!0) pairs, nub $ map (!!1) pairs)
   where
     q = do
@@ -68,7 +94,7 @@ ttt :: String
              )
 ttt url = do
     qr <- qAll url
-    let pairs = [ map (\l -> (extract l, l)) lbv | lbv <- fromJust qr ]
+    let pairs = [ map extract lbv | lbv <- fromJust qr ]
     return (nub $ map (!!0) pairs, nub $ map (!!1) pairs, nub $ map (!!2) pairs)
 
 qAll :: String -> IO (Maybe [[BindingValue]])
@@ -89,14 +115,16 @@ tt = do
 
 -- LNode (PlainLL (T.pack "Slug Magazine") (T.pack "en"))
 
-extract :: BindingValue -> String
-extract (Bound v) = T.unpack $ case v of
-    UNode x             -> x
-    BNode x             -> x
---    BNodeGen x          -> show x
-    LNode (PlainL  x)   -> x
-    LNode (PlainLL x _) -> x
-    LNode (TypedL  x _) -> x
-extract _ = error "TODO"
+extract :: BindingValue -> (String, BindingValue)
+extract b@(Bound v) =
+    let s = case v of
+                (UNode x)             -> x
+                (BNode x)             -> x
+                --    BNodeGen x            -> show x
+                (LNode (PlainL  x))   -> x
+                (LNode (PlainLL x _)) -> x
+                (LNode (TypedL  x _)) -> x
+    in (T.unpack s, b)
+extract Unbound   = (show Unbound, Unbound)
 
 -- End of file.
