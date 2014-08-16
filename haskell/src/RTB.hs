@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 16 (Sat) 15:20:20 by Harold Carr.
+Last Modified : 2014 Aug 16 (Sat) 15:23:52 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -62,23 +62,27 @@ mkLayout  = mdo
 
     -- action
 
+    -- SUBMIT
     on UI.click submitBtn $ \_ -> do
         liftIO $ putStrLn "submit"
         query aTrueBoundNodePair aTrueBoundNodePair aTrueBoundNodePair
         return ()
 
+    -- SUBJECT
     on UI.click subClrBtn   $ \_  -> do
         element subLBSelection # set value (show SUB);
         slt SUB Nothing True
     onEvent eSubLBSelection $ \mk ->
         slt SUB mk      False
 
+    -- PREDICATE
     on UI.click preClrBtn   $ \_  -> do
         element preLBSelection # set value (show PRE);
         slt PRE Nothing True
     onEvent ePreLBSelection $ \mk ->
         slt PRE mk      False
 
+    -- OBJECT
     on UI.click objClrBtn   $ \_  -> do
         element objLBSelection # set value (show OBJ);
         slt OBJ Nothing True
@@ -95,8 +99,10 @@ mkLayout  = mdo
             return ()
 
         setSelAndFrame lbSel k db0 = do
-            element lbSel # set value        (fst (fromJustLookup k db0))
-            element frame # set (attr "src") (fst (fromJustLookup k db0))
+            element lbSel # set value        v
+            element frame # set (attr "src") v
+          where
+            v = (fst (fromJustLookup k db0))
 
         fromJustLookup n db0 = fromJust $ dbLookup n db0
         sndLookup      n db0 = (False, snd (fromJustLookup n db0))
