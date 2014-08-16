@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 16 (Sat) 09:53:19 by Harold Carr.
+Last Modified : 2014 Aug 16 (Sat) 12:02:12 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -12,7 +12,7 @@ Last Modified : 2014 Aug 16 (Sat) 09:53:19 by Harold Carr.
 module RTB where
 
 import qualified Data.Map                    as Map
-import           Data.Maybe                  (fromJust, fromMaybe)
+import           Data.Maybe                  (fromJust)
 import           Data.RDF.Types              (Node (..))
 import qualified Data.Text                   as T (pack)
 import           Database.HSparql.Connection
@@ -45,9 +45,9 @@ mkLayout  = mdo
     submitBtn         <- UI.button #+ [string "submit"]
 
     -- input and display elements and more
-    (subClrBtn, subLayout, eSubLBSelection, bSubDB, hSubFillLB) <- mkSPOPanel SUB
-    (preClrBtn, preLayout, ePreLBSelection, bPreDB, hPreFillLB) <- mkSPOPanel PRE
-    (objClrBtn, objLayout, eObjLBSelection, bObjDB, hObjFillLB) <- mkSPOPanel OBJ
+    (subLBSelection, subClrBtn, subLayout, eSubLBSelection, bSubDB, hSubFillLB) <- mkSPOPanel SUB
+    (preLBSelection, preClrBtn, preLayout, ePreLBSelection, bPreDB, hPreFillLB) <- mkSPOPanel PRE
+    (objLBSelection, objClrBtn, objLayout, eObjLBSelection, bObjDB, hObjFillLB) <- mkSPOPanel OBJ
 
     -- display elements
     frame    <- UI.frame # set (attr "name")   "top"
@@ -62,14 +62,23 @@ mkLayout  = mdo
         query aTrueBoundNodePair aTrueBoundNodePair aTrueBoundNodePair
         return ()
 
-    on UI.click subClrBtn   $ \_  -> slt SUB Nothing True
-    onEvent eSubLBSelection $ \mk -> slt SUB mk      False
+    on UI.click subClrBtn   $ \_  -> do
+        element subLBSelection # set value (show SUB);
+        slt SUB Nothing True
+    onEvent eSubLBSelection $ \mk ->
+        slt SUB mk      False
 
-    on UI.click preClrBtn   $ \_  -> slt PRE Nothing True
-    onEvent ePreLBSelection $ \mk -> slt PRE mk      False
+    on UI.click preClrBtn   $ \_  -> do
+        element preLBSelection # set value (show PRE);
+        slt PRE Nothing True
+    onEvent ePreLBSelection $ \mk ->
+        slt PRE mk      False
 
-    on UI.click objClrBtn   $ \_  -> slt OBJ Nothing True
-    onEvent eObjLBSelection $ \mk -> slt OBJ mk      False
+    on UI.click objClrBtn   $ \_  -> do
+        element objLBSelection # set value (show OBJ);
+        slt OBJ Nothing True
+    onEvent eObjLBSelection $ \mk ->
+        slt OBJ mk      False
 
     let query :: (Bool, BindingValue) -> (Bool, BindingValue) -> (Bool, BindingValue) -> UI ()
         query s p o = do
@@ -82,33 +91,39 @@ mkLayout  = mdo
 
         sndLookup n db0 = (False, snd (fromJust $ dbLookup n db0))
 
-        varOrSelection :: DB DI -> (Bool, BindingValue)
-        varOrSelection db0 =
-            if dbSize db0 == 1
-                then sndLookup 0 db0
-                else aTrueBoundNodePair
+        varOrSelection :: SPOType -> String -> DB DI -> (Bool, BindingValue)
+        varOrSelection spoType lbSel db0 =
+            case spoType of
+                SUB -> if lbSel == (show SUB) then aTrueBoundNodePair else sndLookup 0 db0
+                PRE -> if lbSel == (show PRE) then aTrueBoundNodePair else sndLookup 0 db0
+                OBJ -> if lbSel == (show OBJ) then aTrueBoundNodePair else sndLookup 0 db0
 
         slt :: SPOType -> Maybe DBKey -> Bool -> UI ()
         slt spoType mk isClk = do
             liftIO $ putStrLn ("slt " ++ show spoType ++ " " ++ show mk)
-            s <- currentValue bSubDB
-            p <- currentValue bPreDB
-            o <- currentValue bObjDB
+            [sDB   , pDB   , oDB   ] <- mapM currentValue [bSubDB, bPreDB, bObjDB]
+            [sLBSel, pLBSel, oLBSel] <- mapM (get value) [subLBSelection, preLBSelection, objLBSelection]
             case mk of
                 Just k -> element frame # set (attr "src")
                                               (case spoType of
-                                                    SUB -> fst (fromJust $ dbLookup k s)
-                                                    PRE -> fst (fromJust $ dbLookup k p)
-                                                    OBJ -> fst (fromJust $ dbLookup k o))
+                                                    SUB -> fst (fromJust $ dbLookup k sDB)
+                                                    PRE -> fst (fromJust $ dbLookup k pDB)
+                                                    OBJ -> fst (fromJust $ dbLookup k oDB))
+                _      -> element frame
+            case mk of
+                Just k -> case spoType of
+                              SUB -> element subLBSelection # set value (fst (fromJust $ dbLookup k sDB))
+                              PRE -> element preLBSelection # set value (fst (fromJust $ dbLookup k pDB))
+                              OBJ -> element objLBSelection # set value (fst (fromJust $ dbLookup k oDB))
                 _      -> element frame
             let tval     = aTrueBoundNodePair
                 fval     = sndLookup (fromJust mk)
-                pick b x = if b then
-                                if isClk then tval else fval x
-                                else varOrSelection x
-            query (pick (spoType == SUB) s)
-                  (pick (spoType == PRE) p)
-                  (pick (spoType == OBJ) o)
+                pick spo lbSel db0 = if (spoType == spo) then
+                                         if isClk then tval else fval db0
+                                         else varOrSelection spo lbSel db0
+            query (pick SUB sLBSel sDB)
+                  (pick PRE pLBSel pDB)
+                  (pick OBJ oLBSel oDB)
 
         aTrueBoundNodePair   :: (Bool, BindingValue)
         aTrueBoundNodePair   =  (True, aBoundNode)
@@ -120,31 +135,19 @@ mkLayout  = mdo
          ]
 
 mkSPOPanel :: SPOType
---           -> ((SPOType, String) -> UI ())
-           -> UI ( UI.Element -- clrBtn
+           -> UI ( UI.Element -- current selection
+                 , UI.Element -- clrBtn
                  , UI.Element -- layout
                  , Event (Maybe DBKey)
                  , Behavior (DB DI)
                  , Handler [(String, BindingValue)]
                  )
 mkSPOPanel spoType = mdo
-    -- NOTE: if you move the declarations in this let to the one with many below
-    --       then it compiles and starts up, but nothing displays
-    let decide :: DB DI -> String
-        decide db0 | dbSize db0 > 1 = show spoType
-                   | otherwise      = fst $ fromMaybe aStringBoundNodePair (dbLookup 0 db0) `hcDebug` ("decide " ++ show spoType)
-
-        dataItem :: Behavior (Maybe DI) -> UI Element
-        dataItem _ = do
-            liftIO (putStrLn "dataItem")
-            entry1 <- UI.entry $ decide <$> bDB
-            element entry1 # set style [("width", "300px")]
-            return $ getElement  entry1
-
     -- GUI elements
+    lbSelection <- UI.input  # set (attr "size") "40" # set (attr "type") "text"
+                             # set value (show spoType)
     clrBtn      <- UI.button #+ [string "*"]
     xpdBtn      <- UI.button #+ [string "+"]
-    lbSelection <- dataItem    bLBSelectionDI
     listBox     <- UI.listBox  bLBItems bLBSelection bDisplayDI
     element listBox # set (attr "size") "10" # set style [("width","300px")]
 
@@ -171,9 +174,6 @@ mkSPOPanel spoType = mdo
         bLBItems       :: Behavior [DBKey]
         bLBItems       = dbKeys <$> bDB
 
-        bLBSelectionDI :: Behavior (Maybe DI)
-        bLBSelectionDI = (=<<) <$> bLookup <*> bLBSelection `hcDebug` "bLBSelection"
-
         aStringBoundNodePair :: (String, BindingValue)
         aStringBoundNodePair =  ("NOT SUPPOSED TO HAPPEN", aBoundNode)
 
@@ -182,7 +182,7 @@ mkSPOPanel spoType = mdo
                      , element listBox
                      ]
 
-    return (clrBtn, layout, eLBSelection, bDB, hFillLB)
+    return (lbSelection, clrBtn, layout, eLBSelection, bDB, hFillLB)
 
 aBoundNode :: BindingValue
 aBoundNode =  Bound (UNode (T.pack "A DUMMY NODE"))
