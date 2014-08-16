@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 16 (Sat) 15:04:08 by Harold Carr.
+Last Modified : 2014 Aug 16 (Sat) 15:08:58 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -108,15 +108,13 @@ mkLayout  = mdo
             [sDB   , pDB   , oDB   ] <- mapM currentValue [bSubDB, bPreDB, bObjDB]
             [sLBSel, pLBSel, oLBSel] <- mapM (get value) [subLBSelection, preLBSelection, objLBSelection]
             case mk of
-                Just k -> do element frame # set (attr "src")
-                                                 (case spoType of
-                                                     SUB -> fst (fromJust $ dbLookup k sDB)
-                                                     PRE -> fst (fromJust $ dbLookup k pDB)
-                                                     OBJ -> fst (fromJust $ dbLookup k oDB))
-                             case spoType of
-                                 SUB -> element subLBSelection # set value (fst (fromJust $ dbLookup k sDB))
-                                 PRE -> element preLBSelection # set value (fst (fromJust $ dbLookup k pDB))
-                                 OBJ -> element objLBSelection # set value (fst (fromJust $ dbLookup k oDB))
+                Just k -> case spoType of
+                                 SUB -> do element subLBSelection # set value (fst (fromJust $ dbLookup k sDB))
+                                           element frame   # set (attr "src") (fst (fromJust $ dbLookup k sDB))
+                                 PRE -> do element preLBSelection # set value (fst (fromJust $ dbLookup k pDB))
+                                           element frame   # set (attr "src") (fst (fromJust $ dbLookup k pDB))
+                                 OBJ -> do element objLBSelection # set value (fst (fromJust $ dbLookup k oDB))
+                                           element frame   # set (attr "src") (fst (fromJust $ dbLookup k oDB))
                 _      -> element frame
             let tval     = aTrueBoundNodePair
                 fval     = sndLookup (fromJust mk)
