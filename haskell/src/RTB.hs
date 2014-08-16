@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 15 (Fri) 22:22:34 by Harold Carr.
+Last Modified : 2014 Aug 16 (Sat) 09:32:32 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -8,8 +8,6 @@ Last Modified : 2014 Aug 15 (Fri) 22:22:34 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
-
--- TODO NEXT : set frame src
 
 module RTB where
 
@@ -96,6 +94,11 @@ mkLayout  = mdo
             s <- currentValue bSubDB
             p <- currentValue bPreDB
             o <- currentValue bObjDB
+            element frame # set (attr "src")
+                                (case spoType of
+                                    SUB -> fst (fromJust $ dbLookup (fromJust mk) s)
+                                    PRE -> fst (fromJust $ dbLookup (fromJust mk) p)
+                                    OBJ -> fst (fromJust $ dbLookup (fromJust mk) o))
             let tval     = aTrueBoundNodePair
                 fval     = sndLookup (fromJust mk)
                 pick b x = if b then
