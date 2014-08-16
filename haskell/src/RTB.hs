@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 15 (Fri) 22:12:31 by Harold Carr.
+Last Modified : 2014 Aug 15 (Fri) 22:22:34 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -8,6 +8,8 @@ Last Modified : 2014 Aug 15 (Fri) 22:12:31 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
+
+-- TODO NEXT : set frame src
 
 module RTB where
 
@@ -73,13 +75,11 @@ mkLayout  = mdo
 
     let query :: (Bool, BindingValue) -> (Bool, BindingValue) -> (Bool, BindingValue) -> UI ()
         query s p o = do
-            sparql <- get value sparqlEndpointURL;
-            liftIO $ putStrLn ("query " ++ show sparql ++ " " ++ show s ++" " ++ show p ++ " " ++ show o)
-            (s',p',o') <- liftIO $ test'' sparql s p o
+            url <- get value sparqlEndpointURL;
+            liftIO $ putStrLn ("query " ++ show url ++ " " ++ show s ++" " ++ show p ++ " " ++ show o)
+            (s',p',o') <- liftIO $ test'' url s p o
             -- These are the MAGIC steps.  A Handler feeds events to its corresponding Event (from newEvent)
-            liftIO $ hSubFillLB s'
-            liftIO $ hPreFillLB p'
-            liftIO $ hObjFillLB o'
+            mapM_ liftIO [hSubFillLB s', hPreFillLB p', hObjFillLB o']
             return ()
 
         sndLookup n db0 = (False, snd (fromJust $ dbLookup n db0))
@@ -123,6 +123,8 @@ mkSPOPanel :: SPOType
                  , Handler [(String, BindingValue)]
                  )
 mkSPOPanel spoType = mdo
+    -- NOTE: if you move the declarations in this let to the one with many below
+    --       then it compiles and starts up, but nothing displays
     let decide :: DB DI -> String
         decide db0 | dbSize db0 > 1 = show spoType
                    | otherwise      = fst $ fromMaybe aStringBoundNodePair (dbLookup 0 db0) `hcDebug` ("decide " ++ show spoType)
@@ -177,8 +179,8 @@ mkSPOPanel spoType = mdo
 
     return (clrBtn, layout, eLBSelection, bDB, hFillLB)
 
-aBoundNode           :: BindingValue
-aBoundNode           =  Bound (UNode (T.pack "A DUMMY NODE"))
+aBoundNode :: BindingValue
+aBoundNode =  Bound (UNode (T.pack "A DUMMY NODE"))
 
 ------------------------------------------------------------------------------
 -- DB Model
