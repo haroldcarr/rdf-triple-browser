@@ -1,11 +1,13 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 16 (Sat) 12:02:12 by Harold Carr.
+Last Modified : 2014 Aug 16 (Sat) 12:43:36 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
   - threepenny-gui MissingDollars sample
 -}
+
+-- TODO : expand/contract
 
 {-# LANGUAGE RecursiveDo #-}
 
@@ -24,6 +26,9 @@ import           RTBQ
 hcDebug :: c -> String -> c
 hcDebug = flip trace
 
+defaultEndPoint :: String
+defaultEndPoint = "http://localhost:3030/ds/query"
+
 data SPOType = SUB | PRE | OBJ deriving Eq
 
 instance Show SPOType where
@@ -41,7 +46,7 @@ mkLayout :: UI Element
 mkLayout  = mdo
     -- input elements
     sparqlEndpointURL <- UI.input  # set (attr "size") "175" # set (attr "type") "text"
-                                   # set (attr "value") endPoint
+                                   # set (attr "value") defaultEndPoint
     submitBtn         <- UI.button #+ [string "submit"]
 
     -- input and display elements and more
@@ -84,7 +89,7 @@ mkLayout  = mdo
         query s p o = do
             url <- get value sparqlEndpointURL;
             liftIO $ putStrLn ("query " ++ show url ++ " " ++ show s ++" " ++ show p ++ " " ++ show o)
-            (s',p',o') <- liftIO $ test'' url s p o
+            (s',p',o') <- liftIO $ query2 url s p o
             -- These are the MAGIC steps.  A Handler feeds events to its corresponding Event (from newEvent)
             mapM_ liftIO [hSubFillLB s', hPreFillLB p', hObjFillLB o']
             return ()
@@ -94,9 +99,9 @@ mkLayout  = mdo
         varOrSelection :: SPOType -> String -> DB DI -> (Bool, BindingValue)
         varOrSelection spoType lbSel db0 =
             case spoType of
-                SUB -> if lbSel == (show SUB) then aTrueBoundNodePair else sndLookup 0 db0
-                PRE -> if lbSel == (show PRE) then aTrueBoundNodePair else sndLookup 0 db0
-                OBJ -> if lbSel == (show OBJ) then aTrueBoundNodePair else sndLookup 0 db0
+                SUB -> if lbSel == show SUB then aTrueBoundNodePair else sndLookup 0 db0
+                PRE -> if lbSel == show PRE then aTrueBoundNodePair else sndLookup 0 db0
+                OBJ -> if lbSel == show OBJ then aTrueBoundNodePair else sndLookup 0 db0
 
         slt :: SPOType -> Maybe DBKey -> Bool -> UI ()
         slt spoType mk isClk = do
@@ -118,7 +123,7 @@ mkLayout  = mdo
                 _      -> element frame
             let tval     = aTrueBoundNodePair
                 fval     = sndLookup (fromJust mk)
-                pick spo lbSel db0 = if (spoType == spo) then
+                pick spo lbSel db0 = if spoType == spo then
                                          if isClk then tval else fval db0
                                          else varOrSelection spo lbSel db0
             query (pick SUB sLBSel sDB)
@@ -173,9 +178,6 @@ mkSPOPanel spoType = mdo
 
         bLBItems       :: Behavior [DBKey]
         bLBItems       = dbKeys <$> bDB
-
-        aStringBoundNodePair :: (String, BindingValue)
-        aStringBoundNodePair =  ("NOT SUPPOSED TO HAPPEN", aBoundNode)
 
     layout <- column [ element lbSelection
                      , row [ element clrBtn, element xpdBtn ]
