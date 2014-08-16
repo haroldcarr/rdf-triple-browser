@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 15 (Fri) 08:36:46 by Harold Carr.
+Last Modified : 2014 Aug 15 (Fri) 18:41:47 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -12,7 +12,7 @@ Last Modified : 2014 Aug 15 (Fri) 08:36:46 by Harold Carr.
 module RTB where
 
 import qualified Data.Map                    as Map
-import           Data.Maybe                  (fromMaybe)
+import           Data.Maybe                  (fromJust, fromMaybe)
 import           Data.RDF.Types              (Node (..))
 import qualified Data.Text                   as T (pack)
 import           Database.HSparql.Connection
@@ -31,6 +31,10 @@ instance Show SPOType where
     show PRE = "?predicate"
     show OBJ = "?object"
 
+badNode                = UNode (T.pack "BAD")
+badBoundNode           = Bound badNode
+badStringBoundNodePair = ("NOT SUPPOSED TO HAPPEN", badBoundNode)
+
 main :: IO ()
 main = startGUI defaultConfig $ \w -> do
     return w # set title "RDF Triple Browser"
@@ -45,9 +49,81 @@ mkLayout  = mdo
     submitBtn         <- UI.button #+ [string "submit"]
 
     -- display elements
-    (_, subLayout, hSubFillLB) <- mkSPOPanel SUB
-    (_, preLayout, hPreFillLB) <- mkSPOPanel PRE
-    (_, objLayout, hObjFillLB) <- mkSPOPanel OBJ
+    (subClrBtn, subLayout, eSubLBSelection, bSubDB, hSubFillLB) <- mkSPOPanel SUB
+    (preClrBtn, preLayout, ePreLBSelection, bPreDB, hPreFillLB) <- mkSPOPanel PRE
+    (objClrBtn, objLayout, eObjLBSelection, bObjDB, hObjFillLB) <- mkSPOPanel OBJ
+
+    let query :: String -> (Bool, BindingValue) -> (Bool, BindingValue) -> (Bool, BindingValue) -> UI ()
+        query url s p o = do
+            liftIO $ putStrLn ("query " ++ show url ++ " " ++ show s ++" " ++ show p ++ " " ++ show o)
+            (s',p',o') <- liftIO $ test'' endPoint s p o
+            liftIO $ hSubFillLB s'
+            liftIO $ hPreFillLB p'
+            liftIO $ hObjFillLB o'
+            return ()
+
+        whatever :: DB DI -> (Bool, BindingValue)
+        whatever db0 =
+            if (dbSize db0) == 1
+                then (False, snd (fromJust $ dbLookup 0 db0))
+                else (True , badBoundNode)
+
+    on UI.click subClrBtn $ \_ -> do
+        liftIO $ putStrLn "UI.click subClrBtn"
+        p <- currentValue bPreDB
+        o <- currentValue bObjDB
+        query endPoint
+              (True, badBoundNode)
+              (whatever p)
+              (whatever o)
+
+    onEvent eSubLBSelection $ \mk -> do
+        liftIO $ putStrLn ("onEvent eSubLBSelection: " ++ (show mk))
+        s <- currentValue bSubDB
+        p <- currentValue bPreDB
+        o <- currentValue bObjDB
+        query endPoint
+              (False, snd (fromJust $ dbLookup (fromJust mk) s))
+              (whatever p)
+              (whatever o)
+
+    on UI.click preClrBtn $ \_ -> do
+        liftIO $ putStrLn "UI.click preClrBtn"
+        s <- currentValue bSubDB
+        o <- currentValue bObjDB
+        query endPoint
+              (whatever s)
+              (True, badBoundNode)
+              (whatever o)
+
+    onEvent ePreLBSelection $ \mk -> do
+        liftIO $ putStrLn ("onEvent ePreLBSelection: " ++ (show mk))
+        s <- currentValue bSubDB
+        p <- currentValue bPreDB
+        o <- currentValue bObjDB
+        query endPoint
+              (whatever s)
+              (False, snd (fromJust $ dbLookup (fromJust mk) p))
+              (whatever o)
+
+    on UI.click objClrBtn $ \_ -> do
+        liftIO $ putStrLn "UI.click objClrBtn"
+        s <- currentValue bSubDB
+        p <- currentValue bPreDB
+        query endPoint
+              (whatever s)
+              (whatever p)
+              (True, badBoundNode)
+
+    onEvent eObjLBSelection $ \mk -> do
+        liftIO $ putStrLn ("onEvent eObjLBSelection: " ++ (show mk))
+        s <- currentValue bSubDB
+        p <- currentValue bPreDB
+        o <- currentValue bObjDB
+        query endPoint
+              (whatever s)
+              (whatever p)
+              (False, snd (fromJust $ dbLookup (fromJust mk) o))
 
     frame <- UI.frame # set (attr "name")   "top"
                       # set (attr "target") "top"
@@ -79,20 +155,21 @@ mkLayout  = mdo
 
 mkSPOPanel :: SPOType
 --           -> ((SPOType, String) -> UI ())
-           -> UI ( UI.Element
-                 , UI.Element
+           -> UI ( UI.Element -- clrBtn
+                 , UI.Element -- layout
+                 , Event (Maybe DBKey)
+                 , Behavior (DB DI)
                  , Handler [(String, BindingValue)]
                  )
 mkSPOPanel spoType = mdo
-    let bad = ("NOT SUPPOSED TO HAPPEN", Bound (UNode (T.pack "BAD")))
-        decide :: DB DI -> String
+    let decide :: DB DI -> String
         decide db0 | dbSize db0 > 1 = show spoType
-                   | otherwise      = fst $ fromMaybe bad (dbLookup 0 db0) `hcDebug` "decide"
+                   | otherwise      = fst $ fromMaybe badStringBoundNodePair (dbLookup 0 db0) `hcDebug` ("decide " ++ (show spoType))
 
         dataItem :: Behavior (Maybe DI) -> UI Element
         dataItem _ = do
-            liftIO (putStrLn "YES")
             entry1 <- UI.entry $ decide <$> bDB
+            liftIO (putStrLn "dataItem")
             element entry1 # set style [("width", "300px")]
             return $ getElement  entry1
 
@@ -107,25 +184,6 @@ mkSPOPanel spoType = mdo
         eLBSelection = rumors $ UI.userSelection listBox
 
     (eFillLB, hFillLB) <- liftIO newEvent
-
-    let query :: String -> Maybe DBKey -> UI ()
-        query url mk  = do
-            liftIO $ putStrLn ("query " ++ show url ++ " " ++ show mk)
-            (s,p,o) <- liftIO $ doRDFQuery2 endPoint mk bDB
-            liftIO $ hFillLB (case spoType of SUB -> s; PRE -> p; OBJ -> o)
-            return ()
-
-        queryNothing :: () -> UI ()
-        queryNothing _ = do
-            query endPoint Nothing
-
-    on UI.click clrBtn $ \_ -> do
-        liftIO $ putStrLn "UI.click clrBtn"
-        queryNothing ()
-
-    onEvent eLBSelection $ \mk -> do
-        liftIO $ putStrLn "onEvent eLBSelection"
-        query endPoint mk
 
     let dbFill      :: [(String,BindingValue)] -> DB DI -> DB DI
         dbFill ss _ = foldr dbCreate  dbEmpty ss
@@ -156,7 +214,7 @@ mkSPOPanel spoType = mdo
                      , element listBox
                      ]
 
-    return (lbSelection, layout, hFillLB)
+    return (clrBtn, layout, eLBSelection, bDB, hFillLB)
 
 ------------------------------------------------------------------------------
 -- DB Model
@@ -212,10 +270,10 @@ doRDFQuery2 url mk bdb = do
         (Just k) -> do let v = dbLookup k db0
                        putStrLn ("DBValue: " ++ show v)
                        case v of
-                           Just b -> do rrr <- ttwv url b
-                                        print rrr
-                                        return rrr
-                           Nothing             -> ttt url
+                           Just (_, Bound b) -> do rrr <- test' url (False, b) (True, badNode) (True, badNode)
+                                                   print rrr
+                                                   return rrr
+                           Nothing           -> ttt url
         _        -> do putStrLn "key is NOTHING"
                        ttt url
 -- End of file.

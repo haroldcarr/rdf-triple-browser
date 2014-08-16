@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 29 (Tue) 07:16:51 by Harold Carr.
-Last Modified : 2014 Aug 15 (Fri) 17:10:25 by Harold Carr.
+Last Modified : 2014 Aug 15 (Fri) 18:29:14 by Harold Carr.
 -}
 
 {-# LANGUAGE OverloadedStrings #-}
@@ -65,6 +65,14 @@ test' url s@(isSVar,sn) p@(isPVar,pn) o@(isOVar,on) = testing $ test url s p o
                , ite pairs isOVar 2 on
                )
     ite pairs i t e = if i then nub $ map (!!t) pairs else [extract $ Bound e]
+
+
+test'' :: String -> (Bool, BindingValue) -> (Bool, BindingValue) -> (Bool, BindingValue) -> IO ( [(String, BindingValue)]
+                                                                                               , [(String, BindingValue)]
+                                                                                               , [(String, BindingValue)]
+                                                                                               )
+test'' url (isSVar,Bound s) (isPVar,Bound p) (isOVar, Bound o) =
+    test' url (isSVar, s) (isPVar, p) (isOVar, o)
 
 ttwv :: String
         -> (String, BindingValue)
