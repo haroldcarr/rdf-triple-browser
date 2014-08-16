@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 16 (Sat) 15:08:58 by Harold Carr.
+Last Modified : 2014 Aug 16 (Sat) 15:20:20 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -94,27 +94,29 @@ mkLayout  = mdo
             mapM_ liftIO [hSubFillLB s', hPreFillLB p', hObjFillLB o']
             return ()
 
-        sndLookup n db0 = (False, snd (fromJust $ dbLookup n db0))
+        setSelAndFrame lbSel k db0 = do
+            element lbSel # set value        (fst (fromJustLookup k db0))
+            element frame # set (attr "src") (fst (fromJustLookup k db0))
+
+        fromJustLookup n db0 = fromJust $ dbLookup n db0
+        sndLookup      n db0 = (False, snd (fromJustLookup n db0))
 
         varOrSelection :: String -> DB DI -> (Bool, BindingValue)
         varOrSelection lbSel db0 =
-            if lbSel == show SUB || lbSel == show PRE || lbSel == show OBJ
+            if lbSel `elem` [show SUB, show PRE, show OBJ]
                 then aTrueBoundNodePair
                 else sndLookup 0 db0
 
         slt :: SPOType -> Maybe DBKey -> Bool -> UI ()
         slt spoType mk isClk = do
             liftIO $ putStrLn ("slt " ++ show spoType ++ " " ++ show mk)
-            [sDB   , pDB   , oDB   ] <- mapM currentValue [bSubDB, bPreDB, bObjDB]
-            [sLBSel, pLBSel, oLBSel] <- mapM (get value) [subLBSelection, preLBSelection, objLBSelection]
+            [sDB   , pDB   , oDB   ] <- mapM currentValue [bSubDB        , bPreDB        , bObjDB        ]
+            [sLBSel, pLBSel, oLBSel] <- mapM (get value)  [subLBSelection, preLBSelection, objLBSelection]
             case mk of
                 Just k -> case spoType of
-                                 SUB -> do element subLBSelection # set value (fst (fromJust $ dbLookup k sDB))
-                                           element frame   # set (attr "src") (fst (fromJust $ dbLookup k sDB))
-                                 PRE -> do element preLBSelection # set value (fst (fromJust $ dbLookup k pDB))
-                                           element frame   # set (attr "src") (fst (fromJust $ dbLookup k pDB))
-                                 OBJ -> do element objLBSelection # set value (fst (fromJust $ dbLookup k oDB))
-                                           element frame   # set (attr "src") (fst (fromJust $ dbLookup k oDB))
+                                 SUB -> setSelAndFrame subLBSelection k sDB
+                                 PRE -> setSelAndFrame preLBSelection k pDB
+                                 OBJ -> setSelAndFrame objLBSelection k oDB
                 _      -> element frame
             let tval     = aTrueBoundNodePair
                 fval     = sndLookup (fromJust mk)
