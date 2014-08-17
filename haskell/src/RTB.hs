@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 16 (Sat) 16:43:57 by Harold Carr.
+Last Modified : 2014 Aug 17 (Sun) 10:42:42 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -13,8 +13,9 @@ Last Modified : 2014 Aug 16 (Sat) 16:43:57 by Harold Carr.
 
 module RTB where
 
+import           Data.List                   (elemIndex, elemIndices)
 import qualified Data.Map                    as Map
-import           Data.Maybe                  (fromJust)
+import           Data.Maybe                  (fromJust, fromMaybe)
 import           Data.RDF.Types              (Node (..))
 import qualified Data.Text                   as T (pack)
 import           Database.HSparql.Connection
@@ -185,11 +186,11 @@ mkSPOPanel spoType = mdo
         dbFill ss _    = foldr dbCreate dbEmpty ss
 
         dbFill' :: DB DI -> DB DI
-        dbFill' d@(DB newkey db0) =
-            let (s1,bn) = fromJust (dbLookup 0 d)
-                (s2,_ ) = extract bn
-                xpd     = length s1 == length s2
-            in DB newkey $ Map.map (\(s,b) -> ((if xpd then "lengthen" else "shorten") ++ s,b)) db0
+        dbFill' (DB newkey db0) =
+            DB newkey $ Map.map (if all (\(s1,bn) -> let (s2,_) = extract bn in length s1 == length s2) (Map.elems db0)
+                                    then (\(s,b) -> (fromMaybe s (maybeShorten s)  , b))
+                                    else (\(_,b) -> extract b))
+                                db0
 
         bLookup        :: Behavior (DBKey -> Maybe DI)
         bLookup        = flip dbLookup <$> bDB `hcDebug` "bLookup"
@@ -238,5 +239,30 @@ type DI = (String, BindingValue)
 
 showDI :: DI -> String
 showDI (x,_) = x
+
+------------------------------------------------------------------------------
+-- Utility
+
+maybeShorten :: String -> Maybe String
+maybeShorten x = subStringAfterFirstSharp x <|> subStringAfterLastSlash x
+
+subStringAfterFirstSharp :: String -> Maybe String
+subStringAfterFirstSharp x = do
+    i <- elemIndex '#' x
+    return $ drop (i + 1) x
+
+subStringAfterLastSlash :: String -> Maybe String
+subStringAfterLastSlash x0 = do
+    let x  = removeTrailingSlash x0
+        is = elemIndices '/' x
+    return $ if null is
+                 then x
+                 else drop (last is + 1) x
+
+removeTrailingSlash :: String -> String
+removeTrailingSlash x =
+    if last x == '/'
+        then take (length x - 1) x
+        else x
 
 -- End of file.
