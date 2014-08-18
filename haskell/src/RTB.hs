@@ -1,13 +1,11 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 17 (Sun) 21:03:09 by Harold Carr.
+Last Modified : 2014 Aug 18 (Mon) 08:11:47 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
   - threepenny-gui MissingDollars sample
 -}
-
--- TODO : fix expand/contract to be consistent
 
 {-# LANGUAGE RecursiveDo #-}
 
@@ -184,7 +182,7 @@ mkSPOPanel spoType = mdo
     bLBSelection <- stepper Nothing eLBSelection `hcDebug` "stepper"
 
     let dbQueryFill    :: [BindingValue] -> DB DI -> DB DI
-        dbQueryFill ss (DB sP _ _) = foldr (dbInsert . mkDI sP) dbEmpty ss `hcDebug` ("dbQueryFill " ++ show sP)
+        dbQueryFill ss (DB sP _ _) = foldr (dbInsert . mkDI sP) (dbEmpty' sP) ss `hcDebug` ("dbQueryFill " ++ show sP)
 
         dbExpandFill   :: DB DI -> DB DI
         dbExpandFill (DB sP k db0) = DB (not sP) k $ Map.map (\(s,b) -> if sP then mkDI (not sP) b else (shorten s, b)) db0 `hcDebug` ("dbExpandFill " ++ show sP)
@@ -216,6 +214,9 @@ data DB a  = DB { shortened :: !Bool, nextKey :: !Int, db :: Map.Map DBKey a }
 
 dbEmpty  :: DB a
 dbEmpty  = DB True 0 Map.empty
+
+dbEmpty' :: Bool -> DB a
+dbEmpty' b = DB b 0 Map.empty
 
 dbSize   :: DB a -> Int
 dbSize   = Map.size . db
