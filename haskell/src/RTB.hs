@@ -1,13 +1,13 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 17 (Sun) 10:42:42 by Harold Carr.
+Last Modified : 2014 Aug 17 (Sun) 21:03:09 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
   - threepenny-gui MissingDollars sample
 -}
 
--- TODO : expand/contract
+-- TODO : fix expand/contract to be consistent
 
 {-# LANGUAGE RecursiveDo #-}
 
@@ -16,8 +16,8 @@ module RTB where
 import           Data.List                   (elemIndex, elemIndices)
 import qualified Data.Map                    as Map
 import           Data.Maybe                  (fromJust, fromMaybe)
-import           Data.RDF.Types              (Node (..))
-import qualified Data.Text                   as T (pack)
+import           Data.RDF.Types              (LValue (..), Node (..))
+import qualified Data.Text                   as T (pack, unpack)
 import           Database.HSparql.Connection
 import           Debug.Trace
 import qualified Graphics.UI.Threepenny      as UI
@@ -51,9 +51,9 @@ mkLayout  = mdo
     submitBtn         <- UI.button #+ [string "submit"]
 
     -- input and display elements and more
-    (subLBSelection, subClrBtn, subLayout, eSubLBSelection, bSubDB, hSubFillLB) <- mkSPOPanel SUB
-    (preLBSelection, preClrBtn, preLayout, ePreLBSelection, bPreDB, hPreFillLB) <- mkSPOPanel PRE
-    (objLBSelection, objClrBtn, objLayout, eObjLBSelection, bObjDB, hObjFillLB) <- mkSPOPanel OBJ
+    (subLBSelection, subClrBtn, subLayout, eSubLBSelection, bSubDB, hSubQFillLB) <- mkSPOPanel SUB
+    (preLBSelection, preClrBtn, preLayout, ePreLBSelection, bPreDB, hPreQFillLB) <- mkSPOPanel PRE
+    (objLBSelection, objClrBtn, objLayout, eObjLBSelection, bObjDB, hObjQFillLB) <- mkSPOPanel OBJ
 
     -- display elements
     frame    <- UI.frame # set (attr "name")   "top"
@@ -96,14 +96,15 @@ mkLayout  = mdo
             liftIO $ putStrLn ("query " ++ show url ++ " " ++ show s ++" " ++ show p ++ " " ++ show o)
             (s',p',o') <- liftIO $ query2 url s p o
             -- These are the MAGIC steps.  A Handler feeds events to its corresponding Event (from newEvent)
-            mapM_ liftIO [hSubFillLB s', hPreFillLB p', hObjFillLB o']
+            mapM_ liftIO [hSubQFillLB s', hPreQFillLB p', hObjQFillLB o']
             return ()
 
         setSelAndFrame lbSel k db0 = do
-            element lbSel # set value        v
-            element frame # set (attr "src") v
+            element lbSel # set value        v1 -- shortened version
+            element frame # set (attr "src") v2 -- full version
           where
-            v = (fst (fromJustLookup k db0))
+            (v1,bn) = (fromJustLookup k db0)
+            (v2,_)  = mkDI False bn
 
         fromJustLookup n db0 = fromJust $ dbLookup n db0
         sndLookup      n db0 = (False, snd (fromJustLookup n db0))
@@ -149,48 +150,44 @@ mkSPOPanel :: SPOType
                  , UI.Element -- layout
                  , Event (Maybe DBKey)
                  , Behavior (DB DI)
-                 , Handler [(String, BindingValue)]
+                 , Handler [BindingValue]
                  )
 mkSPOPanel spoType = mdo
     -- GUI elements
     lbSelection <- UI.input  # set (attr "size") "40" # set (attr "type") "text"
                              # set value (show spoType)
     clrBtn      <- UI.button #+ [string "*"]
-    xpdBtn      <- UI.button #+ [string "+"] # set value "+"
+    expandBtn   <- UI.button #+ [string "+"] # set value "+"
     listBox     <- UI.listBox  bLBItems bLBSelection bDisplayDI
     element listBox # set (attr "size") "10" # set style [("width","300px")]
 
-    let eXpdBtn      :: Event ()
-        eXpdBtn      = UI.click xpdBtn
+    let eExpandBtn   :: Event ()
+        eExpandBtn   = UI.click expandBtn
 
         eLBSelection :: Event (Maybe DBKey)
         eLBSelection = rumors $ UI.userSelection listBox
 
-    onEvent eXpdBtn $ \_ -> do
-        current <- get value xpdBtn
+    onEvent eExpandBtn $ \_ -> do
+        current <- get value expandBtn
         let next = if current == "+" then "-" else "+"
-        element xpdBtn # set text next # set value next `hcDebug` ("onEvent eXpdBtn c " ++ current ++ " n " ++ next)
+        element expandBtn # set text next # set value next `hcDebug` ("onEvent eExpandBtn c " ++ current ++ " n " ++ next)
 
-    (eFillLB, hFillLB) <- liftIO newEvent
+    (eQueryFillLB, hQueryFillLB) <- liftIO newEvent
 
     -- bDB :: Behavior (DB DI)
     bDB <- accumB dbEmpty $ concatenate <$> unions
-        [ dbFill  <$> eFillLB
-        , dbFill' <$  eXpdBtn
+        [ dbQueryFill  <$> eQueryFillLB
+        , dbExpandFill <$  eExpandBtn
         ]
 
     -- bLBSelection :: Behavior (Maybe DBKey)
     bLBSelection <- stepper Nothing eLBSelection `hcDebug` "stepper"
 
-    let dbFill         :: [(String,BindingValue)] -> DB DI -> DB DI
-        dbFill ss _    = foldr dbCreate dbEmpty ss
+    let dbQueryFill    :: [BindingValue] -> DB DI -> DB DI
+        dbQueryFill ss (DB sP _ _) = foldr (dbInsert . mkDI sP) dbEmpty ss `hcDebug` ("dbQueryFill " ++ show sP)
 
-        dbFill' :: DB DI -> DB DI
-        dbFill' (DB newkey db0) =
-            DB newkey $ Map.map (if all (\(s1,bn) -> let (s2,_) = extract bn in length s1 == length s2) (Map.elems db0)
-                                    then (\(s,b) -> (fromMaybe s (maybeShorten s)  , b))
-                                    else (\(_,b) -> extract b))
-                                db0
+        dbExpandFill   :: DB DI -> DB DI
+        dbExpandFill (DB sP k db0) = DB (not sP) k $ Map.map (\(s,b) -> if sP then mkDI (not sP) b else (shorten s, b)) db0 `hcDebug` ("dbExpandFill " ++ show sP)
 
         bLookup        :: Behavior (DBKey -> Maybe DI)
         bLookup        = flip dbLookup <$> bDB `hcDebug` "bLookup"
@@ -202,11 +199,11 @@ mkSPOPanel spoType = mdo
         bLBItems       = dbKeys <$> bDB
 
     layout <- column [ element lbSelection
-                     , row [ element clrBtn, element xpdBtn ]
+                     , row [ element clrBtn, element expandBtn ]
                      , element listBox
                      ]
 
-    return (lbSelection, clrBtn, layout, eLBSelection, bDB, hFillLB)
+    return (lbSelection, clrBtn, layout, eLBSelection, bDB, hQueryFillLB)
 
 aBoundNode :: BindingValue
 aBoundNode =  Bound (UNode (T.pack "A DUMMY NODE"))
@@ -215,10 +212,10 @@ aBoundNode =  Bound (UNode (T.pack "A DUMMY NODE"))
 -- DB Model
 
 type DBKey = Int
-data DB a  = DB { nextKey :: !Int, db :: Map.Map DBKey a }
+data DB a  = DB { shortened :: !Bool, nextKey :: !Int, db :: Map.Map DBKey a }
 
 dbEmpty  :: DB a
-dbEmpty  = DB 0 Map.empty
+dbEmpty  = DB True 0 Map.empty
 
 dbSize   :: DB a -> Int
 dbSize   = Map.size . db
@@ -226,11 +223,11 @@ dbSize   = Map.size . db
 dbKeys   :: DB a -> [DBKey]
 dbKeys   = Map.keys . db
 
-dbCreate :: a -> DB a -> DB a
-dbCreate x     (DB newkey db0) = DB (newkey+1) $ Map.insert newkey x db0
+dbInsert :: a -> DB a -> DB a
+dbInsert x   (DB s nk db0) = DB s (nk+1) $ Map.insert nk x db0
 
 dbLookup :: DBKey -> DB a -> Maybe a
-dbLookup key   (DB _      db0) =                 Map.lookup    key   db0 `hcDebug` ("dbLookup " ++ show key)
+dbLookup key (DB _ _  db0) =               Map.lookup key  db0 `hcDebug` ("dbLookup " ++ show key)
 
 ------------------------------------------------------------------------------
 -- What is stored in data base
@@ -240,8 +237,24 @@ type DI = (String, BindingValue)
 showDI :: DI -> String
 showDI (x,_) = x
 
+mkDI :: Bool -> BindingValue -> (String, BindingValue)
+mkDI shortenP b@(Bound v) =
+    let s = T.unpack $ case v of
+                           (UNode x)             -> x
+                           (BNode x)             -> x
+                           --    BNodeGen x            -> show x
+                           (LNode (PlainL  x))   -> x
+                           (LNode (PlainLL x _)) -> x
+                           (LNode (TypedL  x _)) -> x
+
+    in (if shortenP then shorten s else s, b)
+mkDI _ Unbound   = (show Unbound, Unbound)
+
 ------------------------------------------------------------------------------
 -- Utility
+
+shorten :: String -> String
+shorten x = fromMaybe x $ maybeShorten x
 
 maybeShorten :: String -> Maybe String
 maybeShorten x = subStringAfterFirstSharp x <|> subStringAfterLastSlash x
@@ -260,9 +273,7 @@ subStringAfterLastSlash x0 = do
                  else drop (last is + 1) x
 
 removeTrailingSlash :: String -> String
-removeTrailingSlash x =
-    if last x == '/'
-        then take (length x - 1) x
-        else x
+removeTrailingSlash x | last x == '/' = take (length x - 1) x
+                      | otherwise     = x
 
 -- End of file.
