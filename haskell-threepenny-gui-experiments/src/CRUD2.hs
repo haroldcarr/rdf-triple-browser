@@ -1,6 +1,6 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 14 (Thu) 21:35:21 by Harold Carr.
+Last Modified : 2014 Aug 18 (Mon) 16:44:19 by Harold Carr.
 -}
 
 {-# LANGUAGE RecursiveDo #-}
@@ -15,7 +15,7 @@ import           Database.HSparql.Connection
 import           Debug.Trace
 import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core
-import           RTBQ
+-- import           RTBQ
 
 hcDebug :: c -> String -> c
 hcDebug = flip trace
@@ -152,20 +152,6 @@ doRDFQuery :: String
                     , [(String, BindingValue)]
                     , [(String, BindingValue)]
                     )
-doRDFQuery url mk bdb = do
-    putStrLn ""
-    putStrLn url
-    putStrLn ("MK : " ++ show mk)
-    db0 <- currentValue bdb
-    case mk of
-        (Just k) -> do let v = dbLookup k db0
-                       putStrLn ("DBValue: " ++ show v)
-                       case v of
-                           Just b -> do rrr <- ttwv url b
-                                        print rrr
-                                        return rrr
-                           Nothing             -> ttt url
-        _        -> do putStrLn "key is NOTHING"
-                       ttt url
+doRDFQuery _ _ _ = undefined
 
 -- End of file.

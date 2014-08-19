@@ -1,10 +1,10 @@
-name:                rdf-triple-browser
+name:                haskell-threepenny-gui-experiments
 version:             0.1.0.0
 -- synopsis:            
 -- description:         
 homepage:            http://haroldcarr.com/
 -- license:             
-license-file:        LICENSE
+-- license-file:        LICENSE
 author:              Harold Carr
 maintainer:          harold.carr@gmail.com
 -- copyright:           
@@ -14,12 +14,15 @@ build-type:          Simple
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     RTB
+  exposed-modules:     CRUD, CRUD2, Diagrams, JaccoUnsafeFRPExample, TaldykinFRPAndEventExample
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >=4.6 && <4.7
                        , containers >= 0.5.0.0
+                       , data-graphviz-hc-util >= 0.1.0.0
+                       , graphviz >= 2999.17.0.1
                        , hsparql
+                       , random >= 1.0.1.1
                        , rdf4h >= 1.2.5
                        , text >= 0.11.3.1
                        , threepenny-gui >= 0.4.2.0
