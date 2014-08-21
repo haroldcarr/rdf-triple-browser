@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 20 (Wed) 19:25:29 by Harold Carr.
+Last Modified : 2014 Aug 21 (Thu) 07:50:05 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -257,6 +257,18 @@ mkDI _ Unbound   = (show Unbound, Unbound)
 ------------------------------------------------------------------------------
 -- Utility
 
+-- | Strip off everything before '#' (the first one if multiples),
+--   or, if no '#' is present, strip off everything before the last '/',
+--   or, if neither '#' or '/' is present, return the given String.
+--
+-- >>> shorten "http://www.geonames.org/ontology#postalCode"
+-- "postalCode"
+--
+-- >>> shorten "http://xmlns.com/foaf/0.1/homepage"
+-- "homepage"
+--
+-- >>> shorten "Music Garage"
+-- "Music Garage"
 shorten :: String -> String
 shorten x = fromMaybe x $ maybeShorten x
 
