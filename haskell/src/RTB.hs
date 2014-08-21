@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 21 (Thu) 14:30:37 by Harold Carr.
+Last Modified : 2014 Aug 21 (Thu) 15:41:06 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -264,24 +264,26 @@ mkDI _ Unbound   = (show Unbound, Unbound)
 -- >>> shorten "http://www.geonames.org/ontology#postalCode"
 -- "postalCode"
 --
+-- >>> shorten "http://www.geonames.org/ontology#postalCode/"
+-- "postalCode/"
+--
 -- >>> shorten "http://xmlns.com/foaf/0.1/homepage"
+-- "homepage"
+--
+-- >>> shorten "http://xmlns.com/foaf/0.1/homepage/"
 -- "homepage"
 --
 -- >>> shorten "Music Garage"
 -- "Music Garage"
+
 shorten :: String -> String
-shorten s = fromMaybe s $ dropAllBefore "#/" (if elem '#' s then s else removeTrailing '/' s)
+shorten s0 = drop (cutIndex + 1) s
+  where
+    s        = if elem '#' s0 then s0 else removeTrailing '/' s0
+    cutIndex = fromJust ((elemIndexEnd '#' s) <|> (elemIndexEnd '/' s) <|> Just (-1))
 
-dropAllBefore :: Eq a => [a] -> [a] -> Maybe [a]
-dropAllBefore ds0 s =
-    case ds0 of
-        (d:ds) -> maybeDropLast d s <|> dropAllBefore ds s
-        []     -> Nothing
-
-maybeDropLast :: Eq a => a -> [a] -> Maybe [a]
-maybeDropLast c s = do
-    let is = elemIndices c s
-    if null is then Nothing else Just $ drop (last is + 1) s
+elemIndexEnd :: Eq a => a -> [a] -> Maybe Int
+elemIndexEnd chr str = ((length str) - 1 -) <$> elemIndex chr (reverse str)
 
 removeTrailing :: Eq a => a -> [a] -> [a]
 removeTrailing a as | last as == a = take (length as - 1) as
