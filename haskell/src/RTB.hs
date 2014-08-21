@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 21 (Thu) 15:41:06 by Harold Carr.
+Last Modified : 2014 Aug 21 (Thu) 15:54:24 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -11,9 +11,9 @@ Last Modified : 2014 Aug 21 (Thu) 15:41:06 by Harold Carr.
 
 module RTB where
 
-import           Data.List                   (elemIndex, elemIndices)
+import           Data.List                   (elemIndex)
 import qualified Data.Map                    as Map
-import           Data.Maybe                  (fromJust, fromMaybe)
+import           Data.Maybe                  (fromJust)
 import           Data.RDF.Types              (LValue (..), Node (..))
 import qualified Data.Text                   as T (pack, unpack)
 import           Database.HSparql.Connection
@@ -279,11 +279,11 @@ mkDI _ Unbound   = (show Unbound, Unbound)
 shorten :: String -> String
 shorten s0 = drop (cutIndex + 1) s
   where
-    s        = if elem '#' s0 then s0 else removeTrailing '/' s0
-    cutIndex = fromJust ((elemIndexEnd '#' s) <|> (elemIndexEnd '/' s) <|> Just (-1))
+    s        = if '#' `elem` s0 then s0 else removeTrailing '/' s0
+    cutIndex = fromJust (elemIndexEnd '#' s <|> elemIndexEnd '/' s <|> Just (-1))
 
 elemIndexEnd :: Eq a => a -> [a] -> Maybe Int
-elemIndexEnd chr str = ((length str) - 1 -) <$> elemIndex chr (reverse str)
+elemIndexEnd a as = (length as - 1 -) <$> elemIndex a (reverse as)
 
 removeTrailing :: Eq a => a -> [a] -> [a]
 removeTrailing a as | last as == a = take (length as - 1) as
