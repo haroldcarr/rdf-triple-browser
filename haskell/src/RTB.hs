@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 21 (Thu) 14:10:11 by Harold Carr.
+Last Modified : 2014 Aug 21 (Thu) 14:30:37 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -270,24 +270,21 @@ mkDI _ Unbound   = (show Unbound, Unbound)
 -- >>> shorten "Music Garage"
 -- "Music Garage"
 shorten :: String -> String
-shorten x = fromMaybe x $ maybeShorten x
+shorten s = fromMaybe s $ dropAllBefore "#/" (if elem '#' s then s else removeTrailing '/' s)
 
-maybeShorten :: String -> Maybe String
-maybeShorten s = subStringAfterFirstSharp s <|> subStringAfterLastSlash s <|> Just s
+dropAllBefore :: Eq a => [a] -> [a] -> Maybe [a]
+dropAllBefore ds0 s =
+    case ds0 of
+        (d:ds) -> maybeDropLast d s <|> dropAllBefore ds s
+        []     -> Nothing
 
-maybeDropLast :: Char -> String -> Maybe String
+maybeDropLast :: Eq a => a -> [a] -> Maybe [a]
 maybeDropLast c s = do
     let is = elemIndices c s
     if null is then Nothing else Just $ drop (last is + 1) s
 
-subStringAfterFirstSharp :: String -> Maybe String
-subStringAfterFirstSharp s = maybeDropLast '#' s
-
-subStringAfterLastSlash :: String -> Maybe String
-subStringAfterLastSlash s = maybeDropLast '/' (removeTrailingSlash s)
-
-removeTrailingSlash :: String -> String
-removeTrailingSlash x | last x == '/' = take (length x - 1) x
-                      | otherwise     = x
+removeTrailing :: Eq a => a -> [a] -> [a]
+removeTrailing a as | last as == a = take (length as - 1) as
+                    | otherwise    = as
 
 -- End of file.
