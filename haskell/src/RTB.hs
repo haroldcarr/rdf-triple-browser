@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 21 (Thu) 07:50:05 by Harold Carr.
+Last Modified : 2014 Aug 21 (Thu) 14:10:11 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -273,20 +273,18 @@ shorten :: String -> String
 shorten x = fromMaybe x $ maybeShorten x
 
 maybeShorten :: String -> Maybe String
-maybeShorten x = subStringAfterFirstSharp x <|> subStringAfterLastSlash x
+maybeShorten s = subStringAfterFirstSharp s <|> subStringAfterLastSlash s <|> Just s
+
+maybeDropLast :: Char -> String -> Maybe String
+maybeDropLast c s = do
+    let is = elemIndices c s
+    if null is then Nothing else Just $ drop (last is + 1) s
 
 subStringAfterFirstSharp :: String -> Maybe String
-subStringAfterFirstSharp x = do
-    i <- elemIndex '#' x
-    return $ drop (i + 1) x
+subStringAfterFirstSharp s = maybeDropLast '#' s
 
 subStringAfterLastSlash :: String -> Maybe String
-subStringAfterLastSlash x0 = do
-    let x  = removeTrailingSlash x0
-        is = elemIndices '/' x
-    return $ if null is
-                 then x
-                 else drop (last is + 1) x
+subStringAfterLastSlash s = maybeDropLast '/' (removeTrailingSlash s)
 
 removeTrailingSlash :: String -> String
 removeTrailingSlash x | last x == '/' = take (length x - 1) x
