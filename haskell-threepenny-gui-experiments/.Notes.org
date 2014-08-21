@@ -1,5 +1,5 @@
 Created       : 2014 Jul 16 (Wed) 08:35:29 by Harold Carr.
-Last Modified : 2014 Aug 19 (Tue) 18:07:39 by Harold Carr.
+Last Modified : 2014 Aug 21 (Thu) 16:29:40 by Harold Carr.
 
 http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
 
@@ -14,3 +14,6 @@ curl http://localhost:3029/ds/query?query=%20SELECT%20REDUCED%20%3Fx0%20%3Fx1%20
 GOOD: 3 vars limit 1
 curl http://localhost:3029/ds/query?query=%20SELECT%20%20%3Fx0%20%3Fx1%20%3Fx2%20WHERE%20%7B%3Fx0%20%3Fx1%20%3Fx2%20.%7D%20LIMIT%201
 
+small data set:
+
+http://demo.openlinksw.com/sparql/

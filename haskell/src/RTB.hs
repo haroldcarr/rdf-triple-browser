@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 21 (Thu) 15:54:24 by Harold Carr.
+Last Modified : 2014 Aug 21 (Thu) 16:47:21 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -22,8 +22,11 @@ import qualified Graphics.UI.Threepenny      as UI
 import           Graphics.UI.Threepenny.Core
 import           RTBQ
 
+debugEnabled :: Bool
+debugEnabled = False
+
 hcDebug :: c -> String -> c
-hcDebug = flip trace
+hcDebug c s = if debugEnabled then flip trace c s else c
 
 defaultEndPoint :: String
 defaultEndPoint = "http://localhost:3030/ds/query"
@@ -185,7 +188,7 @@ mkSPOPanel spoType = mdo
     bLBSelection <- stepper Nothing eLBSelection `hcDebug` "stepper"
 
     let dbQueryFill    :: [BindingValue] -> DB DI -> DB DI
-        dbQueryFill ss (DB sP _ _) = foldr (dbInsert . mkDI sP) (dbEmpty' sP) ss `hcDebug` ("dbQueryFill " ++ show sP)
+        dbQueryFill ss (DB sP _ _) = foldr (dbInsert . mkDI sP) (dbEmpty' sP) ss `hcDebug` ("dbQueryFill " ++ show sP ++ show ss)
 
         dbExpandFill   :: DB DI -> DB DI
         dbExpandFill (DB sP k db0) = DB (not sP) k $ Map.map (\(s,b) -> if sP then mkDI (not sP) b else (shorten s, b)) db0 `hcDebug` ("dbExpandFill " ++ show sP)
