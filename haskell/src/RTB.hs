@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 18 (Mon) 08:11:47 by Harold Carr.
+Last Modified : 2014 Aug 20 (Wed) 19:25:29 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -44,7 +44,8 @@ main = startGUI defaultConfig $ \w -> do
 mkLayout :: UI Element
 mkLayout  = mdo
     -- input elements
-    sparqlEndpointURL <- UI.input  # set (attr "size") "175" # set (attr "type") "text"
+    sparqlEndpointURL <- UI.input  # set (attr "size")  "205"
+                                   # set (attr "type")  "text"
                                    # set (attr "value") defaultEndPoint
     submitBtn         <- UI.button #+ [string "submit"]
 
@@ -152,12 +153,14 @@ mkSPOPanel :: SPOType
                  )
 mkSPOPanel spoType = mdo
     -- GUI elements
-    lbSelection <- UI.input  # set (attr "size") "40" # set (attr "type") "text"
-                             # set value (show spoType)
+    lbSelection <- UI.input  # set (attr "size") "68"
+                             # set (attr "type") "text"
+                             # set value         (show spoType)
     clrBtn      <- UI.button #+ [string "*"]
     expandBtn   <- UI.button #+ [string "+"] # set value "+"
     listBox     <- UI.listBox  bLBItems bLBSelection bDisplayDI
-    element listBox # set (attr "size") "10" # set style [("width","300px")]
+    element listBox # set (attr "size") "15"
+                    # set style         [("width","350px")]
 
     let eExpandBtn   :: Event ()
         eExpandBtn   = UI.click expandBtn

@@ -1,12 +1,16 @@
 Created       : 2014 Jul 16 (Wed) 08:35:29 by Harold Carr.
-Last Modified : 2014 Jul 16 (Wed) 08:35:31 by Harold Carr.
+Last Modified : 2014 Aug 19 (Tue) 18:07:39 by Harold Carr.
 
 http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
 
-lookupDb
+http://meyerweb.com/eric/tools/dencoder/
 
-(fromDb, fromDbPush) <- newEvent
+GOOD: 3 vars
+curl http://localhost:3029/ds/query?query=%20SELECT%20%20%3Fx0%20%3Fx1%20%3Fx2%20WHERE%20%7B%3Fx0%20%3Fx1%20%3Fx2%20.%7D
 
-register lookupDb (\s ->
-  r <- call sparql
-  fromDbPush r)
+GOOD: 3 vars reduced
+curl http://localhost:3029/ds/query?query=%20SELECT%20REDUCED%20%3Fx0%20%3Fx1%20%3Fx2%20WHERE%20%7B%3Fx0%20%3Fx1%20%3Fx2%20.%7D
+
+GOOD: 3 vars limit 1
+curl http://localhost:3029/ds/query?query=%20SELECT%20%20%3Fx0%20%3Fx1%20%3Fx2%20WHERE%20%7B%3Fx0%20%3Fx1%20%3Fx2%20.%7D%20LIMIT%201
+
