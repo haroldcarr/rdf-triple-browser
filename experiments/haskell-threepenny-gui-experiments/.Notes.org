@@ -1,5 +1,5 @@
 Created       : 2014 Jul 16 (Wed) 08:35:29 by Harold Carr.
-Last Modified : 2014 Aug 21 (Thu) 16:29:40 by Harold Carr.
+Last Modified : 2014 Aug 23 (Sat) 07:03:09 by Harold Carr.
 
 http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
 
@@ -17,3 +17,13 @@ curl http://localhost:3029/ds/query?query=%20SELECT%20%20%3Fx0%20%3Fx1%20%3Fx2%2
 small data set:
 
 http://demo.openlinksw.com/sparql/
+
+
+------------------------------------------------------------------------------
+investigating hsparql test failures
+
+git checkout 311f31269b0515ee532009629f5e570feb7993f1
+still fails the same say
+probably changes to unpinned dependencies
+
+

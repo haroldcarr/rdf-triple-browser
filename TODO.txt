@@ -4,6 +4,10 @@
 //
 
 ------------------------------------------------------------------------------
+- REWRITE GWT and Swing version to be sparql clients only (i.e., drop the ad-hoc services)
+  like the haskell/threepenny-gui version.
+
+------------------------------------------------------------------------------
 
 - ability to download/upload data files in swing version
 - ability to send queries to swing version

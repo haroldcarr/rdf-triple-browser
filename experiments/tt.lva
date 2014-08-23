@@ -1,0 +1,31 @@
+;;;;
+;;;; Created       : 2006 Oct 06 (Fri) 21:46:01 by Harold Carr.
+;;;; Last Modified : 2006 Oct 06 (Fri) 21:57:45 by Harold Carr.
+;;;;
+
+(import com.differentity.server.Jena)
+(import org.openhc.rdf.Jena)
+(import org.openhc.rdf.LRDF)
+
+(set! *m* (-si 'createDefaultModel 'com.hp.hpl.jena.rdf.model.ModelFactory))
+(read-rdf *m* "all.rdf")
+(write-statements *m*)
+(set! *results* (do-query *m*
+"SELECT  ?x ?y ?z WHERE { ?x ?y ?z . }"))
+(for-each-result
+ (lambda (x) (-write x) (-newline) (-flush))
+ *results*)
+
+(set! jena (new 'com.differentity.server.Jena))
+(readRDF jena "all.rdf")
+(set! results (doQuery jena "?x" "?y" "?z"))
+(getResultVars results)
+(for-each-result
+ (lambda (x) (-println x))
+ results)
+
+
+
+
+;;; End of file.
+
