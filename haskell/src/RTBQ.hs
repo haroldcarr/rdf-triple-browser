@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 29 (Tue) 07:16:51 by Harold Carr.
-Last Modified : 2014 Aug 17 (Sun) 20:44:01 by Harold Carr.
+Last Modified : 2014 Aug 24 (Sun) 15:15:40 by Harold Carr.
 -}
 
 {-# LANGUAGE OverloadedStrings #-}
@@ -48,6 +48,7 @@ query0 url (isSVar, sval) (isPVar, pval) (isOVar, oval) = selectQuery url q
         svar <- var
         pvar <- var
         ovar <- var
+        limit 100
         triple (if isSVar then Var' svar else RDFNode sval)
                (if isPVar then Var' pvar else RDFNode pval)
                (if isOVar then Var' ovar else RDFNode oval)

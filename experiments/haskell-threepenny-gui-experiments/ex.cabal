@@ -14,7 +14,7 @@ build-type:          Simple
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     CRUD, CRUD2, Diagrams, JaccoUnsafeFRPExample, TaldykinFRPAndEventExample
+  exposed-modules:     A, CRUD, CRUD2, Diagrams, JaccoUnsafeFRPExample, TaldykinFRPAndEventExample
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >=4.6 && <4.7
@@ -22,6 +22,7 @@ library
                        , data-graphviz-hc-util >= 0.1.0.0
                        , graphviz >= 2999.17.0.1
                        , hsparql
+                       , network >= 2.4.1.2
                        , random >= 1.0.1.1
                        , rdf4h >= 1.2.5
                        , text >= 0.11.3.1
