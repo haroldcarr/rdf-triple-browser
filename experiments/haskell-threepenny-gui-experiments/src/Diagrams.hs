@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 24 (Thu) 09:37:09 by Harold Carr.
-Last Modified : 2014 Aug 10 (Sun) 16:22:00 by Harold Carr.
+Last Modified : 2015 Feb 05 (Thu) 18:25:58 by Harold Carr.
 -}
 
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -127,11 +127,33 @@ taldykin = digraph (Str "taldykin") $ do
 
 ------------------------------------------------------------------------------
 
+fAcceptLoop         = fun         "fAcceptLoop"   "fAcceptLoop"
+hAccept             = handler     "hAccept"       "hAccept ::\nHandler String"
+eAccept             = event       "eAccept"       "eAccept ::\nEvent String"
+bAccept             = behavior    "bAccept"       "bAccept\nm (Behavior String)"
+
+externalNewEvent :: G.DotGraph L.Text
+externalNewEvent = digraph (Str "externalNewEvent") $ do
+
+    graphAttrs [RankDir FromLeft]
+    fAcceptLoop; hAccept; eAccept; stepper; bAccept;
+    listBox
+
+    "fAcceptLoop"         --> "fAcceptLoop"
+    "fAcceptLoop"         --> "hAccept"
+    "hAccept"             --> "eAccept"
+    "eAccept"             --> "stepper"
+    "stepper"             --> "bAccept"
+    "bAccept"             --> "listBox"
+
+------------------------------------------------------------------------------
+
 main :: IO ()
 main =
     doDots' Fdp -- TwoPi -- Fdp
-            [ ("taldykin" , taldykin)
-            , ("crud2"    , crud2)
+            [ ("taldykin"         , taldykin)
+            , ("externalNewEvent" , externalNewEvent)
+            , ("crud2"            , crud2)
             ]
 
 -- End of file.
