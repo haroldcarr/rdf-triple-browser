@@ -14,7 +14,7 @@ build-type:          Simple
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     A, CRUD, CRUD2, Diagrams, JaccoUnsafeFRPExample, TaldykinFRPAndEventExample
+  exposed-modules:     CRUD, CRUD2, Diagrams, JaccoUnsafeFRPExample, TaldykinFRPAndEventExample, ThreepennyExternalNewEventDemo
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >=4.6 && <4.7

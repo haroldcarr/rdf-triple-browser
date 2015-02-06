@@ -1,9 +1,9 @@
 {-
 Created       : 2015 Feb 05 (Thu) 14:56:08 by Harold Carr.
-Last Modified : 2015 Feb 05 (Thu) 18:01:53 by Harold Carr.
+Last Modified : 2015 Feb 05 (Thu) 18:06:06 by Harold Carr.
 -}
 
-module A where
+module ThreepennyExternalNewEventDemo where
 
 import           Control.Concurrent     (forkIO)
 import           Graphics.UI.Threepenny
