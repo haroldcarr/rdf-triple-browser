@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 24 (Thu) 09:37:09 by Harold Carr.
-Last Modified : 2015 Feb 05 (Thu) 18:25:58 by Harold Carr.
+Last Modified : 2015 Feb 06 (Fri) 12:58:24 by Harold Carr.
 -}
 
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -28,6 +28,7 @@ mfun     = uDoubleOctagon $ uFixedSize [Width 1.5, Height 1.5]
 
 doItBtn        = ui          "doItBtn"            "doItBtn ::\nUI Element"
 listBox        = ui          "listBox"            "listBox ::\nUI (ListBox a)"
+entry          = ui          "entry"              "entry ::\nBehavior String ->\nUI (TextEntry)"
 lbSelection    = ui          "lbSelection"        "lbSelection ::\n UI Element"
 userSelection  = fun         "userSelection"      "userSelection ::\nListBox a ->\nTidings (Maybe a)"
 rumors         = fun         "rumors"             "rumors ::\nTidings -> \nEvent a"
@@ -127,33 +128,44 @@ taldykin = digraph (Str "taldykin") $ do
 
 ------------------------------------------------------------------------------
 
-fAcceptLoop         = fun         "fAcceptLoop"   "fAcceptLoop"
-hAccept             = handler     "hAccept"       "hAccept ::\nHandler String"
-eAccept             = event       "eAccept"       "eAccept ::\nEvent String"
-bAccept             = behavior    "bAccept"       "bAccept\nm (Behavior String)"
+acceptLoop6789      = fun         "acceptLoop6789"    "acceptLoop\n6789"
+acceptLoop9876      = fun         "acceptLoop9876"    "acceptLoop\n9876"
+hAccept             = handler     "hAccept"           "hAccept :: Handler String"
+eAccept             = event       "eAccept"           "eAccept ::\nEvent String"
+bAccept             = behavior    "bAccept"           "bAccept ::\nm (Behavior String)"
+newEvent            = fun         "newEvent"          "newEvent ::\nIO (Event a, Handler a)"
 
-externalNewEvent :: G.DotGraph L.Text
-externalNewEvent = digraph (Str "externalNewEvent") $ do
+threepennyExternalNewEventDemoCreate :: G.DotGraph L.Text
+threepennyExternalNewEventDemoCreate = digraph (Str "threepennyExternalNewEventDemoCreate") $ do
 
-    graphAttrs [RankDir FromLeft]
-    fAcceptLoop; hAccept; eAccept; stepper; bAccept;
-    listBox
+    newEvent; eAccept; hAccept;
 
-    "fAcceptLoop"         --> "fAcceptLoop"
-    "fAcceptLoop"         --> "hAccept"
-    "hAccept"             --> "eAccept"
+    edge "newEvent" "eAccept" [textLabel "creates"]
+    edge "newEvent" "hAccept" [textLabel "creates"]
+
+threepennyExternalNewEventDemo :: G.DotGraph L.Text
+threepennyExternalNewEventDemo = digraph (Str "threepennyExternalNewEventDemo") $ do
+
+    acceptLoop6789; acceptLoop9876; hAccept; eAccept; stepper; bAccept; entry;
+
+    "acceptLoop6789"     --> "acceptLoop6789"
+    "acceptLoop9876"     --> "acceptLoop9876"
+    "acceptLoop6789"     --> "hAccept"
+    "acceptLoop9876"     --> "hAccept"
+    edge "hAccept"            "eAccept" [textLabel "    magic"]
     "eAccept"             --> "stepper"
     "stepper"             --> "bAccept"
-    "bAccept"             --> "listBox"
+    "bAccept"             --> "entry"
 
 ------------------------------------------------------------------------------
 
 main :: IO ()
 main =
     doDots' Fdp -- TwoPi -- Fdp
-            [ ("taldykin"         , taldykin)
-            , ("externalNewEvent" , externalNewEvent)
-            , ("crud2"            , crud2)
+            [ ("taldykin"                             , taldykin)
+            , ("threepennyExternalNewEventDemoCreate" , threepennyExternalNewEventDemoCreate)
+            , ("threepennyExternalNewEventDemo"       , threepennyExternalNewEventDemo)
+            , ("crud2"                                , crud2)
             ]
 
 -- End of file.

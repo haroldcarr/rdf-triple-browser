@@ -1,6 +1,6 @@
 {-
 Created       : 2015 Feb 05 (Thu) 14:56:08 by Harold Carr.
-Last Modified : 2015 Feb 05 (Thu) 18:06:06 by Harold Carr.
+Last Modified : 2015 Feb 06 (Fri) 12:56:10 by Harold Carr.
 -}
 
 module ThreepennyExternalNewEventDemo where
@@ -13,28 +13,24 @@ import           System.IO              (hClose)
 main :: IO ()
 main = do
     (eAccept, hAccept) <- newEvent
-    bAccept <- stepper "" eAccept
-    forkIO (listenAndAccept hAccept 6789)
-    forkIO (listenAndAccept hAccept 9876)
+    forkIO (acceptLoop hAccept 6789)
+    forkIO (acceptLoop hAccept 9876)
     startGUI defaultConfig $ \win -> do
+        bAccept <- stepper "" eAccept
         entree <- entry bAccept
         element entree # set (attr "size") "10" # set style [("width","200px")]
         getBody win #+ [element entree]
         return ()
 
-listenAndAccept :: (String -> IO a) -> PortNumber -> IO ()
-listenAndAccept hAccept bindAddr = do
+acceptLoop :: (String -> IO a) -> PortNumber -> IO b
+acceptLoop hAccept bindAddr = do
     s <- listenOn $ PortNumber bindAddr
-    acceptLoop hAccept bindAddr s
-    return ()
-
-acceptLoop :: (String -> IO a) -> PortNumber -> Socket -> IO b
-acceptLoop hAccept bindAddr s = loop
+    loop s
   where
-    loop = do
+    loop s = do
         (h, hostname, portNumber) <- accept s
         hClose h
         hAccept $ show bindAddr ++ " " ++ hostname ++ " " ++ show portNumber
-        loop
+        loop s
 
 -- End of file.

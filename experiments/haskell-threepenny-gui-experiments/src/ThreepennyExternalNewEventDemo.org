@@ -1,0 +1,95 @@
+#+TITLE:       how to connect threepenny-gui to external events
+#+AUTHOR:      Harold Carr
+#+DESCRIPTION: how to connect threepenny-gui to external events
+#+OPTIONS:     num:nil toc:t
+#+OPTIONS:     skip:nil author:nil email:nil creator:nil timestamp:nil
+#+INFOJS_OPT:  view:nil toc:t ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+
+#+BEGIN_HTML
+---
+title: how to connect threepenny-gui to external events
+tags: haskell, threepenny-gui
+---
+#+END_HTML
+
+# Created       : 2015 Feb 06 (Fri) 11:36:49 by Harold Carr.
+Last Modified : 2015 Feb 06 (Fri) 13:29:28 by Harold Carr.
+
+------------------------------------------------------------------------------
+
+Over the years I occasionally reimplemented my [[https://github.com/haroldcarr/rdf-triple-browser][rdf-triple-browser]],
+first in GWT, then Java/Swing and then last summer in Haskell using
+[[https://wiki.haskell.org/Threepenny-gui][Threepenny-gui]] (which I will call 'TPG' for the rest of this article).
+The hardest part for me was understanding how to connect to external events.
+
+The documentation says =newEvent :: IO (Event a, Handler a)= "Create a
+new event. Also returns a function that triggers an event occurrence."
+What is doesn't say it that calling the returned =Handler= causes the
+specific returned =Event= to happen.
+
+I got lost in the documentation about =Handler=, going off on dead
+ends with =register=.  Even the TAs at last summer's [[http://www.utrechtsummerschool.nl/courses/science/applied-functional-programming-in-haskell][Utrecht Haskell
+Summer School]] could not figure it out (although, to be fair, they did
+not spend that much time on it, they were concentrating on course
+questions).
+
+Fortunately, Max Taldykin, on [[http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming][stackoverflow]], provided a small program
+that lead me to discover the "magic" of how to use what is returned via
+=newEvent=. Below I show an even smaller program that shows how it is
+wired.
+
+#+BEGIN_SRC haskell -n
+module ThreepennyExternalNewEventDemo where
+
+import           Control.Concurrent     (forkIO)
+import           Graphics.UI.Threepenny
+import           Network
+import           System.IO              (hClose)
+
+main :: IO ()
+main = do
+    (eAccept, hAccept) <- newEvent
+    forkIO (acceptLoop hAccept 6789)
+    forkIO (acceptLoop hAccept 9876)
+    startGUI defaultConfig $ \win -> do
+        bAccept <- stepper "" eAccept
+        entree <- entry bAccept
+        element entree # set (attr "size") "10" # set style [("width","200px")]
+        getBody win #+ [element entree]
+        return ()
+
+acceptLoop :: (String -> IO a) -> PortNumber -> IO b
+acceptLoop hAccept bindAddr = do
+    s <- listenOn $ PortNumber bindAddr
+    loop s
+  where
+    loop s = do
+        (h, hostname, portNumber) <- accept s
+        hClose h
+        hAccept $ show bindAddr ++ " " ++ hostname ++ " " ++ show portNumber
+        loop s
+#+END_SRC
+
+Line 10 uses =newEvent= to create an =Event a= and =Handler a=.  The
+"magic" is that behind the scenes TPG has wired the return =Handler=
+such that when it is called it generates an =Event= specific to the returned =Event=.
+
+Line 14 creates a =Behavior= from that specific =Event=.  That
+=Behavior= is then given to the =entry= widget.  Whenever the code
+calls the =Handler= it triggers that =Event= that causes the
+=Behavior= to change.  The widget shows the =Behavior= change.
+
+Here is the wiring for the program:
+
+[[file:./threepennyExternalNewEventDemo.png]]
+
+Line 11 starts two threads that accept connection at two different
+listening ports.  Whenever a connection is accepted, the loops call the
+given =Handler= at line 28.  The =Handler= "magically" triggers an
+=Event=.  The =Event= is turned into a =Behavior= via =stepper=.  The
+=Behavior= was previously wired to the =entry= widget.  So, whenever a
+connection is accepted the text field shows the info.  That's it!
+
+Hopefully this small example will save someone some time.
+
+# End of file.
