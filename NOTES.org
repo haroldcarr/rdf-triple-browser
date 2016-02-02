@@ -1,12 +1,14 @@
 #
 # Created       : 2006 Jul 14 (Wed) 19:15:16 by Harold Carr.
-# Last Modified : 2011 Aug 10 (Wed) 21:20:29 by carr.
+# Last Modified : 2016 Feb 01 (Mon) 20:29:11 by Harold Carr.
 #
 
 ------------------------------------------------------------------------------
 2014-07-08
 
 Wrote a Haskell threepenny-gui version.
+
+See haskell/interview notes for starting up fuseki and loading it with data
 
 ------------------------------------------------------------------------------
 2011-08
