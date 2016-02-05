@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
+
 module JaccoUnsafeFRPExample where
 
 import           Graphics.UI.Threepenny as UI

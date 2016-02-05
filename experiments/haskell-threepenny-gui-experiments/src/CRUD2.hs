@@ -1,8 +1,9 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 18 (Mon) 16:44:19 by Harold Carr.
+Last Modified : 2016 Feb 04 (Thu) 20:13:59 by Harold Carr.
 -}
 
+{-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
 {-# LANGUAGE RecursiveDo #-}
 
 module CRUD2 where

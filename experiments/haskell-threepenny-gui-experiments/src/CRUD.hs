@@ -1,8 +1,9 @@
 {-
 Created       : by threepenny-gui/samples/CRUD
-Last Modified : 2014 Aug 02 (Sat) 09:27:02 by Harold Carr.
+Last Modified : 2016 Feb 04 (Thu) 20:16:26 by Harold Carr.
 -}
 
+{-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
 {-# LANGUAGE RecursiveDo #-}
 
 module CRUD where
@@ -49,7 +50,7 @@ mkSPVPanel name = mdo
         eFilter = rumors tFilter
 
     let eSelection  = rumors $ UI.userSelection listBox
-        eDataItemIn = rumors $ tDataItem
+        eDataItemIn = rumors tDataItem
         eCreate     = UI.click createBtn
         eDelete     = UI.click deleteBtn
 
@@ -90,7 +91,7 @@ mkSPVPanel name = mdo
     -- automatically enable / disable editing
     let
         bDisplayItem :: Behavior Bool
-        bDisplayItem = maybe False (const True) <$> bSelection
+        bDisplayItem = isJust <$> bSelection
 
     element deleteBtn # sink UI.enabled bDisplayItem
     element firstname # sink UI.enabled bDisplayItem
@@ -138,7 +139,7 @@ showDataItem x = x
 -- | Data item widget, consisting of two text entries
 dataItem :: Behavior (Maybe DataItem) -> UI (Element, Tidings DataItem)
 dataItem bItem = do
-    entry1 <- UI.entry $ maybe "" id <$> bItem
+    entry1 <- UI.entry $ fromMaybe "" <$> bItem
     return ( getElement  entry1
            , UI.userText entry1
            )

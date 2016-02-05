@@ -1,7 +1,9 @@
 {-
 Created       : 2015 Feb 05 (Thu) 14:56:08 by Harold Carr.
-Last Modified : 2015 Feb 06 (Fri) 12:56:10 by Harold Carr.
+Last Modified : 2016 Feb 04 (Thu) 20:04:24 by Harold Carr.
 -}
+
+{-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
 
 module ThreepennyExternalNewEventDemo where
 

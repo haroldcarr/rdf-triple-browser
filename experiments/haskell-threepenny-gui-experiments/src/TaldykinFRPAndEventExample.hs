@@ -1,8 +1,10 @@
 {-
 Created       : 2014 Jul 17 (Thu) 04:21:11 by Max Taldykin.
-Last Modified : 2014 Aug 09 (Sat) 08:07:32 by Harold Carr.
+Last Modified : 2016 Feb 04 (Thu) 20:11:26 by Harold Carr.
 http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
 -}
+
+{-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
 
 module TaldykinFRPAndEventExample where
 
@@ -51,7 +53,6 @@ main = do
                           liftIO $ valuesSupply it >>= hFillLB
                           element list #+ [li # set html it]
                           setFocus $ getElement lstBox
-
 
 valuesSupply :: String -> IO [String]
 valuesSupply x = do

@@ -1,8 +1,9 @@
 {-
 Created       : 2014 Aug 19 (Tue) 17:42:46 by Harold Carr.
-Last Modified : 2014 Aug 23 (Sat) 07:56:41 by Harold Carr.
+Last Modified : 2016 Feb 04 (Thu) 20:16:57 by Harold Carr.
 -}
 
+{-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Q where
@@ -13,6 +14,7 @@ import           Database.HSparql.QueryGenerator
 endPoint :: String
 endPoint = "http://localhost:3029/ds/query"
 
+q0 :: IO (Maybe [[BindingValue]])
 q0 = qAll endPoint
 
 qAll :: String -> IO (Maybe [[BindingValue]])
