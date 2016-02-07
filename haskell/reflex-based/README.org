@@ -1,0 +1,3 @@
+Use [[https://github.com/ryantrinkle/try-reflex]] to build this.
+
+Initial version done with LOTS of help from Cale Gibbard (at Compose Conference 2016).
