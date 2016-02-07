@@ -38,23 +38,30 @@ mkSPOPanel spo contentE = divClass "spoPanel" $ do
        fmap _dropdown_change $ dropdown "" content (def & dropdownConfig_attributes .~ (constDyn ("size" =: "5")))
   return panel
 
-main = mainWidget $ el "div" $ do
-    -- Dynamic String
-    url <- fmap value
-                (textInput $ def & textInputConfig_initialValue .~ "http://localhost:3030/ds/query")
-    -- Event ()
-    btn <- button "Submit"
-    rec
-        s <- mkSPOPanel SUB (fmap (\(Resp s _ _) -> s) resp)
-        p <- mkSPOPanel PRE (fmap (\(Resp _ p _) -> p) resp)
-        o <- mkSPOPanel OBJ (fmap (\(Resp _ _ o) -> o) resp)
-        f <- combineDyn Req s p
-        req <- combineDyn ($) f o
-        -- this line replaces the previous two lines
-        -- req <- [mkDyn| Req $s $p $o  |]
-        display req
-        resp <- requesting url (leftmost [updated req, tagDyn req btn])
-        -- widgetHold blank (fmap (\x -> text $ show x) resp)
+main = mainWidget $ do
+    elAttr "iframe" (Map.fromList [("style", "display: none;")]) blank
+    divClass "main" $ do
+        -- Dynamic String
+        url <- fmap value
+                    (textInput $ def & textInputConfig_initialValue .~ "http://localhost:3030/ds/query")
+        -- Event ()
+        btn <- button "Submit"
+        rec
+            s <- mkSPOPanel SUB (fmap (\(Resp s _ _) -> s) resp)
+            p <- mkSPOPanel PRE (fmap (\(Resp _ p _) -> p) resp)
+            o <- mkSPOPanel OBJ (fmap (\(Resp _ _ o) -> o) resp)
+            f <- combineDyn Req s p
+            req <- combineDyn ($) f o
+            -- this line replaces the previous two lines (but is SLOW to compile)
+            -- req <- [mkDyn| Req $s $p $o  |]
+            display req
+            resp <- requesting url (leftmost [updated req, tagDyn req btn])
+            -- widgetHold blank (fmap (\x -> text $ show x) resp)
+        return ()
+        el "frameset" $ do
+            elAttr "frame"
+                    (Map.fromList [("top","target"),("src","http://www.geonames.org/ontology#postalCode")])
+                    blank
     return ()
 
 data Req = Req String String String deriving Show
@@ -73,14 +80,14 @@ mkDummyData :: String -> [String]
 mkDummyData spo = Prelude.map (++ spo) dummyData
 
 dummyData :: [String]
-dummyData = [ "http://foo.bar/a"
-            , "http://foo.bar/b"
-            , "http://foo.bar/c"
-            , "http://foo.bar/d"
-            , "http://foo.bar/e"
-            , "http://foo.bar/f"
-            , "http://foo.bar/g"
-            , "http://foo.bar/h"
-            , "http://foo.bar/i"
+dummyData = [ "http://www.slugmag.com/"
+            , "http://www.excellenceconcerts.org/"
+            , "http://www.slcc.edu/"
+            , "http://www.mountaintownmusic.org/"
+            , "http://slcityart.org/"
+            , "http://musicgarage.org/"
+            , "http://xmlns.com/foaf/0.1/Organization"
+            , "http://www.geonames.org/ontology#postalCode"
+            , "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
             ]
 
