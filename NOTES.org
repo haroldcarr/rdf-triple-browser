@@ -1,7 +1,12 @@
 #
 # Created       : 2006 Jul 14 (Wed) 19:15:16 by Harold Carr.
-# Last Modified : 2016 Feb 01 (Mon) 20:29:11 by Harold Carr.
+# Last Modified : 2016 Feb 07 (Sun) 14:15:07 by Harold Carr.
 #
+
+------------------------------------------------------------------------------
+2016-02-6/7
+
+Wrote a Haskell Reflex version at Compose (un)Conference with Cale Gibbard's help
 
 ------------------------------------------------------------------------------
 2014-07-08

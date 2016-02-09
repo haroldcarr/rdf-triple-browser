@@ -1,0 +1,166 @@
+{-# LANGUAGE RecursiveDo, ScopedTypeVariables #-}
+{-# LANGUAGE GADTs, TemplateHaskell, QuasiQuotes, OverloadedStrings #-}
+
+-- =: creates a singleton Map
+
+import qualified Data.Aeson as A
+import qualified Data.ByteString.Lazy.Char8 as BSC8
+import qualified Data.ByteString.Lazy as BSL
+import qualified Data.Map as Map
+import           Data.Map (Map)
+import qualified Data.Text as T (unpack)
+import           Data.Text.Encoding as T
+import           Reflex
+import           Reflex.Dom
+import           Reflex.Dom.Time
+import           Control.Monad (join)
+
+mkToggleBtn :: MonadWidget t m => String -> String -> m (Dynamic t Bool)
+mkToggleBtn on off = do
+    -- e is HTML element
+    rec (e,_) <- elAttr' "button" mempty $
+            dynText label
+        currentState <- toggle False (domEvent Click e)
+        label <- mapDyn (\x -> if x then on else off) currentState
+    return currentState
+
+data SPO = SUB | PRE | OBJ
+
+fromSPO x = case x of
+    SUB -> "?subject"
+    PRE -> "?predicate"
+    OBJ -> "?object"
+
+mkSPOPanel :: MonadWidget t m => SPO -> Event t [String]-> m (Dynamic t String)
+mkSPOPanel spo contentE = divClass "spoPanel" $ do
+  rec
+    panel <- holdDyn (fromSPO spo) (leftmost [selection, fromSPO spo <$ resetBtn])
+    divClass "spoValue" $ dynText panel
+    resetBtn <- button "*"
+    tglBtnVal <- mkToggleBtn "+" "-"
+    content <- holdDyn mempty (fmap (Map.fromList . join zip) contentE)
+    selection <- divClass "spoList" $
+       fmap _dropdown_change $ dropdown "" content (def & dropdownConfig_attributes .~ (constDyn ("size" =: "5")))
+  return panel
+
+main = mainWidget $ do
+    elAttr "iframe" (Map.fromList [("style", "display: none;")]) blank
+    divClass "main" $ do
+        -- Dynamic String
+        url <- fmap value
+                    (textInput $ def & textInputConfig_initialValue .~ "http://localhost:3030/ds/query")
+        -- Event ()
+        btn <- button "Submit"
+        rec
+            s <- mkSPOPanel SUB (fmap (\(Resp s _ _) -> s) resp)
+            p <- mkSPOPanel PRE (fmap (\(Resp _ p _) -> p) resp)
+            o <- mkSPOPanel OBJ (fmap (\(Resp _ _ o) -> o) resp)
+            f <- combineDyn Req s p
+            req <- combineDyn ($) f o
+            -- this line replaces the previous two lines (but is SLOW to compile)
+            -- req <- [mkDyn| Req $s $p $o  |]
+            -- TMP : show the Request
+            divClass "REQ" (display req)
+            md <- mapDyn (urlEncode . toString) req
+            -- TMP : show the query
+            divClass "query" (display md)
+            resp <- requesting url (leftmost [updated req, tagDyn req btn])
+            -- TMP : show the sparql response
+            q <- (foldDyn (\(Resp s _ _) _ -> head s) "" resp)
+            display q
+            -- widgetHold blank (fmap (\x -> text $ show x) resp)
+            linkedData <- holdDyn "http://haroldcarr.com/" (leftmost [updated s, updated p, updated o])
+            frameattr <- mapDyn (\x -> Map.fromList [("top","target"),("src",x)]) linkedData
+            -- TMP : show the link given to the browser frame
+            display linkedData
+        el "frameset" $ do
+            elDynAttr "frame" frameattr blank
+    return ()
+
+data Req = Req String String String deriving Show
+
+varOrEmpty []        = ""
+varOrEmpty x@('?':_) = x
+varOrEmpty _         = ""
+
+toString :: Req -> String
+toString (Req s p o) =
+    unwords ["SELECT", varOrEmpty s, varOrEmpty p, varOrEmpty o,
+             "WHERE {", s, p, o, ".}"]
+
+data Resp = Resp [String] [String] [String] deriving Show
+
+requesting :: MonadWidget t m => Dynamic t String -> Event t Req -> m (Event t Resp)
+requesting url e = do
+    let r = attachDynWith doReq' url e
+    -- performRequestAsync :: Event XhrRequest -> m (Event XhrResponse)
+    x <- performRequestAsync r
+    return (fmap handleResponse x)
+    -- delay 1 $ attachDynWith doReq url e
+  where
+    doReq' url req =
+        -- xhrRequest :: String -> String -> XhrRequestConfig -> XhrRequest
+        xhrRequest "GET"
+                   (url ++ "?query=" ++ (urlEncode . toString) req)
+                   -- _xhrRequestConfig_headers :: Map String String
+                   (setHeaders def (Map.fromList [("Accept",
+                                                             "application/sparql-results+json"
+                                                             -- "application/rdf+json"
+                                                             -- "application/ld+json"
+                                                  )
+                                                 ,("Origin", "foo")]))
+
+handleResponse xhrResp =
+    let r = case _xhrResponse_responseText xhrResp of
+                Just x  -> T.unpack x
+                           {-
+                           case A.decode (BSC8.pack (T.unpack x)) of
+                               Just v  -> show (v :: A.Object)
+                               Nothing -> ""
+                           -}
+                Nothing -> ""
+    in Resp (r : mkDummyData "S") (mkDummyData "P") (mkDummyData "O")
+
+setHeaders (XhrRequestConfig h u p r s) hdrs =
+    XhrRequestConfig hdrs u p r s
+
+doReq :: String -> Req -> Resp
+doReq url (Req s p o) =
+    Resp (tail $ mkDummyData s) (tail $ mkDummyData p) (tail $ mkDummyData o)
+
+mkDummyData :: String -> [String]
+mkDummyData spo = Prelude.map (++ spo) dummyData
+
+dummyData :: [String]
+dummyData = [ "http://www.slugmag.com/"
+            , "http://www.excellenceconcerts.org/"
+            , "http://www.slcc.edu/"
+            , "http://www.mountaintownmusic.org/"
+            , "http://slcityart.org/"
+            , "http://musicgarage.org/"
+            , "http://xmlns.com/foaf/0.1/Organization"
+            , "http://www.geonames.org/ontology#postalCode"
+            , "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+            ]
+
+urlEncode x = case x of
+    [] -> []
+    (' ':xs) -> "%20" ++ urlEncode xs
+    ('?':xs) -> "%3F" ++ urlEncode xs
+    ('{':xs) -> "%7B" ++ urlEncode xs
+    ('}':xs) -> "%7D" ++ urlEncode xs
+    ('<':xs) -> "%3C" ++ urlEncode xs
+    ('>':xs) -> "%3E" ++ urlEncode xs
+    (':':xs) -> "%3A" ++ urlEncode xs
+    ('/':xs) -> "%2F" ++ urlEncode xs
+    (x:xs)   -> x : urlEncode xs
+
+{-
+urlEncode " SELECT  ?x0 ?x1 ?x2 WHERE {<http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah> ?x1 ?x2 .} Limit 100"
+
+"%20SELECT%20%20%3Fx0%20%3Fx1%20%3Fx2%20WHERE%20%7B%3Chttp%3A%2F%2Fopenhc.org%2Fdata%2Fevent%2FSlug_Magazine_Salt_Lake_City_Utah%3E%20%3Fx1%20%3Fx2%20.%7D%20Limit%20100"
+
+"%20SELECT%20%20%3Fx0%20%3Fx1%20%3Fx2%20WHERE%20%7B%3Chttp%3A%2F%2Fopenhc.org%2Fdata%2Fevent%2FSlug_Magazine_Salt_Lake_City_Utah%3E%20%3Fx1%20%3Fx2%20.%7D%20Limit%20100" == "%20SELECT%20%20%3Fx0%20%3Fx1%20%3Fx2%20WHERE%20%7B%3Chttp%3A%2F%2Fopenhc.org%2Fdata%2Fevent%2FSlug_Magazine_Salt_Lake_City_Utah%3E%20%3Fx1%20%3Fx2%20.%7D%20Limit%20100"
+
+   " SELECT  ?x0 ?x1 ?x2 WHERE {<http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah> ?x1 ?x2 .} Limit 100"
+-}
