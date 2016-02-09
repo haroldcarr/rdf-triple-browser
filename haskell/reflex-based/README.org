@@ -24,6 +24,8 @@ file:///Users/carr/try-reflex/RTB.jsexe/index.html
 
 traverse sparql results to build Resp data structure.
 
+See haskell/playpen/aeson-playground/src/AesonAST.hs
+
 - sparql-json.hs
 - at.hs
 
