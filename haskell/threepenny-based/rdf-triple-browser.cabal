@@ -17,7 +17,7 @@ library
   exposed-modules:     RTB, RTBQ
   -- other-modules:       
   -- other-extensions:    
-  build-depends:       base
+  build-depends:       base  >= 4.7 && < 5
                      , containers
                      , hsparql
                      , rdf4h

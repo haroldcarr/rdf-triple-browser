@@ -1,12 +1,13 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2014 Aug 21 (Thu) 16:47:21 by Harold Carr.
+Last Modified : 2016 Feb 09 (Tue) 17:41:56 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
   - threepenny-gui MissingDollars sample
 -}
 
+{-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
 {-# LANGUAGE RecursiveDo #-}
 
 module RTB where
@@ -26,7 +27,7 @@ debugEnabled :: Bool
 debugEnabled = False
 
 hcDebug :: c -> String -> c
-hcDebug c s = if debugEnabled then flip trace c s else c
+hcDebug c s = if debugEnabled then trace s c else c
 
 defaultEndPoint :: String
 defaultEndPoint = "http://localhost:3030/ds/query"
@@ -214,6 +215,7 @@ aBoundNode =  Bound (UNode (T.pack "A DUMMY NODE"))
 
 ------------------------------------------------------------------------------
 -- DB Model
+
 
 type DBKey = Int
 data DB a  = DB { shortened :: !Bool, nextKey :: !Int, db :: Map.Map DBKey a }
