@@ -1,17 +1,27 @@
-{-# LANGUAGE RecursiveDo, ScopedTypeVariables #-}
-{-# LANGUAGE GADTs, TemplateHaskell, QuasiQuotes, OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric     #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE RecursiveDo #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 -- =: creates a singleton Map
 
-import qualified Data.Aeson as A
+import qualified Data.Aeson                 as A (decode)
+import qualified Data.Aeson.Types           as AT (FromJSON)
 import qualified Data.ByteString.Lazy.Char8 as BSC8
-import qualified Data.ByteString.Lazy as BSL
-import qualified Data.Map as Map
-import           Data.Map (Map)
-import qualified Data.Text as T (unpack)
-import           Data.Text.Encoding as T
-import           Reflex
-import           Reflex.Dom
+import qualified Data.ByteString.Lazy       as BSL
+import qualified Data.List                  as L (nub, transpose)
+import qualified Data.Map                   as Map
+import           Data.Map                   (Map)
+import qualified Data.Maybe                 as MB (fromJust)
+import qualified Data.Text                  as T (unpack)
+import           Data.Text.Encoding         as T
+import qualified GHC.Generics               as G (Generic)
+import           Prelude                    as P
+import           Reflex                     as R
+import           Reflex.Dom                 as RD
 import           Reflex.Dom.Time
 import           Control.Monad (join)
 
@@ -47,7 +57,7 @@ main = mainWidget $ do
     elAttr "iframe" (Map.fromList [("style", "display: none;")]) blank
     divClass "main" $ do
         -- Dynamic String
-        url <- fmap value
+        url <- fmap RD.value
                     (textInput $ def & textInputConfig_initialValue .~ "http://localhost:3030/ds/query")
         -- Event ()
         btn <- button "Submit"
@@ -66,7 +76,7 @@ main = mainWidget $ do
             divClass "query" (display md)
             resp <- requesting url (leftmost [updated req, tagDyn req btn])
             -- TMP : show the sparql response
-            q <- (foldDyn (\(Resp s _ _) _ -> head s) "" resp)
+            q <- (foldDyn (\(Resp s _ _) _ -> P.head s) "" resp)
             display q
             -- widgetHold blank (fmap (\x -> text $ show x) resp)
             linkedData <- holdDyn "http://haroldcarr.com/" (leftmost [updated s, updated p, updated o])
@@ -112,13 +122,17 @@ requesting url e = do
 
 handleResponse xhrResp =
     let r = case _xhrResponse_responseText xhrResp of
-                Just x  -> T.unpack x
-                           {-
-                           case A.decode (BSC8.pack (T.unpack x)) of
-                               Just v  -> show (v :: A.Object)
-                               Nothing -> ""
-                           -}
-                Nothing -> ""
+                Just x  ->
+                    show (traverseResults
+                          (MB.fromJust $ A.decode (BSC8.pack (T.unpack x)) :: SparqlResults))
+                    -- T.unpack x
+                    {-
+                    case A.decode (BSC8.pack (T.unpack x)) of
+                    Just v  -> show (v :: A.Object)
+                    Nothing -> ""
+                    -}
+                Nothing ->
+                    ""
     in Resp (r : mkDummyData "S") (mkDummyData "P") (mkDummyData "O")
 
 setHeaders (XhrRequestConfig h u p r s) hdrs =
@@ -129,7 +143,7 @@ doReq url (Req s p o) =
     Resp (tail $ mkDummyData s) (tail $ mkDummyData p) (tail $ mkDummyData o)
 
 mkDummyData :: String -> [String]
-mkDummyData spo = Prelude.map (++ spo) dummyData
+mkDummyData spo = P.map (++ spo) dummyData
 
 dummyData :: [String]
 dummyData = [ "http://www.slugmag.com/"
@@ -154,6 +168,50 @@ urlEncode x = case x of
     (':':xs) -> "%3A" ++ urlEncode xs
     ('/':xs) -> "%2F" ++ urlEncode xs
     (x:xs)   -> x : urlEncode xs
+
+------------------------------------------------------------------------------
+
+data SparqlResults = SparqlResults {
+      head    :: VarsObject
+    , results :: BindingsVector
+    } deriving (G.Generic, Show)
+
+data VarsObject = VarsObject {
+      vars :: [String]
+    } deriving (G.Generic, Show)
+
+data BindingsVector = BindingsVector {
+      bindings :: [Binding]
+    } deriving (G.Generic, Show)
+
+data Binding = Binding {
+      subject   :: Maybe BindingValue
+    , predicate :: Maybe BindingValue
+    , object    :: Maybe BindingValue
+    } deriving (G.Generic, Show)
+
+data BindingValue = BindingValue {
+      -- type :: String
+      value :: String
+    } deriving (G.Generic, Show)
+
+instance AT.FromJSON SparqlResults
+instance AT.FromJSON VarsObject
+instance AT.FromJSON BindingsVector
+instance AT.FromJSON Binding
+instance AT.FromJSON BindingValue
+
+selectFun ("subject")   = subject
+selectFun ("predicate") = predicate
+selectFun ("object")    = object
+selectFun x             = error ("not supported: " ++ x)
+
+traverseResults(SparqlResults (VarsObject vs) (BindingsVector bs)) =
+    P.zip vs $ P.map L.nub $ L.transpose $ traverseBindings (P.map selectFun vs) bs
+
+traverseBindings vs bs = case bs of
+    []      -> []
+    (b:bs') -> P.map (\f -> Main.value $ MB.fromJust $ f b) vs : traverseBindings vs bs'
 
 {-
 urlEncode " SELECT  ?x0 ?x1 ?x2 WHERE {<http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah> ?x1 ?x2 .} Limit 100"

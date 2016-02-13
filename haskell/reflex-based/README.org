@@ -2,11 +2,12 @@ Initial version done with LOTS of help from Cale Gibbard (at Compose Conference 
 
 * Current state:
 
+Sending XhrRequest and getting back SPARQL results.
+Aeson parsing and manual collating results.
+
 ** start TCOMon + fuseki + load data
 
 file:///~/ftptmp/ebooks-music-pics/tech/programming-language/haskell/interview/0-Notes.org
-
-sending XhrRequest and getting back SPARQL results.
 
 ** Build via try-reflex
 
@@ -20,14 +21,18 @@ ghcjs --make RTB.hs
 file:///Users/carr/try-reflex/RTB.jsexe/index.html
 
 
-* Next:
+** DONE
 
-traverse sparql results to build Resp data structure.
+Traverse sparql results to build Resp data structure.
 
 See haskell/playpen/aeson-playground/src/AesonAST.hs
 
 - sparql-json.hs
 - at.hs
+
+* Next:
+
+Fill in panels with results (and refill or dont touch if no included in results).
 
 * TODO:
 
