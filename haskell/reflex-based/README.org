@@ -1,3 +1,4 @@
+
 Initial version done with LOTS of help from Cale Gibbard (at Compose Conference 2016).
 
 * Current state:
@@ -6,6 +7,27 @@ Initial version done with LOTS of help from Cale Gibbard (at Compose Conference 
 - Aeson parsing and manual collating results.
 - Filled in panels with results of submit/SPARQL results.
 - first query on panel select works.
+- panel refill with selection, done via
+
+#+BEGIN_EXAMPLE
+I did not ask the question clearly.  Let me try again.
+I have one event that fires.  It triggers an async request.
+I need to combine info from the initial event and the response to the request.
+In pseudo-code (and leaving out steps), something like:
+Event Request : already fired
+Event XhrResponse = performRequestAsync Event Request
+return $ combine Event Request + Event XhrResponse
+
+<Cale> Ah, okay -- the best way to do that is (perhaps a little unintuitively) to use                                            [15:21]
+<Cale> performRequestsAsync :: (Traversable f, MonadWidget t m) =>
+                               Event t (f XhrRequest) -> m (Event t (f XhrResponse))
+<Cale> The key thing here is that for any type e, we have that (,) e is an instance of Traversable
+<Cale> So for example, if we do  fmap (\x -> (x,x)) on the Event t XhrRequest 
+       to turn it into an Event t (XhrRequest, XhrRequest)
+<Cale> then the result will be an Event t (XhrRequest, XhrResponse)
+<Cale> You can put anything you'd like in the first component of the pair, and
+       it'll pair that information with the corresponding response
+#+END_EXAMPLE
 
 ** start TCOMon + fuseki + load data
 
@@ -33,8 +55,7 @@ See haskell/playpen/aeson-playground/src/AesonAST.hs
 
 * Next:
 
-- Panel refill or dont touch if not included in results
-  - current state: causes further queries after a panel select to fail because of empty panel
+- literals need to be quoted before sending on SPARQL query
 - expand/contract panel displays
 
 * TODO:

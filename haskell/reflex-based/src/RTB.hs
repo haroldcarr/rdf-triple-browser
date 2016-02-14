@@ -104,15 +104,18 @@ toString (Req s p o) =
 data Resp = Resp [String] [String] [String] deriving Show
 
 requesting :: MonadWidget t m => Dynamic t String -> Event t Req -> m (Event t Resp)
-requesting url e = do
-    let r = attachDynWith mkReq url e
+requesting url req = do
+    -- attachDynWith :: (a -> b -> c) ->  Dynamic a -> Event b -> Event c
+    let r = attachDynWith mkReq url req
     -- performRequestAsync :: Event XhrRequest -> m (Event XhrResponse)
-    x <- performRequestAsync r
-    return (fmap handleResponse x)
+    x <- performRequestsAsync r
+    let resp = fmap handleResponse x
+    return resp
   where
     mkReq url req =
         -- xhrRequest :: String -> String -> XhrRequestConfig -> XhrRequest
-        xhrRequest "GET"
+        (req
+        ,xhrRequest "GET"
                    (url ++ "?query=" ++ (urlEncode . toString) req)
                    -- _xhrRequestConfig_headers :: Map String String
                    (setHeaders def (Map.fromList [("Accept",
@@ -120,27 +123,20 @@ requesting url e = do
                                                              -- "application/rdf+json"
                                                              -- "application/ld+json"
                                                   )
-                                                 ,("Origin", "foo")]))
+                                                 ,("Origin", "foo")])))
 
-handleResponse xhrResp =
-    let r = case _xhrResponse_responseText xhrResp of
-                Just x  ->
-                    traverseResults (MB.fromJust $ A.decode (BSC8.pack (T.unpack x)) :: SparqlResults)
-                    -- T.unpack x
-                    {-
-                    case A.decode (BSC8.pack (T.unpack x)) of
-                    Just v  -> show (v :: A.Object)
-                    Nothing -> ""
-                    -}
-                Nothing ->
-                    []
-    in distributedResponse r
+handleResponse :: (Req, XhrResponse) -> Resp
+handleResponse (req, xhrResp) =
+    let resp = case _xhrResponse_responseText xhrResp of
+                   Just x  -> traverseResults (MB.fromJust $ A.decode (BSC8.pack (T.unpack x)) :: SparqlResults)
+                   Nothing -> []
+    in distributeResponse req resp
 
-distributedResponse r =
-    Resp (getSPO "subject" r) (getSPO "predicate" r) (getSPO "object" r)
+distributeResponse (Req s p o) resp  =
+    Resp (getSPO "subject" resp s) (getSPO "predicate" resp p) (getSPO "object" resp o)
 
-getSPO spo r =
-    MB.fromMaybe [] (lookup spo r)
+getSPO spo r d =
+    MB.fromMaybe [d] (lookup spo r)
 
 setHeaders (XhrRequestConfig h u p r s) hdrs =
     XhrRequestConfig hdrs u p r s
