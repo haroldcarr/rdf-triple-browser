@@ -98,8 +98,8 @@ bracket x         = x
 
 toString :: Req -> String
 toString (Req s p o) =
-    unwords ["SELECT", varOrEmpty s, varOrEmpty p, varOrEmpty o,
-             "WHERE {", (bracket s), (bracket p), (bracket o), ".}"]
+    unwords ["SELECT",  varOrEmpty s, varOrEmpty p, varOrEmpty o,
+             "WHERE {", bracket    s, bracket    p, bracket    o, ".}"]
 
 data Resp = Resp [String] [String] [String] deriving Show
 
@@ -137,7 +137,6 @@ handleResponse xhrResp =
     in distributedResponse r
 
 distributedResponse r =
---    Resp (show r : mkDummyData "S") (mkDummyData "P") (mkDummyData "O")
     Resp (getSPO "subject" r) (getSPO "predicate" r) (getSPO "object" r)
 
 getSPO spo r =
@@ -145,21 +144,6 @@ getSPO spo r =
 
 setHeaders (XhrRequestConfig h u p r s) hdrs =
     XhrRequestConfig hdrs u p r s
-
-mkDummyData :: String -> [String]
-mkDummyData spo = P.map (++ spo) dummyData
-
-dummyData :: [String]
-dummyData = [ "http://www.slugmag.com/"
-            , "http://www.excellenceconcerts.org/"
-            , "http://www.slcc.edu/"
-            , "http://www.mountaintownmusic.org/"
-            , "http://slcityart.org/"
-            , "http://musicgarage.org/"
-            , "http://xmlns.com/foaf/0.1/Organization"
-            , "http://www.geonames.org/ontology#postalCode"
-            , "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-            ]
 
 urlEncode x = case x of
     [] -> []
