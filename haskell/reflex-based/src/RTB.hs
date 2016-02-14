@@ -15,7 +15,7 @@ import qualified Data.ByteString.Lazy       as BSL
 import qualified Data.List                  as L (nub, transpose)
 import qualified Data.Map                   as Map
 import           Data.Map                   (Map)
-import qualified Data.Maybe                 as MB (fromJust)
+import qualified Data.Maybe                 as MB (fromJust, fromMaybe)
 import qualified Data.Text                  as T (unpack)
 import           Data.Text.Encoding         as T
 import qualified GHC.Generics               as G (Generic)
@@ -102,13 +102,12 @@ data Resp = Resp [String] [String] [String] deriving Show
 
 requesting :: MonadWidget t m => Dynamic t String -> Event t Req -> m (Event t Resp)
 requesting url e = do
-    let r = attachDynWith doReq' url e
+    let r = attachDynWith mkReq url e
     -- performRequestAsync :: Event XhrRequest -> m (Event XhrResponse)
     x <- performRequestAsync r
     return (fmap handleResponse x)
-    -- delay 1 $ attachDynWith doReq url e
   where
-    doReq' url req =
+    mkReq url req =
         -- xhrRequest :: String -> String -> XhrRequestConfig -> XhrRequest
         xhrRequest "GET"
                    (url ++ "?query=" ++ (urlEncode . toString) req)
@@ -123,8 +122,7 @@ requesting url e = do
 handleResponse xhrResp =
     let r = case _xhrResponse_responseText xhrResp of
                 Just x  ->
-                    show (traverseResults
-                          (MB.fromJust $ A.decode (BSC8.pack (T.unpack x)) :: SparqlResults))
+                    traverseResults (MB.fromJust $ A.decode (BSC8.pack (T.unpack x)) :: SparqlResults)
                     -- T.unpack x
                     {-
                     case A.decode (BSC8.pack (T.unpack x)) of
@@ -132,15 +130,18 @@ handleResponse xhrResp =
                     Nothing -> ""
                     -}
                 Nothing ->
-                    ""
-    in Resp (r : mkDummyData "S") (mkDummyData "P") (mkDummyData "O")
+                    []
+    in distributedResponse r
+
+distributedResponse r =
+--    Resp (show r : mkDummyData "S") (mkDummyData "P") (mkDummyData "O")
+    Resp (getSPO "subject" r) (getSPO "predicate" r) (getSPO "object" r)
+
+getSPO spo r =
+    MB.fromMaybe [] (lookup spo r)
 
 setHeaders (XhrRequestConfig h u p r s) hdrs =
     XhrRequestConfig hdrs u p r s
-
-doReq :: String -> Req -> Resp
-doReq url (Req s p o) =
-    Resp (tail $ mkDummyData s) (tail $ mkDummyData p) (tail $ mkDummyData o)
 
 mkDummyData :: String -> [String]
 mkDummyData spo = P.map (++ spo) dummyData
