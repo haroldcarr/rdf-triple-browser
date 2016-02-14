@@ -2,9 +2,10 @@ Initial version done with LOTS of help from Cale Gibbard (at Compose Conference 
 
 * Current state:
 
-Submit: sending XhrRequest and getting back SPARQL results.
-Aeson parsing and manual collating results.
-Filled in panels with results of submit/SPARQL results.
+- Submit: sending XhrRequest and getting back SPARQL results.
+- Aeson parsing and manual collating results.
+- Filled in panels with results of submit/SPARQL results.
+- first query on panel select works.
 
 ** start TCOMon + fuseki + load data
 
@@ -32,8 +33,8 @@ See haskell/playpen/aeson-playground/src/AesonAST.hs
 
 * Next:
 
-- SPARQL query on panel select broke
-- Panel refill or dont touch if no included in results
+- Panel refill or dont touch if not included in results
+  - current state: causes further queries after a panel select to fail because of empty panel
 - expand/contract panel displays
 
 * TODO:

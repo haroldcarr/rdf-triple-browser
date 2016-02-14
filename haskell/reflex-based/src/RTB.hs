@@ -93,10 +93,13 @@ varOrEmpty []        = ""
 varOrEmpty x@('?':_) = x
 varOrEmpty _         = ""
 
+bracket x@('h':'t':'t':'p':_) = "<" ++ x ++ ">"
+bracket x         = x
+
 toString :: Req -> String
 toString (Req s p o) =
     unwords ["SELECT", varOrEmpty s, varOrEmpty p, varOrEmpty o,
-             "WHERE {", s, p, o, ".}"]
+             "WHERE {", (bracket s), (bracket p), (bracket o), ".}"]
 
 data Resp = Resp [String] [String] [String] deriving Show
 
@@ -168,6 +171,7 @@ urlEncode x = case x of
     ('>':xs) -> "%3E" ++ urlEncode xs
     (':':xs) -> "%3A" ++ urlEncode xs
     ('/':xs) -> "%2F" ++ urlEncode xs
+    ('#':xs) -> "%23" ++ urlEncode xs
     (x:xs)   -> x : urlEncode xs
 
 ------------------------------------------------------------------------------
