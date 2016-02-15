@@ -75,9 +75,9 @@ main = mainWidget $ do
             -- TMP : show the query
             divClass "query" (display md)
             resp <- requesting url (leftmost [updated req, tagDyn req btn])
-            -- TMP : show the sparql response
-            q <- (foldDyn (\(Resp s _ _) _ -> P.head s) "" resp)
-            display q
+            -- TMP : show sparql response
+            q <- (foldDyn (\(Resp s p o) _ -> (s,p,o)) ([""],[""],[""]) resp)
+            divClass "results" (display q)
             -- widgetHold blank (fmap (\x -> text $ show x) resp)
             linkedData <- holdDyn "http://haroldcarr.com/" (leftmost [updated s, updated p, updated o])
             frameattr <- mapDyn (\x -> Map.fromList [("top","target"),("src",x)]) linkedData
