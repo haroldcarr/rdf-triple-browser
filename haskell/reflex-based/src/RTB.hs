@@ -12,7 +12,7 @@ import qualified Data.Aeson                 as A (decode)
 import qualified Data.Aeson.Types           as AT (FromJSON)
 import qualified Data.ByteString.Lazy.Char8 as BSC8
 import qualified Data.ByteString.Lazy       as BSL
-import qualified Data.List                  as L (nub, transpose)
+import qualified Data.List                  as L (isPrefixOf, nub, transpose)
 import qualified Data.Map                   as Map
 import           Data.Map                   (Map)
 import qualified Data.Maybe                 as MB (fromJust, fromMaybe)
@@ -80,7 +80,10 @@ main = mainWidget $ do
             divClass "results" (display q)
             -- widgetHold blank (fmap (\x -> text $ show x) resp)
             linkedData <- holdDyn "http://haroldcarr.com/" (leftmost [updated s, updated p, updated o])
-            frameattr <- mapDyn (\x -> Map.fromList [("top","target"),("src",x)]) linkedData
+            frameattr <- mapDyn (\x -> if "http" `L.isPrefixOf` x
+                                       then Map.fromList [("top","target"),("src",x)]
+                                       else Map.fromList [("top","target")])
+                                linkedData
             -- TMP : show the link given to the browser frame
             display linkedData
         el "frameset" $ do
@@ -95,7 +98,7 @@ varOrEmpty _         = ""
 
 bracket x@('h':'t':'t':'p':_) = "<" ++ x ++ ">"
 bracket x@('?':_)             = x
-bracket x                     = '"' : x ++ "\""
+bracket x                     = '"' : x ++ "@en\""
 
 toString :: Req -> String
 toString (Req s p o) =
@@ -120,12 +123,7 @@ requesting url req = do
         ,xhrRequest "GET"
                    (url ++ "?query=" ++ (urlEncode . toString) req)
                    -- _xhrRequestConfig_headers :: Map String String
-                   (setHeaders def (Map.fromList [("Accept",
-                                                             "application/sparql-results+json"
-                                                             -- "application/rdf+json"
-                                                             -- "application/ld+json"
-                                                  )
-                                                 ,("Origin", "foo")])))
+                   (setHeaders def ("Accept" =: "application/sparql-results+json")))
 
 handleResponse :: (Req, XhrResponse) -> Resp
 handleResponse (req, xhrResp) =
@@ -154,6 +152,7 @@ urlEncode x = case x of
     (':':xs) -> "%3A" ++ urlEncode xs
     ('/':xs) -> "%2F" ++ urlEncode xs
     ('#':xs) -> "%23" ++ urlEncode xs
+    ('@':xs) -> "%40" ++ urlEncode xs
     (x:xs)   -> x : urlEncode xs
 
 ------------------------------------------------------------------------------

@@ -31,6 +31,8 @@ return $ combine Event Request + Event XhrResponse
 
 - literals quoted before sending on SPARQL query
 - added tracing of SPARQL results
+- only set frame =src= if startsWith =http=
+- put =@en= on end of literals (to make SPARQL queries work)
 
 ** start TCOMon + fuseki + load data
 
@@ -56,21 +58,10 @@ See haskell/playpen/aeson-playground/src/AesonAST.hs
 - sparql-json.hs
 - at.hs
 
-* Next:
-
-- strange behavior: select literal : GET file:///Users/carr/try-reflex/RTB.jsexe/rare net::ERR_FILE_NOT_FOUND
-  - show in browser console (traceEventWith)
-- expand/contract panel displays
-
 * TODO:
 
 - build via work-on
 - rdf-triple-browser.cabal
 - build.sh
 - use real UrlEncoder
-
-* Misc:
-
-GET http://127.0.0.1:3030/ds/query?query=%20SELECT%20%20%3Fx0%20%3Fx1%20%3Fx2%20WHERE%20%7B%3Chttp%3A%2F%2Fopenhc.org%2Fdata%2Fevent%2FSlug_Magazine_Salt_Lake_City_Utah%3E%20%3Fx1%20%3Fx2%20.%7D%20Limit%20100
-
-GET http://127.0.0.1:3030/ds/query?query= SELECT  ?x0 ?x1 ?x2 WHERE {<http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah> ?x1 ?x2 .} Limit 100
+- expand/contract panel displays
