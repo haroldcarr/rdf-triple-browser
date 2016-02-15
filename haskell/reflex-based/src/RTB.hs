@@ -94,7 +94,8 @@ varOrEmpty x@('?':_) = x
 varOrEmpty _         = ""
 
 bracket x@('h':'t':'t':'p':_) = "<" ++ x ++ ">"
-bracket x         = x
+bracket x@('?':_)             = x
+bracket x                     = '"' : x ++ "\""
 
 toString :: Req -> String
 toString (Req s p o) =

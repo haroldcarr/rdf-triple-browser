@@ -29,6 +29,8 @@ return $ combine Event Request + Event XhrResponse
        it'll pair that information with the corresponding response
 #+END_EXAMPLE
 
+- literals need to be quoted before sending on SPARQL query
+
 ** start TCOMon + fuseki + load data
 
 file:///~/ftptmp/ebooks-music-pics/tech/programming-language/haskell/interview/0-Notes.org
@@ -55,7 +57,7 @@ See haskell/playpen/aeson-playground/src/AesonAST.hs
 
 * Next:
 
-- literals need to be quoted before sending on SPARQL query
+- strange behavior: comments -> hindemith : ?subject shows instead of match
 - expand/contract panel displays
 
 * TODO:
