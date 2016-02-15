@@ -62,9 +62,9 @@ main = mainWidget $ do
         -- Event ()
         btn <- button "Submit"
         rec
-            s <- mkSPOPanel SUB (fmap (\(Resp s _ _) -> s) resp)
-            p <- mkSPOPanel PRE (fmap (\(Resp _ p _) -> p) resp)
-            o <- mkSPOPanel OBJ (fmap (\(Resp _ _ o) -> o) resp)
+            s <- mkSPOPanel SUB (fmap (\(Resp _ s _ _) -> s) resp)
+            p <- mkSPOPanel PRE (fmap (\(Resp _ _ p _) -> p) resp)
+            o <- mkSPOPanel OBJ (fmap (\(Resp _ _ _ o) -> o) resp)
             f <- combineDyn Req s p
             req <- combineDyn ($) f o
             -- this line replaces the previous two lines (but is SLOW to compile)
@@ -76,7 +76,7 @@ main = mainWidget $ do
             divClass "query" (display md)
             resp <- requesting url (leftmost [updated req, tagDyn req btn])
             -- TMP : show sparql response
-            q <- (foldDyn (\(Resp s p o) _ -> (s,p,o)) ([""],[""],[""]) resp)
+            q <- (foldDyn (\(Resp sparql s p o) _ -> sparql) [] resp)
             divClass "results" (display q)
             -- widgetHold blank (fmap (\x -> text $ show x) resp)
             linkedData <- holdDyn "http://haroldcarr.com/" (leftmost [updated s, updated p, updated o])
@@ -102,7 +102,8 @@ toString (Req s p o) =
     unwords ["SELECT",  varOrEmpty s, varOrEmpty p, varOrEmpty o,
              "WHERE {", bracket    s, bracket    p, bracket    o, ".}"]
 
-data Resp = Resp [String] [String] [String] deriving Show
+--               raw                  subject  predicate object
+data Resp = Resp [(String, [String])] [String] [String] [String] deriving Show
 
 requesting :: MonadWidget t m => Dynamic t String -> Event t Req -> m (Event t Resp)
 requesting url req = do
@@ -110,7 +111,7 @@ requesting url req = do
     let r = attachDynWith mkReq url req
     -- performRequestAsync :: Event XhrRequest -> m (Event XhrResponse)
     x <- performRequestsAsync r
-    let resp = fmap handleResponse x
+    let resp = fmap handleResponse (traceEventWith (T.unpack . MB.fromJust . _xhrResponse_responseText . snd) x)
     return resp
   where
     mkReq url req =
@@ -134,7 +135,7 @@ handleResponse (req, xhrResp) =
     in distributeResponse req resp
 
 distributeResponse (Req s p o) resp  =
-    Resp (getSPO "subject" resp s) (getSPO "predicate" resp p) (getSPO "object" resp o)
+    Resp resp (getSPO "subject" resp s) (getSPO "predicate" resp p) (getSPO "object" resp o)
 
 getSPO spo r d =
     MB.fromMaybe [d] (lookup spo r)
@@ -192,7 +193,7 @@ selectFun ("predicate") = predicate
 selectFun ("object")    = object
 selectFun x             = error ("not supported: " ++ x)
 
-traverseResults(SparqlResults (VarsObject vs) (BindingsVector bs)) =
+traverseResults (SparqlResults (VarsObject vs) (BindingsVector bs)) =
     P.zip vs $ P.map L.nub $ L.transpose $ traverseBindings (P.map selectFun vs) bs
 
 traverseBindings vs bs = case bs of

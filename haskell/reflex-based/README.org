@@ -29,7 +29,8 @@ return $ combine Event Request + Event XhrResponse
        it'll pair that information with the corresponding response
 #+END_EXAMPLE
 
-- literals need to be quoted before sending on SPARQL query
+- literals quoted before sending on SPARQL query
+- added tracing of SPARQL results
 
 ** start TCOMon + fuseki + load data
 
@@ -57,7 +58,8 @@ See haskell/playpen/aeson-playground/src/AesonAST.hs
 
 * Next:
 
-- strange behavior: comments -> hindemith : ?subject shows instead of match
+- strange behavior: select literal : GET file:///Users/carr/try-reflex/RTB.jsexe/rare net::ERR_FILE_NOT_FOUND
+  - show in browser console (traceEventWith)
 - expand/contract panel displays
 
 * TODO:
