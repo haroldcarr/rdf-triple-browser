@@ -6,7 +6,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TemplateHaskell #-}
 
--- =: creates a singleton Map
+module RTB where
 
 import qualified Data.Aeson                 as A (decode)
 import qualified Data.Aeson.Types           as AT (FromJSON)
@@ -197,7 +197,7 @@ traverseResults (SparqlResults (VarsObject vs) (BindingsVector bs)) =
 
 traverseBindings vs bs = case bs of
     []      -> []
-    (b:bs') -> P.map (\f -> Main.value $ MB.fromJust $ f b) vs : traverseBindings vs bs'
+    (b:bs') -> P.map (\f -> RTB.value $ MB.fromJust $ f b) vs : traverseBindings vs bs'
 
 {-
 urlEncode " SELECT  ?x0 ?x1 ?x2 WHERE {<http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah> ?x1 ?x2 .} Limit 100"

@@ -58,9 +58,21 @@ See haskell/playpen/aeson-playground/src/AesonAST.hs
 - sparql-json.hs
 - at.hs
 
+* IN-PROGRESS
+
+cd /Users/carr/.sync/.esync/openhc/rdf-triple-browser/haskell
+~/try-reflex/work-on ghcjs reflex-based
+cabal configure --ghcjs
+cabal build
+
+but can't find *.js file
+and now ./try-reflex ... ghcjs --make RTB.hs   does not work
+  - maybe because of module RTB declaration (maybe must be Main)
+
 * TODO:
 
 - build via work-on
+  - https://github.com/reflex-frp/reflex-dom-contrib
 - rdf-triple-browser.cabal
 - build.sh
 - use real UrlEncoder
