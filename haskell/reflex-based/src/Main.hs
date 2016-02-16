@@ -48,7 +48,7 @@ main = mainWidget $ do
             req  <- combineDyn ($) f o
             -- this line replaces the previous two lines (but is SLOW to compile)
             -- req <- [mkDyn| Req $s $p $o  |]
-            resp <- requesting url (leftmost [updated req, tagDyn req btn])
+            resp       <- requesting url (leftmost [updated req, tagDyn req btn])
             linkedData <- holdDyn "http://haroldcarr.com/" (leftmost [updated s, updated p, updated o])
             frameattr  <- mapDyn (\x -> if "http" `L.isPrefixOf` x
                                         then Map.fromList [("top","target"),("src",x)]
@@ -72,7 +72,7 @@ main = mainWidget $ do
 mkToggleBtn :: MonadWidget t m => String -> String -> m (Dynamic t Bool)
 mkToggleBtn on off = do
     -- e is HTML element
-    rec (e,_)        <- elAttr' "toggleButton" mempty $ dynText label
+    rec (e,_)        <- elAttr' "button" mempty $ dynText label
         currentState <- toggle False (domEvent Click e)
         label        <- mapDyn (\x -> if x then on else off) currentState
     return currentState
