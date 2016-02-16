@@ -2,8 +2,7 @@ dist
 .stack-work
 RCS
 data-private
-haskell/cabal.sandbox.config
-haskell/dist
+haskell/reflex-based/ports
 java/gwt/src/main/java/org/openhc/triplebrowser/gwt/client/tt.lva
 java/gwt/src/main/java/org/openhc/triplebrowser/gwt/server/tt.lva
 java/gwt/target/

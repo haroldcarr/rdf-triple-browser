@@ -6,7 +6,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module RTB where
+module Main where
 
 import qualified Data.Aeson                 as A (decode)
 import qualified Data.Aeson.Types           as AT (FromJSON)
@@ -19,6 +19,7 @@ import qualified Data.Maybe                 as MB (fromJust, fromMaybe)
 import qualified Data.Text                  as T (unpack)
 import           Data.Text.Encoding         as T
 import qualified GHC.Generics               as G (Generic)
+import           Network.URI                as N (escapeURIString, isUnescapedInURI)
 import           Prelude                    as P
 import           Reflex                     as R
 import           Reflex.Dom                 as RD
@@ -98,7 +99,7 @@ varOrEmpty _         = ""
 
 bracket x@('h':'t':'t':'p':_) = "<" ++ x ++ ">"
 bracket x@('?':_)             = x
-bracket x                     = '"' : x ++ "@en\""
+bracket x                     = '"' : x ++ "\""
 
 toString :: Req -> String
 toString (Req s p o) =
@@ -141,7 +142,9 @@ getSPO spo r d =
 setHeaders (XhrRequestConfig h u p r s) hdrs =
     XhrRequestConfig hdrs u p r s
 
-urlEncode x = case x of
+urlEncode = escapeURIString isUnescapedInURI
+    {-
+    case x of
     [] -> []
     (' ':xs) -> "%20" ++ urlEncode xs
     ('?':xs) -> "%3F" ++ urlEncode xs
@@ -154,7 +157,7 @@ urlEncode x = case x of
     ('#':xs) -> "%23" ++ urlEncode xs
     ('@':xs) -> "%40" ++ urlEncode xs
     (x:xs)   -> x : urlEncode xs
-
+   -}
 ------------------------------------------------------------------------------
 
 data SparqlResults = SparqlResults {
@@ -197,7 +200,7 @@ traverseResults (SparqlResults (VarsObject vs) (BindingsVector bs)) =
 
 traverseBindings vs bs = case bs of
     []      -> []
-    (b:bs') -> P.map (\f -> RTB.value $ MB.fromJust $ f b) vs : traverseBindings vs bs'
+    (b:bs') -> P.map (\f -> Main.value $ MB.fromJust $ f b) vs : traverseBindings vs bs'
 
 {-
 urlEncode " SELECT  ?x0 ?x1 ?x2 WHERE {<http://openhc.org/data/event/Slug_Magazine_Salt_Lake_City_Utah> ?x1 ?x2 .} Limit 100"

@@ -33,6 +33,17 @@ return $ combine Event Request + Event XhrResponse
 - added tracing of SPARQL results
 - only set frame =src= if startsWith =http=
 - put =@en= on end of literals (to make SPARQL queries work)
+- build via work-on
+  - https://github.com/reflex-frp/reflex-dom-contrib
+#+BEGIN_EXAMPLE
+cd .
+make wo
+make data
+make c
+make b
+make w
+#+END_EXAMPLE
+- use real URL Encoder
 
 ** start TCOMon + fuseki + load data
 
@@ -58,22 +69,6 @@ See haskell/playpen/aeson-playground/src/AesonAST.hs
 - sparql-json.hs
 - at.hs
 
-* IN-PROGRESS
-
-cd /Users/carr/.sync/.esync/openhc/rdf-triple-browser/haskell
-~/try-reflex/work-on ghcjs reflex-based
-cabal configure --ghcjs
-cabal build
-
-but can't find *.js file
-and now ./try-reflex ... ghcjs --make RTB.hs   does not work
-  - maybe because of module RTB declaration (maybe must be Main)
-
 * TODO:
 
-- build via work-on
-  - https://github.com/reflex-frp/reflex-dom-contrib
-- rdf-triple-browser.cabal
-- build.sh
-- use real UrlEncoder
 - expand/contract panel displays
