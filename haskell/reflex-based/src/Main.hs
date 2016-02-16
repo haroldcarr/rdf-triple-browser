@@ -26,7 +26,7 @@ import           Reflex.Dom                 as RD
 import           Reflex.Dom.Time
 import           Control.Monad (join)
 
-data SPO = SUB | PRE | OBJ
+data SPO = SUB | PRE | OBJ deriving Show
 
 --             SUB    PRE    OBJ
 data Req = Req String String String deriving Show
@@ -55,38 +55,25 @@ main = mainWidget $ do
                                         else Map.fromList [("top","target")])
                                  linkedData
             -- rest at this level is all debug
-            -- show the Request
-            divClass "REQ" (display req)
-            -- show the query
-            md   <- mapDyn (urlEncode . toString) req
-            divClass "query" (display md)
-            -- show sparql response
-            q    <- foldDyn (\(Resp sparql s p o) _ -> sparql) [] resp
-            divClass "results" (display q)
-            -- show the link given to the browser frame
-            display linkedData
+            divClass "showRequest"    (display req)
+            divClass "showWuery"      (display =<< mapDyn (urlEncode . toString) req)
+            divClass "showSparqlResp" (display =<< foldDyn (\(Resp sparql s p o) _ -> sparql) [] resp)
+            divClass "showSelection"  (display linkedData)
         el "frameset" $
             elDynAttr "frame" frameattr blank
     return ()
-
-mkToggleBtn :: MonadWidget t m => String -> String -> m (Dynamic t Bool)
-mkToggleBtn on off = do
-    -- e is HTML element
-    rec (e,_)        <- elAttr' "button" mempty $ dynText label
-        currentState <- toggle False (domEvent Click e)
-        label        <- mapDyn (\x -> if x then on else off) currentState
-    return currentState
 
 mkSPOPanel :: MonadWidget t m => SPO -> Event t [String]-> m (Dynamic t String)
 mkSPOPanel spo contentE = divClass "spoPanel" $ do
   rec
     panel     <- holdDyn (fromSPO spo) (leftmost [selection, fromSPO spo <$ resetBtn])
-    divClass "spoSelection" $ dynText panel
+    divClass (show spo ++ "Selection") $ dynText panel
     resetBtn  <- button "*"
     tglBtnVal <- mkToggleBtn "+" "-"
     content   <- holdDyn mempty (fmap (Map.fromList . join zip) contentE)
-    selection <- divClass "spoList" $
-       _dropdown_change <$> dropdown "" content (def & dropdownConfig_attributes .~ constDyn ("size" =: "5"))
+    selection <- divClass (show spo ++ "List") $
+       _dropdown_change <$>
+           dropdown "" content (def & dropdownConfig_attributes .~ constDyn ("size" =: "5"))
   return panel
 
 requesting :: MonadWidget t m => Dynamic t String -> Event t Req -> m (Event t Resp)
@@ -140,6 +127,14 @@ toString (Req s p o) =
              "WHERE {", bracket    s, bracket    p, bracket    o, ".}"]
 
 urlEncode = escapeURIString isUnescapedInURI
+
+mkToggleBtn :: MonadWidget t m => String -> String -> m (Dynamic t Bool)
+mkToggleBtn on off = do
+    -- e is HTML element
+    rec (e,_)        <- elAttr' "button" mempty $ dynText label
+        currentState <- toggle False (domEvent Click e)
+        label        <- mapDyn (\x -> if x then on else off) currentState
+    return currentState
 
 ------------------------------------------------------------------------------
 
