@@ -1,13 +1,11 @@
 {-# LANGUAGE DeriveGeneric       #-}
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE RecursiveDo         #-}
--- following for mkDyn| below
--- {-# LANGUAGE GADTs               #-}
--- {-# LANGUAGE QuasiQuotes         #-}
 
 module Main where
 
 import           Control.Applicative        ((<$>))
+import           Control.Monad              (join, when)
 import qualified Data.Aeson                 as A (decode)
 import qualified Data.Aeson.Types           as AT (FromJSON)
 import qualified Data.ByteString.Lazy.Char8 as BSC8
@@ -24,7 +22,6 @@ import           Prelude                    as P
 import           Reflex                     as R
 import           Reflex.Dom                 as RD
 import           Reflex.Dom.Time
-import           Control.Monad (join)
 
 data SPO = SUB | PRE | OBJ deriving Show
 
@@ -38,7 +35,9 @@ main = mainWidget $ do
     elAttr "iframe" (Map.fromList [("style", "display: none;")]) blank
     divClass "main" $ do
         url <- fmap RD.value
-                    (textInput $ def & textInputConfig_initialValue .~ "http://localhost:3030/ds/query")
+                    (textInput $ def {_textInputConfig_initialValue = "http://localhost:3030/ds/query"
+                                     ,_textInputConfig_attributes   =
+                                      constDyn $ Map.fromList [("size","100"),("name","sparqlURL")]})
         btn <- button "Submit"
         rec
             s    <- mkSPOPanel SUB (fmap (\(Resp _ s _ _) -> s) resp)
@@ -46,19 +45,18 @@ main = mainWidget $ do
             o    <- mkSPOPanel OBJ (fmap (\(Resp _ _ _ o) -> o) resp)
             f    <- combineDyn Req s p
             req  <- combineDyn ($) f o
-            -- this line replaces the previous two lines (but is SLOW to compile)
-            -- req <- [mkDyn| Req $s $p $o  |]
             resp       <- requesting url (leftmost [updated req, tagDyn req btn])
-            linkedData <- holdDyn "http://haroldcarr.com/" (leftmost [updated s, updated p, updated o])
+            selection  <- holdDyn "http://haroldcarr.com/" (leftmost [updated s, updated p, updated o])
             frameattr  <- mapDyn (\x -> if "http" `L.isPrefixOf` x
                                         then Map.fromList [("top","target"),("src",x)]
                                         else Map.fromList [("top","target")])
-                                 linkedData
+                                 selection
             -- rest at this level is all debug
-            divClass "showRequest"    (display req)
-            divClass "showWuery"      (display =<< mapDyn (urlEncode . toString) req)
-            divClass "showSparqlResp" (display =<< foldDyn (\(Resp sparql s p o) _ -> sparql) [] resp)
-            divClass "showSelection"  (display linkedData)
+            when False $ do
+                divClass "showRequest"    (display req)
+                divClass "showQuery"      (display =<< mapDyn (urlEncode . toString) req)
+                divClass "showSparqlResp" (display =<< foldDyn (\(Resp sparql _ _ _) _ -> sparql) [] resp)
+                divClass "showSelection"  (display selection)
         el "frameset" $
             elDynAttr "frame" frameattr blank
     return ()
