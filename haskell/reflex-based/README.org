@@ -49,5 +49,7 @@ make w
 #+END_EXAMPLE
 - use real URL Encoder
 - placing stuff via CSS
-  - http://stackoverflow.com/a/20179337/814846
+  - http://stackoverflow.com/a/20179337/814846 (scroll down to end of answer)
+
+<select size="15" style="width: 350px;">
 

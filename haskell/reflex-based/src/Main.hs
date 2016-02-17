@@ -73,7 +73,9 @@ mkSPOPanel spo contentE = divClass (show spo ++ "Panel") $ do
     content   <- holdDyn mempty (fmap (Map.fromList . join zip) contentE)
     selection <- divClass (show spo ++ "List") $
        _dropdown_change <$>
-           dropdown "" content (def & dropdownConfig_attributes .~ constDyn ("size" =: "5"))
+           dropdown "" content (def & dropdownConfig_attributes
+                                        .~ constDyn (Map.fromList [("style", "width:300px")
+                                                                  ,("size", "15")]))
   return panel
 
 requesting :: MonadWidget t m => Dynamic t String -> Event t Req -> m (Event t Resp)
