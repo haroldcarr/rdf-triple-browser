@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 17 (Thu) 08:38:10 by Harold Carr.
-Last Modified : 2016 Feb 09 (Tue) 17:41:56 by Harold Carr.
+Last Modified : 2016 Feb 17 (Wed) 14:52:08 by Harold Carr.
 
 - based on
   - http://stackoverflow.com/questions/24784883/using-threepenny-gui-reactive-in-client-server-programming
@@ -198,7 +198,7 @@ mkSPOPanel spoType = mdo
         bLookup        = flip dbLookup <$> bDB `hcDebug` "bLookup"
 
         bDisplayDI     :: Behavior (DBKey -> UI Element)
-        bDisplayDI     = (UI.string .) <$> (maybe "" showDI .) <$> bLookup
+        bDisplayDI     = ((UI.string .) . (maybe "" showDI .) <$> bLookup)
 
         bLBItems       :: Behavior [DBKey]
         bLBItems       = dbKeys <$> bDB
@@ -255,6 +255,7 @@ mkDI shortenP b@(Bound v) =
                            (LNode (PlainL  x))   -> x
                            (LNode (PlainLL x _)) -> x
                            (LNode (TypedL  x _)) -> x
+                           _                     -> error ("unexpected: " ++ show v)
 
     in (if shortenP then shorten s else s, b)
 mkDI _ Unbound   = (show Unbound, Unbound)

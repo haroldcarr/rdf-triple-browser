@@ -1,8 +1,9 @@
 {-
 Created       : 2014 Jul 29 (Tue) 07:16:51 by Harold Carr.
-Last Modified : 2014 Aug 24 (Sun) 15:15:40 by Harold Carr.
+Last Modified : 2016 Feb 17 (Wed) 14:49:54 by Harold Carr.
 -}
 
+{-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module RTBQ where
