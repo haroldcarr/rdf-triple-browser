@@ -37,9 +37,10 @@ main = mainWidget $ do
         url <- fmap RD.value
                     (textInput $ def {_textInputConfig_initialValue = "http://localhost:3030/ds/query"
                                      ,_textInputConfig_attributes   =
-                                      constDyn $ Map.fromList [("size","100"),("name","sparqlURL")]})
+                                      constDyn $ Map.fromList [("id","sparqlURL")]})
         btn <- button "Submit"
-        rec
+        divClass "spoPanels" $ do
+          rec
             s    <- mkSPOPanel SUB (fmap (\(Resp _ s _ _) -> s) resp)
             p    <- mkSPOPanel PRE (fmap (\(Resp _ _ p _) -> p) resp)
             o    <- mkSPOPanel OBJ (fmap (\(Resp _ _ _ o) -> o) resp)
@@ -57,12 +58,13 @@ main = mainWidget $ do
                 divClass "showQuery"      (display =<< mapDyn (urlEncode . toString) req)
                 divClass "showSparqlResp" (display =<< foldDyn (\(Resp sparql _ _ _) _ -> sparql) [] resp)
                 divClass "showSelection"  (display selection)
-        el "frameset" $
-            elDynAttr "frame" frameattr blank
-    return ()
+            el "p" blank
+            el "frameset" $
+                elDynAttr "frame" frameattr blank
+          return ()
 
 mkSPOPanel :: MonadWidget t m => SPO -> Event t [String]-> m (Dynamic t String)
-mkSPOPanel spo contentE = divClass "spoPanel" $ do
+mkSPOPanel spo contentE = divClass (show spo ++ "Panel") $ do
   rec
     panel     <- holdDyn (fromSPO spo) (leftmost [selection, fromSPO spo <$ resetBtn])
     divClass (show spo ++ "Selection") $ dynText panel

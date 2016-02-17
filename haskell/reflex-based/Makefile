@@ -11,6 +11,9 @@ c :
 b :
 	cabal build
 
+css :
+	cp index.html dist/build/RTB/RTB.jsexe
+
 w :
 	/usr/bin/open -a "/Applications/Google Chrome.app" './dist/build/RTB/RTB.jsexe/index.html'
 
