@@ -1,7 +1,11 @@
 
 Initial version done with LOTS of help from Cale Gibbard (at Compose Conference 2016).
 
-* Current state:
+* TODO:
+
+- expand/contract panel displays
+
+* DONE:
 
 - Submit: sending XhrRequest and getting back SPARQL results.
 - Aeson parsing and manual collating results.
@@ -44,31 +48,6 @@ make b
 make w
 #+END_EXAMPLE
 - use real URL Encoder
+- placing stuff via CSS
+  - http://stackoverflow.com/a/20179337/814846
 
-** start TCOMon + fuseki + load data
-
-file:///~/ftptmp/ebooks-music-pics/tech/programming-language/haskell/interview/0-Notes.org
-
-** Build via try-reflex
-
-[[https://github.com/ryantrinkle/try-reflex]]
-
-cd ~/try-reflex
-./try-reflex
-# RTB.hs is linked here
-ghcjs --make RTB.hs
-
-file:///Users/carr/try-reflex/RTB.jsexe/index.html
-
-** DONE
-
-Traverse sparql results to build Resp data structure.
-
-See haskell/playpen/aeson-playground/src/AesonAST.hs
-
-- sparql-json.hs
-- at.hs
-
-* TODO:
-
-- expand/contract panel displays
