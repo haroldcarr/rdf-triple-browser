@@ -39,29 +39,29 @@ main = mainWidget $ do
                                      ,_textInputConfig_attributes   =
                                       constDyn $ Map.fromList [("id","sparqlURL")]})
         btn <- button "Submit"
-        divClass "spoPanels" $ do
-          rec
-            s    <- mkSPOPanel SUB (fmap (\(Resp _ s _ _) -> s) resp)
-            p    <- mkSPOPanel PRE (fmap (\(Resp _ _ p _) -> p) resp)
-            o    <- mkSPOPanel OBJ (fmap (\(Resp _ _ _ o) -> o) resp)
-            f    <- combineDyn Req s p
-            req  <- combineDyn ($) f o
-            resp       <- requesting url (leftmost [updated req, tagDyn req btn])
-            selection  <- holdDyn "http://haroldcarr.com/" (leftmost [updated s, updated p, updated o])
-            frameattr  <- mapDyn (\x -> if "http" `L.isPrefixOf` x
-                                        then Map.fromList [("top","target"),("src",x)]
-                                        else Map.fromList [("top","target")])
-                                 selection
-            -- rest at this level is all debug
-            when False $ do
-                divClass "showRequest"    (display req)
-                divClass "showQuery"      (display =<< mapDyn (urlEncode . toString) req)
-                divClass "showSparqlResp" (display =<< foldDyn (\(Resp sparql _ _ _) _ -> sparql) [] resp)
-                divClass "showSelection"  (display selection)
-            el "p" blank
-            el "frameset" $
-                elDynAttr "frame" frameattr blank
-          return ()
+        frameAttr <- divClass "spoPanels" $ do
+            rec
+                s    <- mkSPOPanel SUB (fmap (\(Resp _ s _ _) -> s) resp)
+                p    <- mkSPOPanel PRE (fmap (\(Resp _ _ p _) -> p) resp)
+                o    <- mkSPOPanel OBJ (fmap (\(Resp _ _ _ o) -> o) resp)
+                f    <- combineDyn Req s p
+                req  <- combineDyn ($) f o
+                resp       <- requesting url (leftmost [updated req, tagDyn req btn])
+                selection  <- holdDyn "http://haroldcarr.com/" (leftmost [updated s, updated p, updated o])
+                frameattr  <- mapDyn (\x -> if "http" `L.isPrefixOf` x
+                                            then Map.fromList [("top","target"),("src",x)]
+                                            else Map.fromList [("top","target")])
+                                     selection
+                -- rest at this level is all debug
+                when False $ do
+                    divClass "showRequest"    (display req)
+                    divClass "showQuery"      (display =<< mapDyn (urlEncode . toString) req)
+                    divClass "showSparqlResp" (display =<< foldDyn (\(Resp sparql _ _ _) _ -> sparql) [] resp)
+                    divClass "showSelection"  (display selection)
+            return frameattr
+        el "frameset" $
+            elDynAttr "frame" frameAttr blank
+        return ()
 
 mkSPOPanel :: MonadWidget t m => SPO -> Event t [String]-> m (Dynamic t String)
 mkSPOPanel spo contentE = divClass (show spo ++ "Panel") $ do
