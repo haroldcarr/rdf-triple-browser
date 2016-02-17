@@ -47,16 +47,16 @@ main = mainWidget $ do
                 f    <- combineDyn Req s p
                 req  <- combineDyn ($) f o
                 resp       <- requesting url (leftmost [updated req, tagDyn req btn])
-                selection  <- holdDyn "http://haroldcarr.com/" (leftmost [updated s, updated p, updated o])
-                frameattr  <- mapDyn (\x -> if "http" `L.isPrefixOf` x
-                                            then Map.fromList [("top","target"),("src",x)]
-                                            else Map.fromList [("top","target")])
-                                     selection
+                selection  <- holdDyn "http://haroldcarr.com/"
+                                       (ffilter ("http" `L.isPrefixOf`)
+                                                (leftmost [updated s, updated p, updated o]))
+                frameattr  <- mapDyn (\x -> Map.fromList [("top","target"),("src",x)]) selection
                 -- rest at this level is all debug
                 when False $ do
                     divClass "showRequest"    (display req)
                     divClass "showQuery"      (display =<< mapDyn (urlEncode . toString) req)
                     divClass "showSparqlResp" (display =<< foldDyn (\(Resp sparql _ _ _) _ -> sparql) [] resp)
+                    -- because of ffilter above, this won't show non-URL selections
                     divClass "showSelection"  (display selection)
             return frameattr
         el "frameset" $
