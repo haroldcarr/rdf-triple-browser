@@ -14,7 +14,7 @@ b :
 css :
 	cp index.html dist/build/RTB/RTB.jsexe
 
-w :
+v o :
 	/usr/bin/open -a "/Applications/Google Chrome.app" './dist/build/RTB/RTB.jsexe/index.html'
 
 data : f load-data
