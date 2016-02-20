@@ -128,7 +128,7 @@ toString (Req s p o) =
     unwords ["SELECT",  varOrEmpty s, varOrEmpty p, varOrEmpty o,
              "WHERE {", bracket    s, bracket    p, bracket    o, ".}"]
 
-urlEncode = escapeURIString isUnescapedInURI
+urlEncode = N.escapeURIString N.isUnescapedInURI
 
 mkToggleBtn :: MonadWidget t m => String -> String -> m (Dynamic t Bool)
 mkToggleBtn on off = do

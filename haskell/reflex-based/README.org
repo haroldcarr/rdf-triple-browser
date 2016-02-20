@@ -1,9 +1,13 @@
-
 Initial version done with LOTS of help from Cale Gibbard (at Compose Conference 2016).
 
 * TODO:
 
 - expand/contract panel displays
+- handle data model literals correctly (e.g., @en on strings but not numbers)
+
+#+BEGIN_EXAMPLE
+curl 127.0.0.1:3030/ds/query?query=SELECT%20?subject%20?predicate%20%20WHERE%20%7B%20?subject%20?predicate%20%22Excellence%20in%20the%20Community@en%22%20.%7D
+#+END_EXAMPLE
 
 * DONE:
 
@@ -51,4 +55,8 @@ make w
 - placing stuff via CSS
   - http://stackoverflow.com/a/20179337/814846 (scroll down to end of answer)
 - do not change iframe =src= on non-URLs
+
+* wiring diagram
+
+file:./wiring-diagram.jpg
 
