@@ -5,23 +5,20 @@
 module Main where
 
 import           Control.Applicative        ((<$>))
-import           Control.Monad              (join, when)
+import qualified Control.Monad              as M (join, when)
 import qualified Data.Aeson                 as A (decode)
 import qualified Data.Aeson.Types           as AT (FromJSON)
 import qualified Data.ByteString.Lazy.Char8 as BSC8
 import qualified Data.ByteString.Lazy       as BSL
 import qualified Data.List                  as L (isPrefixOf, nub, transpose)
-import qualified Data.Map                   as Map
-import           Data.Map                   (Map)
+import qualified Data.Map                   as Map (Map, fromList)
 import qualified Data.Maybe                 as MB (fromJust, fromMaybe)
 import qualified Data.Text                  as T (unpack)
-import           Data.Text.Encoding         as T
 import qualified GHC.Generics               as G (Generic)
-import           Network.URI                as N (escapeURIString, isUnescapedInURI)
+import qualified Network.URI                as N (escapeURIString, isUnescapedInURI)
 import           Prelude                    as P
 import           Reflex                     as R
 import           Reflex.Dom                 as RD
-import           Reflex.Dom.Time
 
 data SPO = SUB | PRE | OBJ deriving Show
 
@@ -34,58 +31,55 @@ data Resp = Resp [(String, [String])] [String] [String] [String] deriving Show
 main = mainWidget $ do
     elAttr "iframe" (Map.fromList [("style", "display: none;")]) blank
     divClass "main" $ do
-        url <- fmap RD.value
-                    (textInput $ def {_textInputConfig_initialValue = "http://localhost:3030/ds/query"
-                                     ,_textInputConfig_attributes   =
-                                      constDyn $ Map.fromList [("id","sparqlURL")]})
-        btn <- button "Submit"
-        frameAttr <- divClass "spoPanels" $ do
+        url        <- fmap RD.value
+                           (textInput $ def {_textInputConfig_initialValue = "http://localhost:3030/ds/query"
+                                            ,_textInputConfig_attributes   =
+                                             constDyn $ Map.fromList [("id","sparqlURL")]})
+        eSubmit    <- button "Submit"
+        dFrameAttr <- divClass "spoPanels" $ do
             rec
-                s    <- mkSPOPanel SUB (fmap (\(Resp _ s _ _) -> s) resp)
-                p    <- mkSPOPanel PRE (fmap (\(Resp _ _ p _) -> p) resp)
-                o    <- mkSPOPanel OBJ (fmap (\(Resp _ _ _ o) -> o) resp)
-                f    <- combineDyn Req s p
-                req  <- combineDyn ($) f o
-                resp       <- requesting url (leftmost [updated req, tagDyn req btn])
-                selection  <- holdDyn "http://haroldcarr.com/"
-                                       (ffilter ("http" `L.isPrefixOf`)
-                                                (leftmost [updated s, updated p, updated o]))
-                frameattr  <- mapDyn (\x -> Map.fromList [("top","target"),("src",x)]) selection
+                dSubSel   <- mkSPOPanel SUB (fmap (\(Resp _ s _ _) -> s) eResp)
+                dPreSel   <- mkSPOPanel PRE (fmap (\(Resp _ _ p _) -> p) eResp)
+                dObjSel   <- mkSPOPanel OBJ (fmap (\(Resp _ _ _ o) -> o) eResp)
+                dReqSPSel <- combineDyn Req dSubSel   dPreSel
+                dReq      <- combineDyn ($) dReqSPSel dObjSel
+                eResp     <- requesting url (leftmost [updated dReq, tagDyn dReq eSubmit])
+                dCurSel   <- holdDyn "http://haroldcarr.com/"
+                                      (ffilter ("http" `L.isPrefixOf`)
+                                               (leftmost [updated dSubSel, updated dPreSel, updated dObjSel]))
+                dFrmAttr  <- mapDyn (\x -> Map.fromList [("top","target"),("src",x)]) dCurSel
                 -- rest at this level is all debug
-                when False $ do
-                    divClass "showRequest"    (display req)
-                    divClass "showQuery"      (display =<< mapDyn (urlEncode . toString) req)
-                    divClass "showSparqlResp" (display =<< foldDyn (\(Resp sparql _ _ _) _ -> sparql) [] resp)
+                M.when False $ do
+                    divClass "showRequest"    (display dReq)
+                    divClass "showQuery"      (display =<< mapDyn (urlEncode . toString) dReq)
+                    divClass "showSparqlResp" (display =<< foldDyn (\(Resp sparql _ _ _) _ -> sparql) [] eResp)
                     -- because of ffilter above, this won't show non-URL selections
-                    divClass "showSelection"  (display selection)
-            return frameattr
+                    divClass "showSelection"  (display dCurSel)
+            return dFrmAttr
         el "frameset" $
-            elDynAttr "frame" frameAttr blank
+            elDynAttr "frame" dFrameAttr blank
         return ()
 
 mkSPOPanel :: MonadWidget t m => SPO -> Event t [String]-> m (Dynamic t String)
-mkSPOPanel spo contentE = divClass (show spo ++ "Panel") $ do
+mkSPOPanel spo eContent = divClass (show spo ++ "Panel") $ do
   rec
-    panel     <- holdDyn (fromSPO spo) (leftmost [selection, fromSPO spo <$ resetBtn])
-    divClass (show spo ++ "Selection") $ dynText panel
-    resetBtn  <- button "*"
-    tglBtnVal <- mkToggleBtn "+" "-"
-    content   <- holdDyn mempty (fmap (Map.fromList . join zip) contentE)
-    selection <- divClass (show spo ++ "List") $
+    dSelection <- holdDyn (fromSPO spo) (leftmost [eSelection, fromSPO spo <$ eResetBtn])
+    divClass (show spo ++ "Selection") $ dynText dSelection
+    eResetBtn  <- button "*"
+    dTglBtnVal <- mkToggleBtn "+" "-"
+    dContent   <- holdDyn mempty (fmap (Map.fromList . M.join zip) eContent)
+    eSelection <- divClass (show spo ++ "List") $
        _dropdown_change <$>
-           dropdown "" content (def & dropdownConfig_attributes
-                                        .~ constDyn (Map.fromList [("style", "width:300px")
-                                                                  ,("size", "15")]))
-  return panel
+           dropdown "" dContent (def & dropdownConfig_attributes
+                                         .~ constDyn (Map.fromList [("style", "width:300px")
+                                                                   ,("size", "15")]))
+  return dSelection
 
 requesting :: MonadWidget t m => Dynamic t String -> Event t Req -> m (Event t Resp)
 requesting url req = do
-    let r    = attachDynWith mkReq url req
-    x       <- performRequestsAsync r
-    let resp = fmap handleResponse
-                    -- TODO : remove traceEventWith
-                    (traceEventWith (T.unpack . MB.fromJust . _xhrResponse_responseText . snd) x)
-    return resp
+    let eReq  = attachDynWith mkReq url req
+    eRespRaw <- performRequestsAsync eReq
+    return $ fmap handleResponse (respDebug eRespRaw)
   where
     mkReq url req =
         (req -- for debugging only
@@ -128,8 +122,6 @@ toString (Req s p o) =
     unwords ["SELECT",  varOrEmpty s, varOrEmpty p, varOrEmpty o,
              "WHERE {", bracket    s, bracket    p, bracket    o, ".}"]
 
-urlEncode = N.escapeURIString N.isUnescapedInURI
-
 mkToggleBtn :: MonadWidget t m => String -> String -> m (Dynamic t Bool)
 mkToggleBtn on off = do
     -- e is HTML element
@@ -137,6 +129,13 @@ mkToggleBtn on off = do
         currentState <- toggle False (domEvent Click e)
         label        <- mapDyn (\x -> if x then on else off) currentState
     return currentState
+
+respDebug x =
+     if True
+        then traceEventWith (T.unpack . MB.fromJust . _xhrResponse_responseText . snd) x
+        else x
+
+urlEncode = N.escapeURIString N.isUnescapedInURI
 
 ------------------------------------------------------------------------------
 
