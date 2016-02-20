@@ -4,16 +4,17 @@
 
 module Main where
 
-import           Control.Applicative        ((<$>))
+import           Control.Applicative        ((<$>), (<|>))
 import qualified Control.Monad              as M (join, when)
 import qualified Data.Aeson                 as A (decode)
 import qualified Data.Aeson.Types           as AT (FromJSON)
 import qualified Data.ByteString.Lazy.Char8 as BSC8
 import qualified Data.ByteString.Lazy       as BSL
-import qualified Data.List                  as L (isPrefixOf, nub, transpose)
+import qualified Data.Function              as DF (on)
+import qualified Data.List                  as L (elemIndex, isPrefixOf, nub, sortBy, transpose)
 import qualified Data.Map                   as Map (Map, fromList)
 import qualified Data.Maybe                 as MB (fromJust, fromMaybe)
-import qualified Data.Text                  as T (unpack)
+import qualified Data.Text                  as T (pack, toLower, unpack)
 import qualified GHC.Generics               as G (Generic)
 import qualified Network.URI                as N (escapeURIString, isUnescapedInURI)
 import           Prelude                    as P
@@ -66,13 +67,14 @@ mkSPOPanel spo eContent = divClass (show spo ++ "Panel") $ do
     dSelection <- holdDyn (fromSPO spo) (leftmost [eSelection, fromSPO spo <$ eResetBtn])
     divClass (show spo ++ "Selection") $ dynText dSelection
     eResetBtn  <- button "*"
-    dTglBtnVal <- mkToggleBtn "+" "-"
-    dContent   <- holdDyn mempty (fmap (Map.fromList . M.join zip) eContent)
+    dTglBtnVal <- mkToggleBtn "-" "+"
+    dContent   <- holdDyn mempty eContent
+    dContentB  <- combineDyn expandContract dTglBtnVal dContent
     eSelection <- divClass (show spo ++ "List") $
        _dropdown_change <$>
-           dropdown "" dContent (def & dropdownConfig_attributes
-                                         .~ constDyn (Map.fromList [("style", "width:300px")
-                                                                   ,("size", "15")]))
+           dropdown "" dContentB (def & dropdownConfig_attributes
+                                          .~ constDyn (Map.fromList [("style", "width:300px")
+                                                                    ,("size", "15")]))
   return dSelection
 
 requesting :: MonadWidget t m => Dynamic t String -> Event t Req -> m (Event t Resp)
@@ -122,13 +124,12 @@ toString (Req s p o) =
     unwords ["SELECT",  varOrEmpty s, varOrEmpty p, varOrEmpty o,
              "WHERE {", bracket    s, bracket    p, bracket    o, ".}"]
 
-mkToggleBtn :: MonadWidget t m => String -> String -> m (Dynamic t Bool)
-mkToggleBtn on off = do
-    -- e is HTML element
-    rec (e,_)        <- elAttr' "button" mempty $ dynText label
-        currentState <- toggle False (domEvent Click e)
-        label        <- mapDyn (\x -> if x then on else off) currentState
-    return currentState
+expandContract :: Bool -> [String] -> Map.Map String String
+expandContract b v0 =
+    Map.fromList (map (\x -> (x, if b then x else shorten x)) sorted)
+  where
+    lowShort = shorten . T.unpack . T.toLower . T.pack
+    sorted   = L.sortBy (\x y -> compare (lowShort x) (lowShort y)) v0
 
 respDebug x =
      if True
@@ -137,6 +138,48 @@ respDebug x =
 
 urlEncode = N.escapeURIString N.isUnescapedInURI
 
+mkToggleBtn :: MonadWidget t m => String -> String -> m (Dynamic t Bool)
+mkToggleBtn on off = do
+    -- e is HTML element
+    rec (e,_)        <- elAttr' "button" mempty $ dynText label
+        currentState <- toggle False (domEvent Click e)
+        label        <- mapDyn (\x -> if x then on else off) currentState
+    return currentState
+
+------------------------------------------------------------------------------
+-- Utility
+
+-- | Strip off everything before '#' (the first one if multiples),
+--   or, if no '#' is present, strip off everything before the last '/',
+--   or, if neither '#' or '/' is present, return the given String.
+--
+-- >>> shorten "http://www.geonames.org/ontology#postalCode"
+-- "postalCode"
+--
+-- >>> shorten "http://www.geonames.org/ontology#postalCode/"
+-- "postalCode/"
+--
+-- >>> shorten "http://xmlns.com/foaf/0.1/homepage"
+-- "homepage"
+--
+-- >>> shorten "http://xmlns.com/foaf/0.1/homepage/"
+-- "homepage"
+--
+-- >>> shorten "Music Garage"
+-- "Music Garage"
+
+shorten :: String -> String
+shorten s0 = drop (cutIndex + 1) s
+  where
+    s        = if '#' `elem` s0 then s0 else removeTrailing '/' s0
+    cutIndex = MB.fromJust (elemIndexEnd '#' s <|> elemIndexEnd '/' s <|> Just (-1))
+
+elemIndexEnd :: Eq a => a -> [a] -> Maybe Int
+elemIndexEnd a as = (length as - 1 -) <$> L.elemIndex a (reverse as)
+
+removeTrailing :: Eq a => a -> [a] -> [a]
+removeTrailing a as | last as == a = take (length as - 1) as
+                    | otherwise    = as
 ------------------------------------------------------------------------------
 
 data SparqlResults = SparqlResults {

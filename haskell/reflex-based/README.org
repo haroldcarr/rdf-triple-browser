@@ -2,7 +2,7 @@ Initial version done with LOTS of help from Cale Gibbard (at Compose Conference 
 
 * TODO:
 
-- expand/contract panel displays
+- make sort of dropdown contents work
 - handle data model literals correctly (e.g., @en on strings but not numbers)
 
 #+BEGIN_EXAMPLE
@@ -55,6 +55,7 @@ make w
 - placing stuff via CSS
   - http://stackoverflow.com/a/20179337/814846 (scroll down to end of answer)
 - do not change iframe =src= on non-URLs
+- expand/contract dropdown contents
 
 * wiring diagram
 
