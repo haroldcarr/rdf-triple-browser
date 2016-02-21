@@ -11,7 +11,7 @@ import qualified Data.Aeson.Types           as AT (FromJSON)
 import qualified Data.ByteString.Lazy.Char8 as BSC8
 import qualified Data.ByteString.Lazy       as BSL
 import qualified Data.Function              as DF (on)
-import qualified Data.List                  as L (elemIndex, isPrefixOf, nub, sortBy, transpose)
+import qualified Data.List                  as L (elemIndex, isPrefixOf, nub, sortOn, transpose)
 import qualified Data.Map                   as Map (Map, fromList)
 import qualified Data.Maybe                 as MB (fromJust, fromMaybe)
 import qualified Data.Text                  as T (pack, toLower, unpack)
@@ -64,7 +64,7 @@ main = mainWidget $ do
 mkSPOPanel :: MonadWidget t m => SPO -> Event t [String]-> m (Dynamic t String)
 mkSPOPanel spo eContent = divClass (show spo ++ "Panel") $ do
   rec
-    dSelection <- holdDyn (fromSPO spo) (leftmost [eSelection, fromSPO spo <$ eResetBtn])
+    dSelection <- holdDyn (fromSPO spo) (leftmost [fmap snd eSelection, fromSPO spo <$ eResetBtn])
     divClass (show spo ++ "Selection") $ dynText dSelection
     eResetBtn  <- button "*"
     dTglBtnVal <- mkToggleBtn "-" "+"
@@ -72,9 +72,9 @@ mkSPOPanel spo eContent = divClass (show spo ++ "Panel") $ do
     dContentB  <- combineDyn expandContract dTglBtnVal dContent
     eSelection <- divClass (show spo ++ "List") $
        _dropdown_change <$>
-           dropdown "" dContentB (def & dropdownConfig_attributes
-                                          .~ constDyn (Map.fromList [("style", "width:300px")
-                                                                    ,("size", "15")]))
+           dropdown (0,"") dContentB (def & dropdownConfig_attributes
+                                            .~ constDyn (Map.fromList [("style", "width:300px")
+                                                                      ,("size", "15")]))
   return dSelection
 
 requesting :: MonadWidget t m => Dynamic t String -> Event t Req -> m (Event t Resp)
@@ -124,12 +124,13 @@ toString (Req s p o) =
     unwords ["SELECT",  varOrEmpty s, varOrEmpty p, varOrEmpty o,
              "WHERE {", bracket    s, bracket    p, bracket    o, ".}"]
 
-expandContract :: Bool -> [String] -> Map.Map String String
-expandContract b v0 =
-    Map.fromList (map (\x -> (x, if b then x else shorten x)) sorted)
+expandContract :: Bool -> [String] -> Map.Map (Int, String) String
+expandContract b v =
+    -- retain List sort via ordered int keys in Map
+    Map.fromList (map (\p@(n,x) -> (p, if b then x else shorten x)) sorted)
   where
     lowShort = shorten . T.unpack . T.toLower . T.pack
-    sorted   = L.sortBy (\x y -> compare (lowShort x) (lowShort y)) v0
+    sorted   = zip [1 .. ] (L.sortOn lowShort v)
 
 respDebug x =
      if True

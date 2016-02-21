@@ -2,7 +2,6 @@ Initial version done with LOTS of help from Cale Gibbard (at Compose Conference 
 
 * TODO:
 
-- make sort of dropdown contents work
 - handle data model literals correctly (e.g., @en on strings but not numbers)
 
 #+BEGIN_EXAMPLE
@@ -56,6 +55,7 @@ make w
   - http://stackoverflow.com/a/20179337/814846 (scroll down to end of answer)
 - do not change iframe =src= on non-URLs
 - expand/contract dropdown contents
+- sort dropdown contents (via ordered keys in Map)
 
 * wiring diagram
 
