@@ -137,7 +137,11 @@ respDebug x =
         then traceEventWith (T.unpack . MB.fromJust . _xhrResponse_responseText . snd) x
         else x
 
-urlEncode = N.escapeURIString N.isUnescapedInURI
+urlEncode = handleSharp . N.escapeURIString N.isUnescapedInURI
+  where
+    handleSharp []       = []
+    handleSharp ('#':xs) = "%23" ++ handleSharp xs
+    handleSharp   (x:xs) =    x  :  handleSharp xs
 
 mkToggleBtn :: MonadWidget t m => String -> String -> m (Dynamic t Bool)
 mkToggleBtn on off = do
