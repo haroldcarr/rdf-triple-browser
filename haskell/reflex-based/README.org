@@ -2,10 +2,21 @@ Initial version done with LOTS of help from Cale Gibbard (at Compose Conference 
 
 * TODO:
 
-- handle data model literals correctly (e.g., @en on strings but not numbers)
+- Either =?query= or =&query= depending on what is in URL, e.g.,:
+
+http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org
+
+versus
+
+http://localhost:3030/ds/query
+
+- Using =dbpedia= URL above returns good results (see Console in browser) takes a LONG time to render
+  - add =LIMIT= / =OFFSET= paging support
+
+- handle data model literals correctly (e.g., @en on strings but not numbers):
 
 #+BEGIN_EXAMPLE
-curl 127.0.0.1:3030/ds/query?query=SELECT%20?subject%20?predicate%20%20WHERE%20%7B%20?subject%20?predicate%20%22Excellence%20in%20the%20Community@en%22%20.%7D
+127.0.0.1:3030/ds/query?query=SELECT%20?subject%20?predicate%20%20WHERE%20%7B%20?subject%20?predicate%20%22Excellence%20in%20the%20Community@en%22%20.%7D
 #+END_EXAMPLE
 
 * DONE:
@@ -17,23 +28,15 @@ curl 127.0.0.1:3030/ds/query?query=SELECT%20?subject%20?predicate%20%20WHERE%20%
 - panel refill with selection, done via
 
 #+BEGIN_EXAMPLE
-I did not ask the question clearly.  Let me try again.
-I have one event that fires.  It triggers an async request.
-I need to combine info from the initial event and the response to the request.
-In pseudo-code (and leaving out steps), something like:
-Event Request : already fired
 Event XhrResponse = performRequestAsync Event Request
 return $ combine Event Request + Event XhrResponse
 
-<Cale> Ah, okay -- the best way to do that is (perhaps a little unintuitively) to use                                            [15:21]
-<Cale> performRequestsAsync :: (Traversable f, MonadWidget t m) =>
-                               Event t (f XhrRequest) -> m (Event t (f XhrResponse))
-<Cale> The key thing here is that for any type e, we have that (,) e is an instance of Traversable
-<Cale> So for example, if we do  fmap (\x -> (x,x)) on the Event t XhrRequest 
-       to turn it into an Event t (XhrRequest, XhrRequest)
-<Cale> then the result will be an Event t (XhrRequest, XhrResponse)
-<Cale> You can put anything you'd like in the first component of the pair, and
-       it'll pair that information with the corresponding response
+performRequestsAsync :: (Traversable f, MonadWidget t m) =>
+                        Event t (f XhrRequest) -> m (Event t (f XhrResponse))
+key : for any type e, we have that (,) e is an instance of Traversable
+e.g., : fmap (\x -> (x,x)) on Event t XhrRequest to turn it into Event t (XhrRequest, XhrRequest)
+then result will be Event t (XhrRequest, XhrResponse)
+Can put anything in the first component of the pair: it will pair that information with the corresponding response
 #+END_EXAMPLE
 
 - literals quoted before sending on SPARQL query
@@ -44,11 +47,11 @@ return $ combine Event Request + Event XhrResponse
   - https://github.com/reflex-frp/reflex-dom-contrib
 #+BEGIN_EXAMPLE
 cd .
-make wo
-make data
-make c
-make b
-make w
+make wo    # work-on environment
+make data  # start fuseki and TCPMon
+make c     # configure
+make b     # build
+make v     # visit the page in browser
 #+END_EXAMPLE
 - use real URL Encoder
 - placing stuff via CSS
