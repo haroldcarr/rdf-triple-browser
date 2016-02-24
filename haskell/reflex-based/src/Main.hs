@@ -37,7 +37,7 @@ main = mainWidget $ do
                                             ,_textInputConfig_attributes   =
                                              constDyn $ Map.fromList [("id","sparqlURL")]})
         eSubmit    <- button "Submit"
-        dFrameAttr <- divClass "spoPanels" $ do
+        dCurSel    <- divClass "spoPanels" $ do
             rec
                 dSubSel   <- mkSPOPanel SUB (fmap (\(Resp _ s _ _) -> s) eResp)
                 dPreSel   <- mkSPOPanel PRE (fmap (\(Resp _ _ p _) -> p) eResp)
@@ -48,7 +48,6 @@ main = mainWidget $ do
                 dCurSel   <- holdDyn "http://haroldcarr.com/"
                                       (ffilter ("http" `L.isPrefixOf`)
                                                (leftmost [updated dSubSel, updated dPreSel, updated dObjSel]))
-                dFrmAttr  <- mapDyn (\x -> Map.fromList [("top","target"),("src",x)]) dCurSel
                 -- rest at this level is all debug
                 M.when False $ do
                     divClass "showRequest"    (display dReq)
@@ -56,7 +55,11 @@ main = mainWidget $ do
                     divClass "showSparqlResp" (display =<< foldDyn (\(Resp sparql _ _ _) _ -> sparql) [] eResp)
                     -- because of ffilter above, this won't show non-URL selections
                     divClass "showSelection"  (display dCurSel)
-            return dFrmAttr
+            return dCurSel
+        dAAttr      <- mapDyn (\x -> Map.fromList [("target","_blank"),("href",x)]) dCurSel
+        dFrameAttr  <- mapDyn (\x -> Map.fromList [("target","top")   ,("src" ,x)]) dCurSel
+        divClass "currentSelection" $ do
+            e <- elDynAttr "a" dAAttr $ dynText dCurSel; return ()
         el "frameset" $
             elDynAttr "frame" dFrameAttr blank
         return ()

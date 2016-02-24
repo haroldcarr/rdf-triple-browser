@@ -59,6 +59,7 @@ make v     # visit the page in browser
 - do not change iframe =src= on non-URLs
 - expand/contract dropdown contents
 - sort dropdown contents (via ordered keys in Map)
+- anchor opens current selection in new tab when clicked
 
 * wiring diagram
 
