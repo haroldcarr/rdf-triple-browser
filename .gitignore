@@ -8,6 +8,9 @@ java/gwt/src/main/java/org/openhc/triplebrowser/gwt/server/tt.lva
 java/gwt/target/
 java/swing/NB-gui-examples/
 java/swing/saved-libs/
+java/swing/hs_err_pid69923.log
+java/swing/replay_pid69923.log
+java/swing/target/
 java/triple-browser-gwt-1.0-SNAPSHOT.war
 swing/target/
 triple-browser-old/

@@ -1,6 +1,6 @@
 {-
 Created       : 2014 Jul 29 (Tue) 07:16:51 by Harold Carr.
-Last Modified : 2016 Feb 17 (Wed) 14:49:54 by Harold Carr.
+Last Modified : 2017 Jul 24 (Mon) 08:50:02 by Harold Carr.
 -}
 
 {-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
@@ -49,7 +49,7 @@ query0 url (isSVar, sval) (isPVar, pval) (isOVar, oval) = selectQuery url q
         svar <- var
         pvar <- var
         ovar <- var
-        limit 100
+        -- limit 100
         triple (if isSVar then Var' svar else RDFNode sval)
                (if isPVar then Var' pvar else RDFNode pval)
                (if isOVar then Var' ovar else RDFNode oval)
