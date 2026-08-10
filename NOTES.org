@@ -1,7 +1,33 @@
 #
 # Created       : 2006 Jul 14 (Wed) 19:15:16 by Harold Carr.
-# Last Modified : 2016 Feb 07 (Sun) 14:15:07 by Harold Carr.
+# Last Modified : 2026 Aug 09 (Sun) 20:22:05 by Harold Carr.
 #
+
+------------------------------------------------------------------------------
+2026-08-09
+
+The best open-source RDF visualization tools today are:
+
+| Tool                 | Type         | Best for                               | Notes |
+|----------------------+--------------+----------------------------------------+-------|
+| LodLive              | Local web    | Interactive graph exploration          | node-by-node exploration. Works with SPARQL endpoints. Can also be adapted to local data.           |
+| Gruff (Free version) | Desktop      | RDF graph browsing                     | Proprietary; limited free version. Not open source.                    |
+| GraphDB Free         | Local server | Large RDF datasets + visualization     | Excellent. Visualization plugin. Free, not open source.      |
+| Apache Jena Fuseki   | Local server | SPARQL + integrates with viewers       | Pair with LodLive or other JS visualizers. |
+| Ontodia              | Local web    | Large knowledge graph visualization    | Open source. Can connect to Fuseki.                              |
+| Metaphactory CE      | Local server | Knowledge graph exploration            | Requires docker. Open-source Community Edition. Powerful UI. |
+| VOWL/WebVOWL         | Browser      | Ontology visualization                 | Good for OWL schema/classes; not instance data.      |
+| Gephi                | Desktop      | Large graph layouts                    | Import RDF (after conversion). For structural analysis.      |
+| Cytoscape            | Desktop      | Network visualization                  | RDF import via plugins/conversion. scalable.      |
+
+1. Apache Jena Fuseki : a SPARQL endpoint
+- Load your RDF.
+
+2. Ontodia : connect it to Fuseki.
+
+3. Gephi
+   - Export interesting subsets from SPARQL.
+   - Use when you want to study graph structure rather than browse.
 
 ------------------------------------------------------------------------------
 2016-02-6/7
