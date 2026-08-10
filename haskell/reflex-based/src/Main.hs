@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE MonoLocalBinds    #-}
+{-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecursiveDo       #-}
 
@@ -120,23 +121,30 @@ handleResponse (req, xhrResp) = distributeResponse req resp
            Just x  -> traverseResults x
            Nothing -> []
 
+distributeResponse :: Req -> [(String, [String])] -> Resp
 distributeResponse (Req s p o) resp  =
   Resp resp (getSPO "subject" resp s) (getSPO "predicate" resp p) (getSPO "object" resp o)
 
+getSPO :: a1 -> [(a1, [a2])] -> a2 -> [a2]
 getSPO spo r d = MB.fromMaybe [d] (lookup spo r)
 
-fromSPO x = case x of
+fromSPO :: SPO -> String
+fromSPO = \case
   SUB -> "?subject"
   PRE -> "?predicate"
   OBJ -> "?object"
 
-varOrEmpty []        = ""
-varOrEmpty x@('?':_) = x
-varOrEmpty _         = ""
+varOrEmpty :: String -> String
+varOrEmpty = \case
+  []        -> ""
+  x@('?':_) -> x
+  _         -> ""
 
-bracket x@('h':'t':'t':'p':_) = "<" ++ x ++ ">"
-bracket x@('?':_)             = x
-bracket x                     = '"' : x ++ "\""
+bracket :: String -> String
+bracket = \case
+  x@('h':'t':'t':'p':_) -> "<" ++ x ++ ">"
+  x@('?':_)             -> x
+  x                     -> '"' : x ++ "\""
 
 toString :: Req -> String
 toString (Req s p o) =
@@ -144,23 +152,26 @@ toString (Req s p o) =
            "WHERE {", bracket    s, bracket    p, bracket    o, ".}"]
 
 expandContract :: Bool -> [String] -> Map.Map (Int, String) String
-expandContract b v = 
+expandContract b v =
   -- retain List sort via ordered int keys in Map
   Map.fromList (map (\p@(n,x) -> (p, if b then x else shorten x)) sorted)
  where
   lowShort = shorten . T.unpack . T.toLower . T.pack
   sorted   = zip [1 .. ] (L.sortOn lowShort v)
 
+respDebug :: Event t (a, XhrResponse) -> Event t (a, XhrResponse)
 respDebug x =
   if True
   then traceEventWith (T.unpack . MB.fromJust . _xhrResponse_responseText . snd) x
   else x
 
+urlEncode :: String -> String
 urlEncode = handleSharp . N.escapeURIString N.isUnescapedInURI
  where
-  handleSharp []       = []
-  handleSharp ('#':xs) = "%23" ++ handleSharp xs
-  handleSharp   (x:xs) =    x  :  handleSharp xs
+  handleSharp = \case
+    []       -> []
+    ('#':xs) -> "%23" ++ handleSharp xs
+    (x:xs)   ->  x  :  handleSharp xs
 
 mkToggleBtn :: MonadWidget t m => String -> String -> m (Dynamic t Bool)
 mkToggleBtn on off = do
@@ -202,10 +213,10 @@ elemIndexEnd :: Eq a => a -> [a] -> Maybe Int
 elemIndexEnd a as = (length as - 1 -) <$> L.elemIndex a (reverse as)
 
 removeTrailing :: Eq a => a -> [a] -> [a]
-removeTrailing _ [] = []
-removeTrailing a as
-  | last as == a = init as
-  | otherwise    = as
+removeTrailing a = \case
+  []                -> []
+  as | last as == a -> init as
+  as                -> as
 
 ------------------------------------------------------------------------------
 
@@ -239,6 +250,7 @@ instance AT.FromJSON BindingsVector
 instance AT.FromJSON Binding
 instance AT.FromJSON BindingValue
 
+selectFun :: String -> Binding -> Maybe BindingValue
 selectFun ("subject")   = subject
 selectFun ("predicate") = predicate
 selectFun ("object")    = object
@@ -249,6 +261,7 @@ traverseResults :: SparqlResults -> [(String, [String])]
 traverseResults (SparqlResults (VarsObject vs) (BindingsVector bs)) =
   P.zip vs $ P.map L.nub $ L.transpose $ traverseBindings (P.map selectFun vs) bs
 
+traverseBindings :: [t -> Maybe BindingValue] -> [t] -> [[String]]
 traverseBindings vs bs =
   case bs of
     []      -> []
