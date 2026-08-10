@@ -1,20 +1,41 @@
-name:                rdf-triple-browser
-version:             0.1.0.0
-homepage:            http://haroldcarr.com/
-author:              Harold Carr
-maintainer:          harold.carr@gmail.com
-build-type:          Simple
-cabal-version:       >=1.10
+cabal-version: 1.12
 
-executable RTB
-  hs-source-dirs:      src
-  main-is:             Main.hs
-  build-depends:       base
-                     , aeson
-                     , bytestring
-                     , containers
-                     , network-uri
-                     , reflex
-                     , reflex-dom
-                     , text
-  default-language:    Haskell2010
+-- This file has been generated from package.yaml by hpack version 0.38.3.
+--
+-- see: https://github.com/sol/hpack
+
+name:           rdf-triple-browser
+version:        0.1.0.0
+synopsis:       A browser for RDF triples using Reflex
+description:    Please see the README on GitHub at <https://github.com/yourusername/rdf-triple-browser#readme>
+category:       Web
+maintainer:     Your Name <your.email@example.com>
+copyright:      2016-2025 Your Name
+license:        BSD3
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+data-files:
+    config.yaml
+
+executable rdf-triple-browser-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_rdf_triple_browser
+  hs-source-dirs:
+      src
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson >=2.2.5.0
+    , base >=4.7 && <5
+    , bytestring >=0.10
+    , containers >=0.6 && <0.8
+    , lens >=5.0 && <5.4
+    , network-uri >=2.6.4.2
+    , reflex >=0.9.4.1
+    , reflex-dom >=0.6.3.4
+    , reflex-dom-core >=0.8.1.4
+    , text >=1.2 && <2
+    , yaml >=0.11
+  default-language: Haskell2010

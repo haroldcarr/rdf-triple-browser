@@ -1,113 +1,223 @@
-{-# LANGUAGE DeriveGeneric       #-}
-{-# LANGUAGE OverloadedStrings   #-}
-{-# LANGUAGE RecursiveDo         #-}
+{-# LANGUAGE DeriveGeneric     #-}
+{-# LANGUAGE MonoLocalBinds    #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecursiveDo       #-}
 
 module Main where
 
-import           Control.Applicative        ((<$>), (<|>))
-import qualified Control.Monad              as M (join, when)
-import qualified Data.Aeson                 as A (decode)
-import qualified Data.Aeson.Types           as AT (FromJSON)
-import qualified Data.ByteString.Lazy.Char8 as BSC8
-import qualified Data.ByteString.Lazy       as BSL
-import qualified Data.Function              as DF (on)
-import qualified Data.List                  as L (elemIndex, isPrefixOf, nub, sortOn, transpose)
-import qualified Data.Map                   as Map (Map, fromList)
-import qualified Data.Maybe                 as MB (fromJust, fromMaybe)
-import qualified Data.Text                  as T (pack, toLower, unpack)
-import qualified GHC.Generics               as G (Generic)
-import qualified Network.URI                as N (escapeURIString, isUnescapedInURI)
-import           Prelude                    as P
-import           Reflex                     as R
-import           Reflex.Dom                 as RD
+import           Control.Applicative         ((<|>))
+import           Control.Lens                ((.~), (&))
+import qualified Control.Monad               as M
+import           Data.Aeson.Types            as AT (FromJSON)
+import qualified Data.Function               as DF (on)
+import qualified Data.List                   as L (elemIndex, isPrefixOf, nub, sortOn, transpose)
+import qualified Data.Map                    as Map (Map, fromList)
+import qualified Data.Maybe                  as MB (fromJust, fromMaybe)
+import qualified Data.Text                   as T (Text, pack, toLower, unpack)
+import qualified GHC.Generics                as G (Generic)
+import           Network.URI                 as N (escapeURIString, isUnescapedInURI)
+import           Prelude                     as P
+import           Reflex                      as R
+import           Reflex.Dom                  as RD
 
 data SPO = SUB | PRE | OBJ deriving Show
 
---             SUB    PRE    OBJ
-data Req = Req String String String deriving Show
+--              SUB     PRE     OBJ
+data Req = Req !String !String !String deriving Show
 
---               raw (for debug)      subject  predicate object
-data Resp = Resp [(String, [String])] [String] [String] [String] deriving Show
+--                raw (for debug)       subject   predicate object
+data Resp = Resp ![(String, [String])] ![String] ![String] ![String] deriving Show
 
+main :: IO ()
 main = mainWidget $ do
-    elAttr "iframe" (Map.fromList [("style", "display: none;")]) blank
-    divClass "main" $ do
-        url        <- fmap RD.value
-                           (textInput $ def {_textInputConfig_initialValue = "http://localhost:3030/ds/query"
-                                            ,_textInputConfig_attributes   =
-                                             constDyn $ Map.fromList [("id","sparqlURL")]})
-        eSubmit    <- button "Submit"
-        dCurSel    <- divClass "spoPanels" $ do
-            rec
-                dSubSel   <- mkSPOPanel SUB (fmap (\(Resp _ s _ _) -> s) eResp)
-                dPreSel   <- mkSPOPanel PRE (fmap (\(Resp _ _ p _) -> p) eResp)
-                dObjSel   <- mkSPOPanel OBJ (fmap (\(Resp _ _ _ o) -> o) eResp)
-                dReqSPSel <- combineDyn Req dSubSel   dPreSel
-                dReq      <- combineDyn ($) dReqSPSel dObjSel
-                eResp     <- requesting url (leftmost [updated dReq, tagDyn dReq eSubmit])
-                dCurSel   <- holdDyn "http://haroldcarr.com/"
-                                      (ffilter ("http" `L.isPrefixOf`)
-                                               (leftmost [updated dSubSel, updated dPreSel, updated dObjSel]))
-                -- rest at this level is all debug
-                M.when False $ do
-                    divClass "showRequest"    (display dReq)
-                    divClass "showQuery"      (display =<< mapDyn (urlEncode . toString) dReq)
-                    divClass "showSparqlResp" (display =<< foldDyn (\(Resp sparql _ _ _) _ -> sparql) [] eResp)
-                    -- because of ffilter above, this won't show non-URL selections
-                    divClass "showSelection"  (display dCurSel)
-            return dCurSel
-        dAAttr      <- mapDyn (\x -> Map.fromList [("target","_blank"),("href",x)]) dCurSel
-        dFrameAttr  <- mapDyn (\x -> Map.fromList [("target","top")   ,("src" ,x)]) dCurSel
-        divClass "currentSelection" $ do
-            e <- elDynAttr "a" dAAttr $ dynText dCurSel; return ()
-        el "frameset" $
-            elDynAttr "frame" dFrameAttr blank
-        return ()
+    urlInput <-
+      inputElement $
+        def
+          & inputElementConfig_initialValue
+              .~ "http://localhost:3030/ds/query"
+          & inputElementConfig_elementConfig
+          . elementConfig_initialAttributes
+              .~ Map.fromList [("id", "sparqlURL")]
 
-mkSPOPanel :: MonadWidget t m => SPO -> Event t [String]-> m (Dynamic t String)
-mkSPOPanel spo eContent = divClass (show spo ++ "Panel") $ do
-  rec
-    dSelection <- holdDyn (fromSPO spo) (leftmost [fmap snd eSelection, fromSPO spo <$ eResetBtn])
-    divClass (show spo ++ "Selection") $ dynText dSelection
-    eResetBtn  <- button "*"
-    dTglBtnVal <- mkToggleBtn "-" "+"
-    dContent   <- holdDyn mempty eContent
-    dContentB  <- combineDyn expandContract dTglBtnVal dContent
-    eSelection <- divClass (show spo ++ "List") $
-       _dropdown_change <$>
-           dropdown (0,"") dContentB (def & dropdownConfig_attributes
-                                            .~ constDyn (Map.fromList [("style", "width:300px")
-                                                                      ,("size", "15")]))
-  return dSelection
+    let url = _inputElement_value urlInput
 
-requesting :: MonadWidget t m => Dynamic t String -> Event t Req -> m (Event t Resp)
-requesting url req = do
-    let eReq  = attachDynWith mkReq url req
-    eRespRaw <- performRequestsAsync eReq
-    return $ fmap handleResponse (respDebug eRespRaw)
+    eSubmit <- button "Submit"
+
+    dCurSel <- divClass "spoPanels" $ do
+      rec
+        dSubSel <- mkSPOPanel SUB $
+          (\(Resp _ s _ _) -> s) <$> eResp
+
+        dPreSel <- mkSPOPanel PRE $
+          (\(Resp _ _ p _) -> p) <$> eResp
+
+        dObjSel <- mkSPOPanel OBJ $
+          (\(Resp _ _ _ o) -> o) <$> eResp
+
+        -- combineDyn is gone.  Dynamic has an Applicative instance.
+        let dReq = Req <$> dSubSel <*> dPreSel <*> dObjSel
+
+        eResp <-
+          requestSparql
+            url
+            (leftmost
+              [ updated dReq
+              , tagPromptlyDyn dReq eSubmit
+              ])
+
+        dCurSel <-
+          holdDyn
+            "http://haroldcarr.com/"
+            (ffilter
+              ("http" `L.isPrefixOf`)
+              (leftmost
+                [ updated dSubSel
+                , updated dPreSel
+                , updated dObjSel
+                ]))
+
+        -- Debug
+        M.when False $ do
+          divClass "showRequest" $
+            display dReq
+
+          divClass "showQuery" $
+            display ((urlEncode . toString) <$> dReq)
+
+          dSparqlResp <-
+            foldDyn
+              (\(Resp sparql _ _ _) _ -> sparql)
+              []
+              eResp
+
+          divClass "showSparqlResp" $
+            display dSparqlResp
+
+          divClass "showSelection" $
+            display dCurSel
+
+      pure dCurSel
+
+    let dAAttr =
+          (\x ->
+             Map.fromList
+               [ ("target", "_blank")
+               , ("href", T.pack x)
+               ])
+          <$> dCurSel
+
+        dFrameAttr =
+          (\x ->
+             Map.fromList
+               [ ("src", T.pack x)
+               ])
+          <$> dCurSel
+
+    divClass "currentSelection" $
+      elDynAttr "a" dAAttr $
+        dynText (T.pack <$> dCurSel)
+
+    elDynAttr "iframe" dFrameAttr blank
+
+mkSPOPanel spo eContent =
+  divClass (T.pack (show spo ++ "Panel")) $ do
+    rec
+      dSelection <-
+        holdDyn
+          (fromSPO spo)
+          (leftmost
+            [ snd <$> eSelection
+            , fromSPO spo <$ eResetBtn
+            ])
+
+      divClass (T.pack (show spo ++ "Selection")) $
+        dynText (T.pack <$> dSelection)
+
+      eResetBtn <- button "*"
+
+      (e, _) <-
+        elDynAttr' "button" mempty $
+          dynText label
+
+      currentState <-
+        toggle False (domEvent Click e)
+
+      let label =
+            (\x -> if x then "-" else "+")
+            <$> currentState
+
+      -- Content arriving from the SPARQL response.
+      dContent <-
+        holdDyn [] eContent
+
+      -- Dropdown wants Map k Text.
+      let dContentB =
+            zipDynWith
+              (\expanded xs ->
+                 T.pack <$> expandContract expanded xs)
+              currentState
+              dContent
+
+      eSelection <-
+        divClass (T.pack (show spo ++ "List")) $
+          _dropdown_change <$>
+            dropdown
+              (0, "")
+              dContentB
+              (def
+                & dropdownConfig_attributes
+                    .~ constDyn
+                         (Map.fromList
+                           [ ("style", "width:300px")
+                           , ("size",  "15")
+                           ]))
+
+    pure dSelection
+
+requestSparql
+  :: MonadWidget t m
+  => Dynamic t T.Text
+  -> Event t Req
+  -> m (Event t Resp)
+
+requestSparql dUrl eReq = do
+    let eXhrReq =
+          attachPromptlyDynWith mkReq dUrl eReq
+
+    eRespRaw <-
+      performRequestsAsync eXhrReq
+
+    pure $
+      handleResponse <$> respDebug eRespRaw
+
   where
     mkReq url req =
-        (req -- for debugging only
-        ,xhrRequest "GET"
-                    (url ++ "?query=" ++ (urlEncode . toString) req)
-                    (setHeaders def ("Accept" =: "application/sparql-results+json")))
+      ( req
+      , xhrRequest
+          "GET"
+          (url
+            <> "?query="
+            <> T.pack (urlEncode (toString req)))
+          (def
+            & xhrRequestConfig_headers
+                .~ ("Accept"
+                    =: "application/sparql-results+json"))
+      )
 
 handleResponse :: (Req, XhrResponse) -> Resp
 handleResponse (req, xhrResp) =
-    let resp = case _xhrResponse_responseText xhrResp of
-            Just x  -> traverseResults
-                           (MB.fromJust $ A.decode (BSC8.pack (T.unpack x)) :: SparqlResults)
-            Nothing -> []
-    in distributeResponse req resp
+    distributeResponse req resp
+  where
+    resp =
+      case decodeXhrResponse xhrResp :: Maybe SparqlResults of
+        Just x  -> traverseResults x
+        Nothing -> []
 
 distributeResponse (Req s p o) resp  =
     Resp resp (getSPO "subject" resp s) (getSPO "predicate" resp p) (getSPO "object" resp o)
 
 getSPO spo r d =
     MB.fromMaybe [d] (lookup spo r)
-
-setHeaders (XhrRequestConfig h u p r s) hdrs =
-    XhrRequestConfig hdrs u p r s
 
 fromSPO x = case x of
     SUB -> "?subject"
@@ -146,13 +256,26 @@ urlEncode = handleSharp . N.escapeURIString N.isUnescapedInURI
     handleSharp ('#':xs) = "%23" ++ handleSharp xs
     handleSharp   (x:xs) =    x  :  handleSharp xs
 
-mkToggleBtn :: MonadWidget t m => String -> String -> m (Dynamic t Bool)
+mkToggleBtn
+  :: MonadWidget t m
+  => String
+  -> String
+  -> m (Dynamic t Bool)
+
 mkToggleBtn on off = do
-    -- e is HTML element
-    rec (e,_)        <- elAttr' "button" mempty $ dynText label
-        currentState <- toggle False (domEvent Click e)
-        label        <- mapDyn (\x -> if x then on else off) currentState
-    return currentState
+  rec
+    (e, _) <-
+      elDynAttr' "button" mempty $
+        dynText label
+
+    currentState <-
+      toggle False (domEvent Click e)
+
+    let label =
+          T.pack . (\x -> if x then on else off)
+          <$> currentState
+
+  pure currentState
 
 ------------------------------------------------------------------------------
 -- Utility
@@ -186,27 +309,30 @@ elemIndexEnd :: Eq a => a -> [a] -> Maybe Int
 elemIndexEnd a as = (length as - 1 -) <$> L.elemIndex a (reverse as)
 
 removeTrailing :: Eq a => a -> [a] -> [a]
-removeTrailing a as | last as == a = take (length as - 1) as
-                    | otherwise    = as
+removeTrailing _ [] = []
+removeTrailing a as
+  | last as == a = init as
+  | otherwise    = as
+
 ------------------------------------------------------------------------------
 
 data SparqlResults = SparqlResults {
-      head    :: VarsObject
-    , results :: BindingsVector
+      head    :: !VarsObject
+    , results :: !BindingsVector
     } deriving (G.Generic, Show)
 
 data VarsObject = VarsObject {
-      vars :: [String]
+      vars :: ![String]
     } deriving (G.Generic, Show)
 
 data BindingsVector = BindingsVector {
-      bindings :: [Binding]
+      bindings :: ![Binding]
     } deriving (G.Generic, Show)
 
 data Binding = Binding {
-      subject   :: Maybe BindingValue
-    , predicate :: Maybe BindingValue
-    , object    :: Maybe BindingValue
+      subject   :: !(Maybe BindingValue)
+    , predicate :: !(Maybe BindingValue)
+    , object    :: !(Maybe BindingValue)
     } deriving (G.Generic, Show)
 
 data BindingValue = BindingValue {
@@ -230,6 +356,14 @@ traverseResults :: SparqlResults -> [(String, [String])]
 traverseResults (SparqlResults (VarsObject vs) (BindingsVector bs)) =
     P.zip vs $ P.map L.nub $ L.transpose $ traverseBindings (P.map selectFun vs) bs
 
-traverseBindings vs bs = case bs of
-    []      -> []
-    (b:bs') -> P.map (\f -> Main.value $ MB.fromJust $ f b) vs : traverseBindings vs bs'
+traverseBindings vs bs =
+  case bs of
+    [] ->
+      []
+
+    (b:bs') ->
+      P.map
+        (\f ->
+           P.maybe "" Main.value (f b))
+        vs
+      : traverseBindings vs bs'

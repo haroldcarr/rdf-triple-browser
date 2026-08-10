@@ -1,0 +1,14 @@
+Look at the project in:
+/Volumes/HC/.sync/.esync/openhc/rdf-triple-browser/haskell/reflex-based
+It is an RDF triple browser built with Haskell using https://reflex-frp.org/
+The last time this ran was in 2016.
+So Haskell, Cabal, Reflex and other libraries used have changed.
+Please update the project to use:
+- GHC 9.10.3
+- reflex 0.9.4.1
+- reflex-dom 0.6.3.4
+- reflex-dom-core 0.8.1.4
+Do not change formatting.
+Make changes and compile it using `cabal build`
+Do not do GIT commits.
+Do not do work in any other directories except the one given and its subdirectores.

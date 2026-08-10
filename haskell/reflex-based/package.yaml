@@ -1,0 +1,35 @@
+name: rdf-triple-browser
+version: 0.1.0.0
+synopsis: A browser for RDF triples using Reflex
+license: BSD3
+description: Please see the README on GitHub at <https://github.com/yourusername/rdf-triple-browser#readme>
+maintainer: Your Name <your.email@example.com>
+copyright: 2016-2025 Your Name
+category: Web
+extra-source-files:
+  - README.md
+  - ChangeLog.md
+data-files:
+  - config.yaml
+executables:
+  rdf-triple-browser-exe:
+    main: Main.hs
+    source-dirs: src
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - base >= 4.7 && < 5
+dependencies:
+  - lens >= 5.0 && <5.4
+  - base >= 4.7 && < 5
+  - reflex >= 0.9.4.1
+  - reflex-dom >= 0.6.3.4
+  - reflex-dom-core >= 0.8.1.4
+  - text >= 1.2 && < 2
+  - containers >= 0.6 && < 0.8
+  - bytestring >= 0.10
+  - yaml >= 0.11
+  - aeson >= 2.2.5.0
+  - network-uri >= 2.6.4.2
