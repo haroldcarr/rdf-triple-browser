@@ -1,7 +1,7 @@
 HCLOC  = $(shell hcLocation "ulhcd")
 FLOC   = ${HCLOC}/java/apache/apache-jena-fuseki-3.14.0
 TLOC   = ${HCLOC}/java/apache/tcpmon-1.0-bin
-DLOC   = $(shell hcLocation "esync")/language/java/org/openhc/venuetime/metadata/
+VLOC   = $(shell hcLocation "esync")/language/java/org/openhc/venuetime/metadata/
 
 build :
 	cabal build
@@ -25,8 +25,12 @@ fusekiexec :
 	cd /tmp/rdf-triple-browser-fuseki-data ; \
 	${FLOC}/fuseki-server --port 3029 --update --mem /ds & )
 
-load-data :
-	( cd ${DLOC} ; \
+load-hc-data :
+	( ${FLOC}/bin/s-put http://localhost:3030/ds/data --verbose default ../../data-private/hc-p.rdf ; \
+	${FLOC}/bin/s-put http://localhost:3030/ds/data           default ../../data-private/hc-x.rdf )
+
+load-vt-data :
+	( cd ${VLOC} ; \
 	${FLOC}/bin/s-put http://localhost:3030/ds/data --verbose default events.n3 ; \
 	${FLOC}/bin/s-put http://localhost:3030/ds/data           default participants.n3 ; \
 	${FLOC}/bin/s-put http://localhost:3030/ds/data           default places.n3 ; \

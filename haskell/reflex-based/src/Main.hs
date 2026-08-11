@@ -21,6 +21,40 @@ import           Prelude                     as P
 import           Reflex                      as R
 import           Reflex.Dom                  as RD
 
+{-
+* Structure produced by =bodyWidget=
+
+body
+├── input#sparqlURL
+├── button                  ; "Submit"
+├── div.spoPanels
+│   ├── div.SUBPanel
+│   ├── div.PREPanel
+│   ├── div.OBJPanel
+│   ├── div.showRequest     ; only when M.when True
+│   ├── div.showQuery       ; only when M.when True
+│   ├── div.showSparqlResp  ; only when M.when True
+│   └── div.showSelection   ; only when M.when True
+├── div.currentSelection
+│   └── a
+└── iframe
+
+Note: the three RDF panels and all four debug divs are children of div.spoPanels
+so CSS grid rules on =.spoPanels= directly control everything inside,
+including showSelection.
+
+currentSelection and iframe are outside spoPanels.
+
+each SUBPanel, PREPanel, OBJPanel has
+
+div.SUBPanel
+├── div.SUBSelection
+├── button                  ; "*"
+├── button                  ; "+/-"
+└── div.SUBList
+    └── select
+-}
+
 data SPO = SUB | PRE | OBJ deriving Show
 
 --              SUB     PRE     OBJ
@@ -33,24 +67,80 @@ main :: IO ()
 main = mainWidgetWithHead headWidget bodyWidget
 
 headWidget :: MonadWidget t m => m ()
-headWidget =
-  el "style" $ text $ T.unlines
-    [ ".spoPanels {"
-    , "  display: grid;"
-    , "  grid-template-columns: repeat(3, minmax(0, 1fr));"
-    , "  gap: 1rem;"
-    , "  width: 100%;"
-    , "}"
-    , ""
-    , ".SUBPanel, .PREPanel, .OBJPanel {"
-    , "  min-width: 0;"
-    , "}"
-    , ""
-    , ".spoPanels select {"
-    , "  width: 100%;"
-    , "  box-sizing: border-box;"
-    , "}"
-    ]
+headWidget = el "style" $ text $ T.unlines
+  [ "html, body {"
+  , "  margin: 0;"
+  , "  padding: 1rem;"
+  , "  font-family: sans-serif;"
+  , "  font-size: 18px;"
+  , "}"
+  , ""
+  , "input,"
+  , "button,"
+  , "select,"
+  , "textarea {"
+  , "  font-size: inherit;"
+  , "}"
+  , ""
+  , "#sparqlURL {"
+  , "  width: 40rem;"
+  , "}"
+  , ""
+  , ".spoPanels {"
+  , "  display: grid;"
+  , "  grid-template-columns: repeat(3, minmax(0, 1fr));"
+  , "  gap: 1rem;"
+  , "  width: 100%;"
+  , "  align-items: start;"
+  , "}"
+  , ""
+  , ".SUBPanel,"
+  , ".PREPanel,"
+  , ".OBJPanel {"
+  , "  min-width: 0;"
+  , "  border: 1px solid #ccc;"
+  , "  padding: 0.5rem;"
+  , "  box-sizing: border-box;"
+  , "}"
+  , ""
+  , ".SUBSelection,"
+  , ".PRESelection,"
+  , ".OBJSelection {"
+  , "  margin-bottom: 0.5rem;"
+  , "  font-weight: bold;"
+  , "  overflow-wrap: anywhere;"
+  , "}"
+  , ""
+  , ".spoPanels select {"
+  , "  width: 100%;"
+  , "  box-sizing: border-box;"
+  , "}"
+  , ""
+  , ".showRequest,"
+  , ".showQuery,"
+  , ".showSparqlResp,"
+  , ".showSelection {"
+  , "  grid-column: 1 / -1;"
+  , "  width: 100%;"
+  , "  box-sizing: border-box;"
+  , "  margin-top: 0.5rem;"
+  , "  padding: 0.5rem;"
+  , "  border: 1px solid #ddd;"
+  , "  overflow-wrap: anywhere;"
+  , "}"
+  , ""
+  , ".currentSelection {"
+  , "  margin-top: 1rem;"
+  , "  font-size: 120%;"
+  , "}"
+  , ""
+  , "iframe {"
+  , "  width: 100%;"
+  , "  height: 40rem;"
+  , "  border: 1px solid #ccc;"
+  , "  margin-top: 1rem;"
+  , "}"
+  ]
 
 bodyWidget :: MonadWidget t m => m ()
 bodyWidget  = do
@@ -182,7 +272,7 @@ expandContract b v =
 
 respDebug :: Reflex t => Event t (a, XhrResponse) -> Event t (a, XhrResponse)
 respDebug x =
-  if True
+  if False
   then traceEventWith (T.unpack . MB.fromJust . _xhrResponse_responseText . snd) x
   else x
 
