@@ -14,7 +14,7 @@ import qualified Data.Function               as DF (on)
 import qualified Data.List                   as L (elemIndex, isPrefixOf, nub, sortOn, transpose)
 import qualified Data.Map                    as Map (Map, fromList)
 import qualified Data.Maybe                  as MB (fromJust, fromMaybe)
-import qualified Data.Text                   as T (Text, pack, toLower, unpack)
+import qualified Data.Text                   as T (Text, pack, toLower, unlines, unpack)
 import qualified GHC.Generics                as G (Generic)
 import           Network.URI                 as N (escapeURIString, isUnescapedInURI)
 import           Prelude                     as P
@@ -30,14 +30,37 @@ data Req = Req !String !String !String deriving Show
 data Resp = Resp ![(String, [String])] ![String] ![String] ![String] deriving Show
 
 main :: IO ()
-main = mainWidget $ do
+main = mainWidgetWithHead headWidget bodyWidget
+
+headWidget :: MonadWidget t m => m ()
+headWidget =
+  el "style" $ text $ T.unlines
+    [ ".spoPanels {"
+    , "  display: grid;"
+    , "  grid-template-columns: repeat(3, minmax(0, 1fr));"
+    , "  gap: 1rem;"
+    , "  width: 100%;"
+    , "}"
+    , ""
+    , ".SUBPanel, .PREPanel, .OBJPanel {"
+    , "  min-width: 0;"
+    , "}"
+    , ""
+    , ".spoPanels select {"
+    , "  width: 100%;"
+    , "  box-sizing: border-box;"
+    , "}"
+    ]
+
+bodyWidget :: MonadWidget t m => m ()
+bodyWidget  = do
   urlInput <- inputElement
     $ def
     & inputElementConfig_initialValue .~ "http://localhost:3030/ds/query"
     & inputElementConfig_elementConfig . elementConfig_initialAttributes
       .~ Map.fromList [("id", "sparqlURL")]
 
-  let url = _inputElement_value urlInput
+  let url  = _inputElement_value urlInput
   eSubmit <- button "Submit"
   dCurSel <- divClass "spoPanels" $ do
     rec
@@ -95,9 +118,7 @@ mkSPOPanel spo eContent =
       eSelection   <- divClass (T.pack (show spo ++ "List")) $ _dropdown_change <$>
                       dropdown (0, "") dContentB
                       (def & dropdownConfig_attributes .~ constDyn
-                       (Map.fromList [ ("style", "width:300px")
-                                     , ("size",  "15")
-                                     ]))
+                       (Map.fromList [ ("size",  "15") ]))
     pure dSelection
 
 requestSparql :: MonadWidget t m => Dynamic t T.Text -> Event t Req -> m (Event t Resp)
@@ -125,7 +146,7 @@ distributeResponse :: Req -> [(String, [String])] -> Resp
 distributeResponse (Req s p o) resp  =
   Resp resp (getSPO "subject" resp s) (getSPO "predicate" resp p) (getSPO "object" resp o)
 
-getSPO :: a1 -> [(a1, [a2])] -> a2 -> [a2]
+getSPO :: Eq a1 => a1 -> [(a1, [a2])] -> a2 -> [a2]
 getSPO spo r d = MB.fromMaybe [d] (lookup spo r)
 
 fromSPO :: SPO -> String
@@ -159,7 +180,7 @@ expandContract b v =
   lowShort = shorten . T.unpack . T.toLower . T.pack
   sorted   = zip [1 .. ] (L.sortOn lowShort v)
 
-respDebug :: Event t (a, XhrResponse) -> Event t (a, XhrResponse)
+respDebug :: Reflex t => Event t (a, XhrResponse) -> Event t (a, XhrResponse)
 respDebug x =
   if True
   then traceEventWith (T.unpack . MB.fromJust . _xhrResponse_responseText . snd) x
