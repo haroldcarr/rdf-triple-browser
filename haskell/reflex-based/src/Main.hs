@@ -240,11 +240,12 @@ mkSPOPanel spo eContent =
       eSelection   <- divClass (T.pack (show spo ++ "List")) $ _dropdown_change <$>
                       dropdown (0, "") dContentB
                       (def & dropdownConfig_attributes .~ constDyn
-                       (Map.fromList [ ("size",  "15") ]))
-     -}
+                       (Map.fromList [ ("size",  "23") ]))
+      -}
+      -- "23" number of rows in SPO panels
       eSelection   <- divClass (T.pack (show spo ++ "List")) $ do
         dd <- dropdown (0, "") dContentB
-                (def & dropdownConfig_attributes .~ constDyn (Map.fromList [("size", "15")]))
+                (def & dropdownConfig_attributes .~ constDyn (Map.fromList [("size", "23")]))
         let eChange = _dropdown_change dd
         pure $ traceEventWith (\x -> show spo ++ " DROPDOWN CHANGE: " ++ show x)  eChange
     pure dSelection
