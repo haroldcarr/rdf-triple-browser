@@ -21,6 +21,7 @@ import           Network.URI                 as N (escapeURIString, isUnescapedI
 import           Prelude                     as P
 import           Reflex                      as R
 import           Reflex.Dom                  as RD
+import           System.Process              (callProcess)
 ------------------------------------------------------------------------------
 import           EndpointReachable
 {-
@@ -200,31 +201,23 @@ bodyWidget  = do
         divClass "showSelection"  $ display dCurSel
 
     pure dCurSel
-  {-
-  let dAAttr = (\x -> Map.fromList [ ("target", "_blank"), ("href", T.pack x) ]) <$> dCurSel
-      dFrameAttr = (\x -> Map.fromList [ ("src", T.pack x) ])                    <$> dCurSel
-  divClass "currentSelection" $ elDynAttr "a" dAAttr $ dynText (T.pack <$> dCurSel)
-  elDynAttr "iframe" dFrameAttr blank
-  -}
-  {-
-  eOkUrl <- performEvent $
-    ffor (updated dCurSel) $ \u -> do
-      ok <- lift $ endpointReachable u
-      pure $ if ok then Just u else Nothing
-  dFrameUrl <- holdDyn "" (mapMaybe id eOkUrl)
-  let dFrameAttr = (\x -> Map.fromList [("src", T.pack x)]) <$> dFrameUrl
-  elDynAttr "iframe" dFrameAttr blank
-  -}
+
   let dAAttr = (\x -> Map.fromList [ ("target", "_blank"), ("href",   T.pack x) ]) <$> dCurSel
   divClass "currentSelection" $ elDynAttr "a" dAAttr $ dynText (T.pack <$> dCurSel)
 
-  eOkUrl <- performEvent $
-    ffor (updated dCurSel) $ \u -> do
-      ok <- liftIO $ endpointReachable u
-      pure $ if ok then Just u else Nothing
-  dFrameUrl <- holdDyn "" (mapMaybe id eOkUrl)
-  let dFrameAttr = (\x -> Map.fromList [ ("src", T.pack x) ]) <$> dFrameUrl
-  elDynAttr "iframe" dFrameAttr blank
+  if False
+    then do
+      eOkUrl <- performEvent $
+        ffor (updated dCurSel) $ \u -> do
+          ok <- liftIO $ endpointReachable u
+          pure $ if ok then Just u else Nothing
+      dFrameUrl <- holdDyn "" (mapMaybe id eOkUrl)
+      let dFrameAttr = (\x -> Map.fromList [ ("src", T.pack x) ]) <$> dFrameUrl
+      elDynAttr "iframe" dFrameAttr blank
+    else do
+      performEvent_ $
+        ffor (updated dCurSel) $ \u ->
+          liftIO $ callProcess "open" [ "-a", "Firefox", u ]
 
 mkSPOPanel spo eContent =
   divClass (T.pack (show spo ++ "Panel")) $ do

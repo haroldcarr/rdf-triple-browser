@@ -22,16 +22,17 @@ executables:
     dependencies:
       - base >= 4.7 && < 5
 dependencies:
-  - lens >= 5.0 && <5.4
+  - aeson >= 2.2.5.0
   - base >= 4.7 && < 5
+  - bytestring >= 0.10
+  - containers >= 0.6 && < 0.8
+  - http-client >= 0.7 && < 0.8
+  - http-client-tls >= 0.3 && < 0.4
+  - lens >= 5.0 && <5.4
+  - network-uri >= 2.6.4.2
+  - process >= 1.6 && < 1.7
   - reflex >= 0.9.4.1
   - reflex-dom >= 0.6.3.4
   - reflex-dom-core >= 0.8.1.4
   - text >= 1.2 && < 2
-  - containers >= 0.6 && < 0.8
-  - bytestring >= 0.10
   - yaml >= 0.11
-  - aeson >= 2.2.5.0
-  - network-uri >= 2.6.4.2
-  - http-client >= 0.7 && < 0.8
-  - http-client-tls >= 0.3 && < 0.4

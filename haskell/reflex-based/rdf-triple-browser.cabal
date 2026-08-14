@@ -36,6 +36,7 @@ executable rdf-triple-browser-exe
     , http-client-tls ==0.3.*
     , lens >=5.0 && <5.4
     , network-uri >=2.6.4.2
+    , process ==1.6.*
     , reflex >=0.9.4.1
     , reflex-dom >=0.6.3.4
     , reflex-dom-core >=0.8.1.4
