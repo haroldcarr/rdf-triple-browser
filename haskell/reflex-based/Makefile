@@ -6,7 +6,7 @@ VLOC   = $(shell hcLocation "esync")/language/java/org/openhc/venuetime/metadata
 build :
 	cabal build
 
-run :
+run : FORCE
 	cabal run
 
 data : f load-data
@@ -35,3 +35,5 @@ load-vt-data :
 	${FLOC}/bin/s-put http://localhost:3030/ds/data           default participants.n3 ; \
 	${FLOC}/bin/s-put http://localhost:3030/ds/data           default places.n3 ; \
 	${FLOC}/bin/s-put http://localhost:3030/ds/data           default sponsors.n3 )
+
+FORCE :

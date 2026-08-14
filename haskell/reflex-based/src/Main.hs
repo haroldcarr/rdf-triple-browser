@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveGeneric     #-}
-{-# LANGUAGE MonoLocalBinds    #-}
 {-# LANGUAGE LambdaCase        #-}
+{-# LANGUAGE MonoLocalBinds    #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecursiveDo       #-}
 
@@ -9,6 +9,7 @@ module Main where
 import           Control.Applicative         ((<|>))
 import           Control.Lens                ((.~), (&))
 import qualified Control.Monad               as M
+import           Control.Monad.IO.Class      (liftIO)
 import           Data.Aeson.Types            as AT (FromJSON)
 import qualified Data.Function               as DF (on)
 import qualified Data.List                   as L (elemIndex, isPrefixOf, nub, sortOn, transpose)
@@ -20,7 +21,8 @@ import           Network.URI                 as N (escapeURIString, isUnescapedI
 import           Prelude                     as P
 import           Reflex                      as R
 import           Reflex.Dom                  as RD
-
+------------------------------------------------------------------------------
+import           EndpointReachable
 {-
 * Structure produced by =bodyWidget=
 
@@ -73,6 +75,8 @@ headWidget = el "style" $ text $ T.unlines
   , "  padding: 1rem;"
   , "  font-family: sans-serif;"
   , "  font-size: 18px;"
+  , "  background: #1e1e1e;"
+  , "  color: #e8e8e8;"
   , "}"
   , ""
   , "input,"
@@ -80,6 +84,9 @@ headWidget = el "style" $ text $ T.unlines
   , "select,"
   , "textarea {"
   , "  font-size: inherit;"
+  , "  background: #2a2a2a;"
+  , "  color: #e8e8e8;"
+  , "  border: 1px solid #555;"
   , "}"
   , ""
   , "#sparqlURL {"
@@ -98,7 +105,8 @@ headWidget = el "style" $ text $ T.unlines
   , ".PREPanel,"
   , ".OBJPanel {"
   , "  min-width: 0;"
-  , "  border: 1px solid #ccc;"
+  , "  background: #2a2a2a;"
+  , "  border: 1px solid #555;"
   , "  padding: 0.5rem;"
   , "  box-sizing: border-box;"
   , "}"
@@ -125,7 +133,8 @@ headWidget = el "style" $ text $ T.unlines
   , "  box-sizing: border-box;"
   , "  margin-top: 0.5rem;"
   , "  padding: 0.5rem;"
-  , "  border: 1px solid #ddd;"
+  , "  background: #2a2a2a;"
+  , "  border: 1px solid #555;"
   , "  overflow-wrap: anywhere;"
   , "}"
   , ""
@@ -134,10 +143,19 @@ headWidget = el "style" $ text $ T.unlines
   , "  font-size: 120%;"
   , "}"
   , ""
+  , "a {"
+  , "  color: #7db8ff;"
+  , "}"
+  , ""
+  , "a:visited {"
+  , "  color: #b88cff;"
+  , "}"
+  , ""
   , "iframe {"
   , "  width: 100%;"
   , "  height: 40rem;"
-  , "  border: 1px solid #ccc;"
+  , "  background: white;"
+  , "  border: 1px solid #555;"
   , "  margin-top: 1rem;"
   , "}"
   ]
@@ -163,7 +181,7 @@ bodyWidget  = do
       eResp <- requestSparql url (leftmost [ updated dReq
                                            , tagPromptlyDyn dReq eSubmit
                                            ])
-      dCurSel <- holdDyn "http://haroldcarr.com/"
+      dCurSel <- holdDyn "http://hchc.nfshost.com/"
                  (ffilter
                   ("http" `L.isPrefixOf`)
                   (leftmost
@@ -182,10 +200,30 @@ bodyWidget  = do
         divClass "showSelection"  $ display dCurSel
 
     pure dCurSel
-
+  {-
   let dAAttr = (\x -> Map.fromList [ ("target", "_blank"), ("href", T.pack x) ]) <$> dCurSel
       dFrameAttr = (\x -> Map.fromList [ ("src", T.pack x) ])                    <$> dCurSel
   divClass "currentSelection" $ elDynAttr "a" dAAttr $ dynText (T.pack <$> dCurSel)
+  elDynAttr "iframe" dFrameAttr blank
+  -}
+  {-
+  eOkUrl <- performEvent $
+    ffor (updated dCurSel) $ \u -> do
+      ok <- lift $ endpointReachable u
+      pure $ if ok then Just u else Nothing
+  dFrameUrl <- holdDyn "" (mapMaybe id eOkUrl)
+  let dFrameAttr = (\x -> Map.fromList [("src", T.pack x)]) <$> dFrameUrl
+  elDynAttr "iframe" dFrameAttr blank
+  -}
+  let dAAttr = (\x -> Map.fromList [ ("target", "_blank"), ("href",   T.pack x) ]) <$> dCurSel
+  divClass "currentSelection" $ elDynAttr "a" dAAttr $ dynText (T.pack <$> dCurSel)
+
+  eOkUrl <- performEvent $
+    ffor (updated dCurSel) $ \u -> do
+      ok <- liftIO $ endpointReachable u
+      pure $ if ok then Just u else Nothing
+  dFrameUrl <- holdDyn "" (mapMaybe id eOkUrl)
+  let dFrameAttr = (\x -> Map.fromList [ ("src", T.pack x) ]) <$> dFrameUrl
   elDynAttr "iframe" dFrameAttr blank
 
 mkSPOPanel spo eContent =
@@ -205,10 +243,24 @@ mkSPOPanel spo eContent =
       let dContentB = zipDynWith (\expanded xs -> T.pack <$> expandContract expanded xs)
                       currentState
                       dContent
+      {-
       eSelection   <- divClass (T.pack (show spo ++ "List")) $ _dropdown_change <$>
                       dropdown (0, "") dContentB
                       (def & dropdownConfig_attributes .~ constDyn
                        (Map.fromList [ ("size",  "15") ]))
+     -}
+      eSelection <-
+        divClass (T.pack (show spo ++ "List")) $ do
+        dd <- dropdown
+              (0, "")
+              dContentB
+              (def & dropdownConfig_attributes .~
+               constDyn (Map.fromList [("size", "15")]))
+
+        let eChange = _dropdown_change dd
+
+        pure $
+          traceEventWith (\x -> show spo ++ " DROPDOWN CHANGE: " ++ show x)  eChange
     pure dSelection
 
 requestSparql :: MonadWidget t m => Dynamic t T.Text -> Event t Req -> m (Event t Resp)
