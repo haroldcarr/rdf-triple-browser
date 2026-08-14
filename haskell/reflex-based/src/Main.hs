@@ -242,18 +242,11 @@ mkSPOPanel spo eContent =
                       (def & dropdownConfig_attributes .~ constDyn
                        (Map.fromList [ ("size",  "15") ]))
      -}
-      eSelection <-
-        divClass (T.pack (show spo ++ "List")) $ do
-        dd <- dropdown
-              (0, "")
-              dContentB
-              (def & dropdownConfig_attributes .~
-               constDyn (Map.fromList [("size", "15")]))
-
+      eSelection   <- divClass (T.pack (show spo ++ "List")) $ do
+        dd <- dropdown (0, "") dContentB
+                (def & dropdownConfig_attributes .~ constDyn (Map.fromList [("size", "15")]))
         let eChange = _dropdown_change dd
-
-        pure $
-          traceEventWith (\x -> show spo ++ " DROPDOWN CHANGE: " ++ show x)  eChange
+        pure $ traceEventWith (\x -> show spo ++ " DROPDOWN CHANGE: " ++ show x)  eChange
     pure dSelection
 
 requestSparql :: MonadWidget t m => Dynamic t T.Text -> Event t Req -> m (Event t Resp)
